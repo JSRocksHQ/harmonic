@@ -1,0 +1,15 @@
+{
+  "name": "harmonic",
+  "description": "The next static site generator",
+  "version": "0.0.1",
+  "preferGlobal": "true",
+  "bin": {
+    "harmonic": "harmonic.js"
+  },
+  "dependecies": "",
+  "devDependencies": {
+    "commander": "~2.2.0",
+    "marked": "~0.3.2",
+    "co": "~3.0.5"
+  }
+}
