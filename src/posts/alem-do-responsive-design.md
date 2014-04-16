@@ -1,3 +1,14 @@
+<!--
+layout: post
+title: "10 anos e pronto para os próximos 10"
+date: 2014-01-17 00:33
+comments: true
+published: true
+keywords: JavaScript, Web, Devaneios
+description: Post sobre 10 anos de trabalho na área
+categories: Off-topic,Web,Devaneios
+-->
+
 Ano passado(2013) fui em muitos eventos de FrontEnd, e obviamente, assisti muitas palestras.  
 Um destes eventos foi o FronInSampa, que inclusive relatei aqui no blog: [http://jaydson.org/frontinsampa-2013-inferno-lea-html5/](http://jaydson.org/frontinsampa-2013-inferno-lea-html5/).  
 

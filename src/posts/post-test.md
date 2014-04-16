@@ -1,4 +1,4 @@
----
+<!--
 layout: post
 title: "10 anos e pronto para os próximos 10"
 date: 2014-01-17 00:33
@@ -6,11 +6,9 @@ comments: true
 published: true
 keywords: JavaScript, Web, Devaneios
 description: Post sobre 10 anos de trabalho na área
-categories:
-- Off-topic
-- Web
-- Devaneios
----
+categories: Off-topic,Web,Devaneios
+-->
+
 2014 é o ano que considero o meu décimo ano como profissional de tecnologia.  
 Abaixo vou contar um pouco da minha trajetória, e o que penso sobre o que passou e sobre o que vem pela frente.  
 Basicamente, o que vale deste post é que eu realmente gosto do que faço.  
