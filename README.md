@@ -14,6 +14,13 @@ Check your node version:
 node --version
 ```
 
+## Installing on linux
+```shell
+git clone https://github.com/es6rocks/harmonic.git
+cd harmonic
+./install.sh
+```
+## installing manually
 1 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
 ```shell
 #!/bin/sh
