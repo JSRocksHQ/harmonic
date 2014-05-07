@@ -10,13 +10,13 @@ program
 	.command('build')
 	.description('Build your static website')
 	.action(function(env, options) {
-		let parser = require('../parser');
-		parser.parsePosts();
+		let core = require('../core');
+		core.init();
 	});
 
 program.parse(process.argv);
 
 /* Not enough arguments */
 if (!program.args.length) {
-	program.help();	
+	program.help();
 }
