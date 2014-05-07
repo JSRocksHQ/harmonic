@@ -31,6 +31,15 @@ nodeHarmony myfile.js
 You will be running node with harmony flag.  
 Harmonic depends on this configuration.
 
+3 - Install the dependencies:  
+```
+[sudo] npm install
+```
+4 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
+```
+npm link
+```
+
 
 ## Build
 Harmonic is currently in alpha, but you already can generate posts, and the index page.  
@@ -54,5 +63,4 @@ Now, just build your awesome website!
 ```shell
 harmonic build
 ```
-
 
