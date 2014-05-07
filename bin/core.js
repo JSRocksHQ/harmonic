@@ -10,7 +10,7 @@ module.exports = {
 			.then(parser.generateIndex)
 			.then(parser.generatePosts)
 			.then(function (data) {
-				console.log(data);
+				//console.log(data);
 			}, function (e) {
 				console.log(e);
 			});

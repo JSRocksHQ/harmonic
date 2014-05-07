@@ -47,6 +47,7 @@ let Parser = function () {
 					fs.writeFile('./public/' + metadata.filename + '.html', postHTMLFile, function (err) {
 						if (err) throw err;
 						console.log('Successefuly generate post html file ' + metadata.filename);
+						resolve(postsMetadata);
 					});
 				});
 			});
@@ -96,58 +97,6 @@ let Parser = function () {
 				}
 			});
 		});
-	};
-
-	this.getPostsMetadata = function() {
-		let promise = new Promise(function (resolve, reject) {
-
-			/* Reading posts dir */
-			fs.readdir(path, function (err, files) {
-				if (err) {
-					throw err;
-				}
-
-				let posts = [];
-
-				files.forEach(function (file, i) {
-					
-					fs.readFile(path + file, function (err, data) {
-						if (err) throw err;
-						let postsTemplate = fs.readFileSync('./src/layouts/post.html');
-						let postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
-						let markfile = data.toString();
-						let filename = file.split('.md')[0];
-
-						/* Markdown extra */
-						let metadata = markextra.metadata(markfile, function (md) {
-							let retObj = {};
-							md.split('\n').forEach(function(line) {
-								let data = line.split(':');
-								retObj[data[0].trim()] = data[1].trim();
-							});
-							return retObj;
-						});
-						posts.push(metadata);
-						
-						if (i === (files.length -1)) {
-							resolve(posts);
-						}
-						
-						let postHTMLFile = postsTemplateNJ.render({ content : marked(markfile), title : metadata.title.toString() });
-
-						/* Removing header metadata */
-						postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-
-						/* write post html file */
-						fs.writeFile('./public/' + filename + '.html', postHTMLFile, function (err) {
-							if (err) throw err;
-							console.log('Successefuly generate post html file ' + filename);
-						});
-					});
-				});
-			});
-		});
-		return promise;
 	};
 }
 
