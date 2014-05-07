@@ -49,3 +49,10 @@ description: my post description
 categories: my-category
 -->
 ```
+
+Now, just build your awesome website!  
+```shell
+harmonic build
+```
+
+
