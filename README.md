@@ -30,3 +30,22 @@ nodeHarmony myfile.js
 ```
 You will be running node with harmony flag.  
 Harmonic depends on this configuration.
+
+
+## Build
+Harmonic is currently in alpha, but you already can generate posts, and the index page.  
+Just as usual, create your posts in the "/src/posts" folder using markdown syntax.  
+You'll need to especify a header for each post.  
+Example:
+```
+<!--
+layout: post
+title: post test
+date: 2014-01-17 00:33
+comments: true
+published: true
+keywords: JavaScript, ES6
+description: my post description
+categories: my-category
+-->
+```
