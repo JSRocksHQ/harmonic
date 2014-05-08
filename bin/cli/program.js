@@ -15,10 +15,13 @@ program
 	});
 
  program
-	.command('new_post [post]')
+	.command('new_post ["title"]')
 	.description('Create a new post')
-	.action(function(post){
-		console.log(post);
+	.action(function(title){
+		let util = require('../cli/util')
+		util.new_post(title).then(function (data) {
+			console.log(data);
+		});
 	});
 
 program.parse(process.argv);
