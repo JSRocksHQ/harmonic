@@ -14,6 +14,13 @@ program
 		core.init();
 	});
 
+ program
+	.command('new_post [post]')
+	.description('Create a new post')
+	.action(function(post){
+		console.log(post);
+	});
+
 program.parse(process.argv);
 
 /* Not enough arguments */
