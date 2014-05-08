@@ -47,7 +47,6 @@ Harmonic depends on this configuration.
 npm link
 ```
 
-
 ## Build
 Harmonic is currently in alpha, but you already can generate posts, and the index page.  
 Just as usual, create your posts in the "/src/posts" folder using markdown syntax.  
@@ -71,3 +70,23 @@ Now, just build your awesome website!
 harmonic build
 ```
 
+## New Post
+To create a new post, just run:
+```shell
+harmonic new_post "my awesome post"
+```
+
+## Run
+To run your static server:
+```shell
+harmonic run
+```
+You can specify an port, by default Harmonic will use the 9356 port:
+```shell
+harmonic run 9090
+```
+
+## Help
+```shell
+harmonic --help
+```
