@@ -1,13 +1,13 @@
-let fs = require('fs');
-let marked = require('marked');
-let path = './src/posts/';
-let markextra = require('markdown-extra');
-let _ = require('underscore');
-let nunjucks = require('nunjucks');
-let co = require('co');
-let Promise = require('promise');
+var fs = require('fs');
+var marked = require('marked');
+var path = './src/posts/';
+var markextra = require('markdown-extra');
+var _ = require('underscore');
+var nunjucks = require('nunjucks');
+var co = require('co');
+var Promise = require('promise');
 
-let Parser = function () {
+var Parser = function () {
 
 	this.start = function () {
 		return new Promise(function (resolve, reject) {
@@ -17,9 +17,9 @@ let Parser = function () {
 
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
-			let indexTemplate = fs.readFileSync('./src/layouts/index.html');
-			let indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
-			let indexContent = '';
+			var indexTemplate = fs.readFileSync('./src/layouts/index.html');
+			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
+			var indexContent = '';
 			indexContent = indexTemplateNJ.render({ posts : postsMetadata });
 
 			/* write index html file */
@@ -35,10 +35,10 @@ let Parser = function () {
 		return new Promise(function(resolve, reject) {
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
-					let postsTemplate = fs.readFileSync('./src/layouts/post.html');
-					let postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
-					let markfile = data.toString();
-					let postHTMLFile = postsTemplateNJ.render({ content : marked(markfile), title : metadata.title.toString() });
+					var postsTemplate = fs.readFileSync('./src/layouts/post.html');
+					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+					var markfile = data.toString();
+					var postHTMLFile = postsTemplateNJ.render({ content : marked(markfile), title : metadata.title.toString() });
 
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
@@ -69,20 +69,20 @@ let Parser = function () {
 	};
 
 	this.getMarkdownMetadata = function(data) {
-		let posts = [];
+		var posts = [];
 		return new Promise(function (resolve, reject) {
 			data.forEach(function (file, i) {
-				let post = fs.readFileSync( path + "/" + file).toString();
-				let postsTemplate = fs.readFileSync('./src/layouts/post.html');
-				let postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
-				let markfile = post.toString();
-				let filename = file.split('.md')[0];
+				var post = fs.readFileSync( path + "/" + file).toString();
+				var postsTemplate = fs.readFileSync('./src/layouts/post.html');
+				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
+				var markfile = post.toString();
+				var filename = file.split('.md')[0];
 
 				/* Markdown extra */
-				let metadata = markextra.metadata(markfile, function (md) {
-					let retObj = {};
+				var metadata = markextra.metadata(markfile, function (md) {
+					var retObj = {};
 					md.split('\n').forEach(function(line) {
-						let data = line.split(':');
+						var data = line.split(':');
 						retObj[data[0].trim()] = data[1].trim();
 					});
 					return retObj;

@@ -1,4 +1,5 @@
 var program = require('commander');
+var util = require('../cli/util');
 
 program
 	.version('0.0.1')
@@ -10,18 +11,25 @@ program
 	.command('build')
 	.description('Build your static website')
 	.action(function(env, options) {
-		let core = require('../core');
+		var core = require('../core');
 		core.init();
 	});
 
- program
+program
 	.command('new_post ["title"]')
 	.description('Create a new post')
-	.action(function(title){
-		let util = require('../cli/util')
+	.action(function(title) {
 		util.new_post(title).then(function (data) {
 			console.log(data);
 		});
+	});
+
+program
+	.command('run [port]')
+	.description('Run you static site locally. Port is optional')
+	.action(function(_port) {
+		var port = _port ? _port : '9356';
+		util.run(port);
 	});
 
 program.parse(process.argv);

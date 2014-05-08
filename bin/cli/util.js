@@ -1,11 +1,12 @@
-let fs = require('fs');
-let path = './src/posts/';
-let Promise = require('promise');
+var fs = require('fs');
+var path = './src/posts/';
+var Promise = require('promise');
+var staticServer = require('node-static');
 
 module.exports = {
 	new_post : function (title) {
 		return new Promise(function (resolve, reject) {
-			let template = '<!--\n' +
+			var template = '<!--\n' +
 								'layout: post\n' +
 								'title: ' + title + '\n'+
 								'date:\n' +
@@ -15,7 +16,7 @@ module.exports = {
 								'description:\n' +
 								'categories:\n' +
 							'-->';
-			let filename = path + title.split(' ').join('-') + '.md';
+			var filename = path + title.split(' ').join('-') + '.md';
 
 			/* create a new post */
 			fs.writeFile(filename, template, function (err) {
@@ -23,5 +24,15 @@ module.exports = {
 				resolve('Post "' + title + '" was successefuly created. File generated at ' + filename);
 			});
 		});
+	},
+
+	run : function (port) {
+		var file = new staticServer.Server('./public');
+		console.log('Harmonic site is running on http://localhost:' + port);
+		require('http').createServer(function (request, response) {
+		    request.addListener('end', function () {
+		        file.serve(request, response);
+		    }).resume();
+		}).listen(port);
 	}
 }

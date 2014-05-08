@@ -1,6 +1,6 @@
-let Parser = require('./parser');
+var Parser = require('./parser');
 
-let parser = new Parser();
+var parser = new Parser();
 module.exports = {
 
 	init : function () {
