@@ -24,7 +24,7 @@ cd harmonic
 1 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
 ```shell
 #!/bin/sh
-node --use-strict --harmony "$@"
+node --harmony "$@"
 ```
 2 - Give the right permission:
 ```shell

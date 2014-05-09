@@ -8,7 +8,7 @@ echo "Creating a file 'nodeHarmony'";
 
 echo '
 !/bin/sh
-node --use-strict --harmony "$@"
+node --harmony "$@"
 ' >> /usr/local/bin/nodeHarmony
 
 echo -e 'Giving the right permission...';
