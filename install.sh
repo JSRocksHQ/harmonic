@@ -14,11 +14,11 @@ node --harmony "$@"
 echo -e 'Giving the right permission...';
 sudo chmod a+x /usr/local/bin/nodeHarmony
 
-echo -e 'installing dependencies...\n';
-sudo npm install
+#echo -e 'installing dependencies...\n';
+#sudo npm install
 
-echo -e '\nputting harmonic on your global path...';
-npm link
+#echo -e '\nputting harmonic on your global path...';
+#npm link
 
 echo -e '\nNow, just build your awesome website!\n';
 echo -e 'use: harmonic build\n\n';

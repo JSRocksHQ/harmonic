@@ -2,10 +2,17 @@ var program = require('commander');
 var util = require('../cli/util');
 
 program
-	.version('0.0.1')
+	.version('0.0.3')
 
 	/* Options */
 	.option('-b, --build', 'Build your static website');
+
+program
+	.command('new_site ["name"]')
+	.description('Create your new static website')
+	.action(function(name) {
+		util.new_site(name);
+	});
 
 program
 	.command('build')

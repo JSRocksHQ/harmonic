@@ -2,7 +2,7 @@
   "name": "harmonic",
   "description": "The next static site generator",
   "homepage": "https://github.com/es6rocks/harmonic",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "preferGlobal": "true",
   "bin": {
     "harmonic": "harmonic.js"
@@ -10,6 +10,9 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
+  },
+  "scripts" : {
+    "install" : "./install.sh"
   },
   "dependencies": {
     "commander": "~2.2.0",
