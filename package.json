@@ -1,13 +1,17 @@
 {
   "name": "harmonic",
   "description": "The next static site generator",
+  "homepage": "https://github.com/es6rocks/harmonic",
   "version": "0.0.1",
   "preferGlobal": "true",
   "bin": {
     "harmonic": "harmonic.js"
   },
-  "dependencies": "",
-  "devDependencies": {
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/es6rocks/harmonic.git"
+  },
+  "dependencies": {
     "commander": "~2.2.0",
     "marked": "~0.3.2",
     "co": "~3.0.5",
@@ -16,5 +20,10 @@
     "nunjucks": "^1.0.4",
     "promise": "^5.0.0",
     "node-static": "~0.7.3"
-  }
+  },
+  "devDependencies": {
+    
+  },
+  "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
+  "license": "MIT"
 }
