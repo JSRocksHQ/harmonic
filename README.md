@@ -28,7 +28,7 @@ node --harmony "$@"
 ```
 2 - Give the right permission:
 ```shell
-sudo chmod a+x
+sudo chmod a+x nodeHarmony
 ```
 
 Now, if your run in your console:  
