@@ -8,13 +8,6 @@ program
 	.option('-b, --build', 'Build your static website');
 
 program
-	.command('new_site ["name"]')
-	.description('Create your new static website')
-	.action(function(name) {
-		util.new_site(name);
-	});
-
-program
 	.command('build')
 	.description('Build your static website')
 	.action(function(env, options) {
