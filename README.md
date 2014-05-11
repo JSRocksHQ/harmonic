@@ -3,7 +3,7 @@
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
-- Build a simple static site generator in node with ES6 features
+- Build a simple static site generator in node using ES6 features
 - Create the ES6 Rocks website with Harmonic!
 
 ## How to start
