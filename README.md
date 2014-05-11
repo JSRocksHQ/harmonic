@@ -21,6 +21,11 @@ cd harmonic
 ./install.sh
 ```
 ## installing manually
+1 - Clone the harmonic repository
+```shell
+git clone https://github.com/es6rocks/harmonic.git
+```
+
 1 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
 ```shell
 #!/bin/sh
@@ -40,6 +45,7 @@ Harmonic depends on this configuration.
 
 3 - Install the dependencies:  
 ```
+cd harmonic
 [sudo] npm install
 ```
 4 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
