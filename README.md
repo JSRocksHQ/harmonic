@@ -7,7 +7,7 @@ Harmonic is being developed with some goals:
 - Create the ES6 Rocks website with Harmonic!
 
 ## How to start
-You'll need the last version of [node](http://nodejs.org/) (ucrrent stable is v0.10.28 and latest is 0.11.13).  
+You'll need the last version of [node](http://nodejs.org/) (current stable is v0.10.28 and latest is 0.11.13).  
 In my tests i'm using node version v0.11.12.  
 Check your node version:  
 ```shell
