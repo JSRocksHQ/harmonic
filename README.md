@@ -3,11 +3,11 @@
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
-- Build a simple static site generator in node with ES6 features
+- Build a simple static site generator in node using ES6 features
 - Create the ES6 Rocks website with Harmonic!
 
 ## How to start
-You'll need the last version of [node](http://nodejs.org/)(Current stable is v0.10.28 and latest is 0.11.13).  
+You'll need the last version of [node](http://nodejs.org/) (current stable is v0.10.28 and latest is 0.11.13).  
 In my tests i'm using node version v0.11.12.  
 Check your node version:  
 ```shell
@@ -21,12 +21,17 @@ cd harmonic
 ./install.sh
 ```
 ## installing manually
-1 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
+1 - Clone the harmonic repository
+```shell
+git clone https://github.com/es6rocks/harmonic.git
+```
+
+2 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
 ```shell
 #!/bin/sh
 node --harmony "$@"
 ```
-2 - Give the right permission:
+3 - Give the right permission:
 ```shell
 sudo chmod a+x nodeHarmony
 ```
@@ -38,11 +43,12 @@ nodeHarmony myfile.js
 You will be running node with harmony flag.  
 Harmonic depends on this configuration.
 
-3 - Install the dependencies:  
+4 - Install the dependencies:  
 ```
+cd harmonic
 [sudo] npm install
 ```
-4 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
+5 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
 ```
 npm link
 ```
