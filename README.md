@@ -26,12 +26,12 @@ cd harmonic
 git clone https://github.com/es6rocks/harmonic.git
 ```
 
-1 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
+2 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
 ```shell
 #!/bin/sh
 node --harmony "$@"
 ```
-2 - Give the right permission:
+3 - Give the right permission:
 ```shell
 sudo chmod a+x nodeHarmony
 ```
@@ -43,12 +43,12 @@ nodeHarmony myfile.js
 You will be running node with harmony flag.  
 Harmonic depends on this configuration.
 
-3 - Install the dependencies:  
+4 - Install the dependencies:  
 ```
 cd harmonic
 [sudo] npm install
 ```
-4 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
+5 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
 ```
 npm link
 ```
