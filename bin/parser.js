@@ -6,6 +6,7 @@ var _ = require('underscore');
 var nunjucks = require('nunjucks');
 var co = require('co');
 var Promise = require('promise');
+var ncp = require('ncp').ncp;
 
 var Parser = function () {
 
@@ -17,10 +18,11 @@ var Parser = function () {
 
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
-			var indexTemplate = fs.readFileSync('./src/layouts/index.html');
+			var curTemplate = GLOBAL.config.template;
+			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
 			var indexContent = '';
-			indexContent = indexTemplateNJ.render({ posts : postsMetadata });
+			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
 
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
@@ -31,14 +33,32 @@ var Parser = function () {
 		});
 	};
 
+	this.copyResources = function () {
+		return new Promise(function (resolve, reject) {
+			var curTemplate = './src/templates/' + GLOBAL.config.template;
+			ncp(curTemplate + '/resources', './public', function (err) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve('Resources copied');
+			});
+		});
+	};
+
 	this.generatePosts = function(postsMetadata) {
 		return new Promise(function(resolve, reject) {
+			var curTemplate = GLOBAL.config.template;
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
-					var postsTemplate = fs.readFileSync('./src/layouts/post.html');
+					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
 					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
 					var markfile = data.toString();
-					var postHTMLFile = postsTemplateNJ.render({ content : marked(markfile), title : metadata.title.toString() });
+					var _post = {
+						content : marked(markfile),
+						metadata : metadata
+					} 
+					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
 
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
@@ -68,12 +88,20 @@ var Parser = function () {
 		});
 	};
 
+	this.getConfig = function() {
+		return new Promise(function (resolve, reject) {
+			var config = fs.readFileSync( "./config.json").toString();
+			resolve(JSON.parse(config));
+		});
+	};
+
 	this.getMarkdownMetadata = function(data) {
 		var posts = [];
 		return new Promise(function (resolve, reject) {
+			var curTemplate = GLOBAL.config.template;
 			data.forEach(function (file, i) {
 				var post = fs.readFileSync( path + "/" + file).toString();
-				var postsTemplate = fs.readFileSync('./src/layouts/post.html');
+				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
 				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];

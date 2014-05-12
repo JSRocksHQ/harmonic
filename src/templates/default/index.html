@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ title }}</title>
+	<title>{{ config.title }}</title>
 </head>
 <body>
-	{% block content %}
 	<ul>
 	  {% for post in posts %}
 		  <li><a href="{{ post.link }}">{{ post.title }}</a></li>
 		  <span>{{ post.date }}</span>
 	  {% endfor %}
 	</ul>
-	{% endblock %}
 </body>
 </html>

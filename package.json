@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
   },
-  "scripts" : {
-    "install" : "./install.sh"
+  "scripts": {
+    "install": "./install.sh"
   },
   "dependencies": {
     "commander": "~2.2.0",
@@ -22,10 +22,10 @@
     "underscore": "^1.6.0",
     "nunjucks": "^1.0.4",
     "promise": "^5.0.0",
-    "node-static": "~0.7.3"
+    "node-static": "~0.7.3",
+    "ncp": "~0.5.1"
   },
   "devDependencies": {
-    
   },
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT"

@@ -1,3 +1,0 @@
-{
-	name : `My Harmonic Website`
-}
