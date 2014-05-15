@@ -54,7 +54,7 @@ npm link
 ```
 
 ##Init
-Harmonic init command help you to create your harmonic configuration file.  
+Harmonic init command helps you to create your harmonic configuration file.  
 ```shell
 harmonic init
 ```
