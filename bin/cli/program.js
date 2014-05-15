@@ -1,5 +1,6 @@
 var program = require('commander');
 var util = require('../cli/util');
+var logo = require('../cli/logo');
 
 program
 	.version('0.0.3')
@@ -11,6 +12,7 @@ program
 	.command('init')
 	.description('Init your new static website')
 	.action(function () {
+		console.log(logo);
 		util.init();
 	});
 
@@ -43,5 +45,6 @@ program.parse(process.argv);
 
 /* Not enough arguments */
 if (!program.args.length) {
+	console.log(logo);
 	program.help();
 }

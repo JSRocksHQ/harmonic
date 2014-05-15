@@ -5,12 +5,24 @@ var staticServer = require('node-static');
 var co = require('co');
 var prompt = require('co-prompt');
 var confirm = prompt.confirm;
+var _ = require('underscore');
 
 module.exports = {
 
 	init : function () {
 		co(function *() {
 			console.log("This guide will help you to create your Harmonic configuration file\n");
+
+			var templateObj = {
+				"name" : "My Harmonic Website",
+				"title" : "My awesome Harmonic Website",
+				"subtitle" : "Harmonic sample",
+				"author": "Jaydson Gomes",
+				"description" : "A sample Harmonic Website",
+				"bio" : "",
+				"template" : "default"
+			};
+
 			var config = {
 				name : yield prompt('Site name: '),
 				title : yield prompt('Title: '),
@@ -21,7 +33,7 @@ module.exports = {
 			}
 
 			/* create the configuration file */
-			fs.writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
+			fs.writeFile('./config.json', JSON.stringify(_.extend(templateObj, config), null, 4), function (err) {
 				if (err) throw err;
 				console.log('Config file was successefuly created');
 			});
