@@ -2,8 +2,34 @@ var fs = require('fs');
 var path = './src/posts/';
 var Promise = require('promise');
 var staticServer = require('node-static');
+var co = require('co');
+var prompt = require('co-prompt');
+var confirm = prompt.confirm;
 
 module.exports = {
+
+	init : function () {
+		co(function *() {
+			console.log("This guide will help you to create your Harmonic configuration file\n");
+			var config = {
+				name : yield prompt('Site name: '),
+				title : yield prompt('Title: '),
+				subtitle : yield prompt('Subtitle: '),
+				description : yield prompt('Description: '),
+				author : yield prompt('Author: '),
+				bio : yield prompt('Author bio: ')
+			}
+
+			/* create the configuration file */
+			fs.writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
+				if (err) throw err;
+				console.log('Config file was successefuly created');
+			});
+			
+			process.stdin.pause();
+
+		})();
+	},
 
 	new_post : function (title) {
 		return new Promise(function (resolve, reject) {

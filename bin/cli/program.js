@@ -8,6 +8,13 @@ program
 	.option('-b, --build', 'Build your static website');
 
 program
+	.command('init')
+	.description('Init your new static website')
+	.action(function () {
+		util.init();
+	});
+
+program
 	.command('build')
 	.description('Build your static website')
 	.action(function(env, options) {
@@ -27,7 +34,7 @@ program
 program
 	.command('run [port]')
 	.description('Run you static site locally. Port is optional')
-	.action(function(_port) {
+	.action(function(_port) {		
 		var port = _port ? _port : '9356';
 		util.run(port);
 	});

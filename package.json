@@ -23,10 +23,10 @@
     "nunjucks": "^1.0.4",
     "promise": "^5.0.0",
     "node-static": "~0.7.3",
-    "ncp": "~0.5.1"
+    "ncp": "~0.5.1",
+    "co-prompt": "^1.0.0"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT"
 }

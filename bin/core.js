@@ -15,14 +15,13 @@ module.exports = {
 			.then(parser.generatePosts)
 			.then(function (data) {
 				console.log('Success');
-			}, function (e) {
-				console.log(e);
 			})
 			.then(parser.copyResources)
 			.then(function(data) {
 				console.log(data);
-			}, function (err) {
-				console.log(err);
+			})
+			.then(null, function (e) {
+				console.log(e);
 			});
 	}
 }
