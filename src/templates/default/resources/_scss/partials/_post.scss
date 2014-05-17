@@ -1,0 +1,23 @@
+.postContent__title {
+    @extend %container;
+    h2 {
+        font-size: 2rem;
+        color: $green;
+        text-align: center;
+    }
+}
+
+.postContent {
+    @extend %container;
+    width: 40%;
+    margin: 0 auto;
+
+    p {
+        margin-bottom: 1em;
+    }
+
+    blockquote {
+        padding: 0 .5em;
+        border-left: solid 2px $grey
+    }
+}

@@ -120,13 +120,14 @@
 
 .post {
     overflow: hidden;
-    padding: 2em 0;
+    padding: 1rem 0;
     @include transition;
 
     @media #{$bp-m} {
         float: left;
         width: 50%;
-        padding: 2em 5%
+        min-height: 12rem;
+        padding: 2em 5%;
     }
 
     &__date {
@@ -145,15 +146,15 @@
     &__title {
         float: left;
         max-width: 70%;
-        margin-left: .5rem;
-        font-size: 1.5em;
+        margin-left: .25rem;
+        font-size: 1.2em;
         font-variant: small-caps;
         color: $green;
         text-decoration: none;
 
         &::first-letter {
             font-weight: bold;
-            font-size: 1.75em;
+            font-size: 1.5em;
         }
     }
 
@@ -161,7 +162,7 @@
         float: left;
         margin-top: .25em;
         margin-left: .5em;
-        font-size: 1.2em;
+        font-size: 1em;
         text-decoration: none;
         clear: both;
     }

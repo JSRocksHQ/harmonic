@@ -5,7 +5,7 @@
 .highlight__title, .highlight__authorBlock, .highlight__excerpt {
   border: 1px dashed firebrick; }
 
-.social__list, .postList, .organizers__list {
+.social__list, .postList, .organizers__list, .postContent__title, .postContent {
   max-width: 1200px;
   margin: 0 auto; }
 
@@ -60,7 +60,9 @@ table {
   box-sizing: border-box; }
 
 body {
-  font: 71.42857% sans-serif;
+  font-size: 100%;
+  line-height: 1.4;
+  font-family: sans-serif;
   overflow-x: hidden; }
 
 .social {
@@ -149,7 +151,7 @@ body {
 
 .post {
   overflow: hidden;
-  padding: 2em 0;
+  padding: 1rem 0;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0; }
@@ -157,6 +159,7 @@ body {
     .post {
       float: left;
       width: 50%;
+      min-height: 12rem;
       padding: 2em 5%; } }
   .post__date {
     display: block;
@@ -170,19 +173,19 @@ body {
   .post__title {
     float: left;
     max-width: 70%;
-    margin-left: .5rem;
-    font-size: 1.5em;
+    margin-left: .25rem;
+    font-size: 1.2em;
     font-variant: small-caps;
     color: #336666;
     text-decoration: none; }
     .post__title::first-letter {
       font-weight: bold;
-      font-size: 1.75em; }
+      font-size: 1.5em; }
   .post__author {
     float: left;
     margin-top: .25em;
     margin-left: .5em;
-    font-size: 1.2em;
+    font-size: 1em;
     text-decoration: none;
     clear: both; }
 
@@ -243,6 +246,20 @@ body {
       .organizers__name {
         font-size: 1.2rem;
         max-width: 6rem; } }
+
+.postContent__title h2 {
+  font-size: 2rem;
+  color: #336666;
+  text-align: center; }
+
+.postContent {
+  width: 40%;
+  margin: 0 auto; }
+  .postContent p {
+    margin-bottom: 1em; }
+  .postContent blockquote {
+    padding: 0 .5em;
+    border-left: solid 2px #a7a9ab; }
 
 .bottom {
   position: relative;

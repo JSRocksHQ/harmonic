@@ -7,6 +7,8 @@
 }
 
 body {
-    font: 100%/$lineHeight $txtFont;
+    font-size: 100%;
+    line-height: $lineHeight;
+    font-family: $txtFont;
     overflow-x: hidden;
 }
