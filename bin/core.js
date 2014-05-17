@@ -18,7 +18,9 @@ module.exports = {
 			})
 			.then(parser.copyResources)
 			.then(function(data) {
-				console.log(data);
+				console.log('>>>>>>>>>>',data);
+			}, function (e) {
+				console.log(e);
 			})
 			.then(null, function (e) {
 				console.log(e);

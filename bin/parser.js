@@ -27,25 +27,7 @@ var Parser = function () {
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
 				if (err) throw err;
-				console.log('Index html file was successefuly generated');
-				resolve(postsMetadata);
-			});
-		});
-	};
-
-	this.generateHomePage = function (metadata, fileParsed) {
-		return new Promise(function (resolve, reject) {
-			var postHTMLFile = fileParsed.replace(/<!--[\s\S]*?-->/g, '');
-			var curTemplate = GLOBAL.config.template;
-			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
-			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
-			var indexContent = '';
-			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
-
-			/* write index html file */
-			fs.writeFile('./public/index.html', indexContent, function (err) {
-				if (err) throw err;
-				console.log('index html file was successefuly generated');
+				console.log('Successefuly generate index html file');
 				resolve(postsMetadata);
 			});
 		});
@@ -64,50 +46,29 @@ var Parser = function () {
 		});
 	};
 
-	this.writePost = function (metadata, content) {
-		return new Promise(function (resolve, reject) {
-			/* Removing header metadata */
-			var postHTMLFile = content.replace(/<!--[\s\S]*?-->/g, '');
-
-			/* write post html file */
-			fs.writeFile('./public/' + metadata.filename + '.html', postHTMLFile, function (err) {
-				if (err) {
-					reject(err);
-					return;	
-				}
-				console.log('Post html file ' + metadata.filename + ' was successefuly generated');
-				resolve(metadata);
-			});
-		});
-	};
-
-	this.getParsedPost = function (metadata) {
-		var curTemplate = GLOBAL.config.template;
-
-		return new Promise(function (resolve, reject) {
-			fs.readFile(metadata.file, function (err, data) {
-				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
-				var markfile = data.toString();
-				var _post = {
-					content : marked(markfile),
-					metadata : metadata
-				} 
-				var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
-				resolve( { meta : metadata, content : postHTMLFile });
-			});
-		});
-	};
-
 	this.generatePosts = function(postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
 			postsMetadata.forEach(function (metadata, i) {
-				var parsed = new Parser().getParsedPost(metadata);
-				parsed.then(function (obj) {
-					new Parser().writePost(obj.meta, obj.content);
-				}, function (e) {
-					console.log(e);
+				fs.readFile(metadata.file, function (err, data) {
+					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
+					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+					var markfile = data.toString();
+					var _post = {
+						content : marked(markfile),
+						metadata : metadata
+					}
+					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });					
+
+					/* Removing header metadata */
+					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+
+					/* write post html file */
+					fs.writeFile('./public/' + metadata.filename + '.html', postHTMLFile, function (err) {
+						if (err) throw err;
+						console.log('Successefuly generate post html file ' + metadata.filename);
+						resolve(postsMetadata);
+					});
 				});
 			});
 		});
@@ -141,7 +102,7 @@ var Parser = function () {
 			data.forEach(function (file, i) {
 				var post = fs.readFileSync( path + "/" + file).toString();
 				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
+				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 
@@ -158,7 +119,7 @@ var Parser = function () {
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
 				posts.push(metadata);
-				
+
 				if (i === data.length - 1) {
 					resolve(posts);
 				}

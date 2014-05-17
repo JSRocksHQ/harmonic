@@ -1,0 +1,102 @@
+.lobby, .highlight__authorBlock, .highlight__authorBlock__pic {
+  width: 100%;
+  height: 15em; }
+
+.container, .highlight__title, .highlight__authorBlock, .highlight__excerpt {
+  border: 1px dashed firebrick; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto; }
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  color: #141414; }
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+.social {
+  background-color: #000;
+  overflow: hidden; }
+  .social__list {
+    float: right; }
+  .social__item {
+    display: inline-block;
+    font-size: 1.2rem;
+    margin: .5em 1em; }
+  .social__link {
+    color: #fff; }
+
+.lobby {
+  width: 100%;
+  background-color: #fafa64; }
+
+mon
+.logo {
+  width: 20em; }
+
+.highlight {
+  background-color: #f1f1f1; }
+  .highlight__title {
+    margin: .5em auto;
+    display: block;
+    font-size: 5em;
+    color: #fafa64;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
+    font-variant: small-caps;
+    text-align: center; }
+  .highlight__authorBlock {
+    width: 70%;
+    margin: 0 auto;
+    overflow: hidden; }
+    .highlight__authorBlock__pic {
+      float: left;
+      max-width: 35%; }
+  .highlight__authorName {
+    font-size: 1.5em;
+    font-weight: bold; }
+  .highlight__postDate {
+    font-size: 1.5em;
+    font-family: monospace; }
+  .highlight__excerpt {
+    float: right;
+    max-width: 60%;
+    font-size: 1.2em;
+    padding-top: 3em; }

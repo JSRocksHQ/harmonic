@@ -1,0 +1,27 @@
+// pallete colors
+// - - - - - - -
+
+   $yellow:   rgb(250,250,100);
+    $green:   rgb(51,102,102);
+ $darkGrey:   rgb(20,20,20);
+     $grey:   rgb(167,169,171);
+$lightGrey:   rgb(241,241,241);
+    $black:   rgb(0,0,0);
+    $white:   rgb(255,255,255);
+
+// basic definitions
+// - - - - - - - - -
+
+  $titleFont: 'Roboto', sans-serif;
+    $txtFont: sans-serif;
+   $txtColor: $darkGrey;
+
+ $lineHeight: 1.4;
+
+// breakpoints
+// - - - - - - -
+
+$tp-s-1: '(min-width: 360px)'; //post items
+$tp-s-2: '(min-width: 450px)';
+$bp-m: '(min-width: 840px)';
+$bp-l: '(min-width: 1000px)';
