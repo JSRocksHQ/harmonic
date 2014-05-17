@@ -1,0 +1,48 @@
+// Transitions Mixin
+// You can use it with no parameters - customizing the defaults as you like
+// Or set parameters each time.
+// ::: Just remember: if you define one, you must define all :::
+@mixin transition($prop: all, $time: 250ms, $time-function: linear, $delay:0) {
+    -ms-transition: $prop $time $time-function $delay;
+    -moz-transition: $prop $time $time-function $delay;
+    transition: $prop $time $time-function $delay;
+}
+
+// Transform Mixin
+// Just fill the parameter with the transform value that you want
+@mixin transform($transform) {
+    -ms-transform: $transform;
+    -webkit-transform: $transform;
+    -moz-transform: $transform;
+    transform: $transform;
+}
+
+// Animation Mixin
+// remember to use in conjunction with the  Keyframes Mixin
+// Bind the animation to the selector where it's used
+@mixin animation($name, $duration) {
+    -ms-animation:$name $duration;
+    -webkit-animation:$name $duration;
+    -moz-animation:$name $duration;
+    animation:$name $duration;
+}
+
+// Keyframes Mixin
+// remember to use in conjunction with the  Animation Mixin
+// Declare the Animation's name in the parameter and put the
+// keyframes - only once - between the brackets
+// keyframes will be printed in @content's place
+@mixin keyframes ($animation-name) {
+    @-webkit-keyframes $animation-name {
+        @content;
+    }
+    @-ms-keyframes $animation-name {
+        @content;
+    }
+    @-moz-keyframes $animation-name {
+        @content;
+    }
+    @keyframes $animation-name {
+        @content;
+    }
+}
