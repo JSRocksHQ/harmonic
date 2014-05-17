@@ -5,7 +5,7 @@
 .highlight__title, .highlight__authorBlock, .highlight__excerpt {
   border: 1px dashed firebrick; }
 
-.social__list, .postList, .organizers__list, .postContent__title, .postContent {
+.social__list, .postList, .organizers__list, .postContent__title, .postContent, .comments {
   max-width: 1200px;
   margin: 0 auto; }
 
@@ -248,18 +248,31 @@ body {
         max-width: 6rem; } }
 
 .postContent__title h2 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #336666;
-  text-align: center; }
+  text-align: center;
+  margin: 2rem 0; }
 
 .postContent {
-  width: 40%;
-  margin: 0 auto; }
+  margin: 0 auto;
+  width: 90%; }
+  @media (min-width: 840px) {
+    .postContent {
+      width: 70%; } }
+  @media (min-width: 1000px) {
+    .postContent {
+      width: 40%; } }
   .postContent p {
     margin-bottom: 1em; }
   .postContent blockquote {
     padding: 0 .5em;
     border-left: solid 2px #a7a9ab; }
+
+.comments {
+  padding: 2rem 0; }
+  .comments #disqus_thread {
+    width: 60%;
+    margin: 0 auto; }
 
 .bottom {
   position: relative;

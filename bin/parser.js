@@ -57,8 +57,9 @@ var Parser = function () {
 					var _post = {
 						content : marked(markfile),
 						metadata : metadata
-					} 
+					}
 					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
+					console.log(_post);
 
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
@@ -102,7 +103,7 @@ var Parser = function () {
 			data.forEach(function (file, i) {
 				var post = fs.readFileSync( path + "/" + file).toString();
 				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());					
+				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 
@@ -119,7 +120,7 @@ var Parser = function () {
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
 				posts.push(metadata);
-				
+
 				if (i === data.length - 1) {
 					resolve(posts);
 				}
