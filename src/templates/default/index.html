@@ -19,6 +19,7 @@
                 </span>
                 <img class="post__authorPic" src="https://pbs.twimg.com/profile_images/{{ post.authorPicture }}.jpeg"/>
                 <a class="post__title" href="{{ post.link }}">{{ post.title }}</a>
+                <div class="harmonic__content">{{ post.content }}</div>
                 <a class="post__author" href="https://twitter.com/{{ post.authorTwitter }}" target="_blank">
                     {{ post.authorName }}
                 </a>
@@ -26,7 +27,7 @@
             {% endfor %}
         </ul>
     </section>
-    
+
     <section class="organizers">
         <ul class="organizers__list">
             <li class="organizers__item">

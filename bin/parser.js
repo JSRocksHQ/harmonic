@@ -9,9 +9,9 @@ var co = require('co');
 var Promise = require('promise');
 var ncp = require('ncp').ncp;
 
-var Parser = function () {
+var Parser = function() {
 
-	this.start = function () {
+	this.start = function() {
 		return new Promise(function (resolve, reject) {
 			resolve('starting the parser');
 		});
@@ -35,7 +35,15 @@ var Parser = function () {
 		});
 	};
 
-	this.copyResources = function () {
+	this.generateHomePage = function(postsMetadata) {
+		return new Promise(function(resolve, reject) {
+			var i = 0,
+				len = postsMetadata.length,
+				content = '';
+		});
+	};
+
+	this.copyResources = function() {
 		return new Promise(function (resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
 			ncp(curTemplate + '/resources', './public', function (err) {
@@ -61,8 +69,7 @@ var Parser = function () {
 						content : marked(markfile),
 						metadata : metadata
 					}
-					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });					
-
+					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
@@ -94,6 +101,8 @@ var Parser = function () {
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
 			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
+			GLOBAL.config = config;
+			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
 			resolve(config);
 		});
 	};
@@ -111,6 +120,15 @@ var Parser = function () {
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 
+				var _post = {
+					content : marked(markfile),
+					metadata : metadata
+				}
+				var postContent = nunjucks.compile(marked(post), nunjucksEnv);
+				var postHTMLFile = postContent.render({ post : _post, config : GLOBAL.config });
+				/* Removing header metadata */
+				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+
 				/* Markdown extra */
 				var metadata = markextra.metadata(markfile, function (md) {
 					var retObj = {};
@@ -120,6 +138,7 @@ var Parser = function () {
 					});
 					return retObj;
 				});
+				metadata['content'] = postHTMLFile;
 				metadata['file'] = path + file;
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
