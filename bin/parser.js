@@ -17,6 +17,13 @@ var Parser = function() {
 		});
 	};
 
+	this.createPublicFolder = function (argument) {
+		fs.exists('./public', function(exists) {
+			if (!exists) throw exists;
+			console.log('Successefuly generate public folder');
+		});
+	}
+
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
