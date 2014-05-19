@@ -1,6 +1,7 @@
 var fs = require('fs');
 var marked = require('marked');
 var path = './src/posts/';
+var nodePath = require('path');
 var markextra = require('markdown-extra');
 var _ = require('underscore');
 var nunjucks = require('nunjucks');
@@ -19,8 +20,9 @@ var Parser = function () {
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
+			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
-			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
+			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
 			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
 
@@ -52,7 +54,8 @@ var Parser = function () {
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
 					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+					var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 					var markfile = data.toString();
 					var _post = {
 						content : marked(markfile),
@@ -90,8 +93,8 @@ var Parser = function () {
 
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
-			var config = fs.readFileSync( "./config.json").toString();
-			resolve(JSON.parse(config));
+			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
+			resolve(config);
 		});
 	};
 
@@ -99,10 +102,12 @@ var Parser = function () {
 		var posts = [];
 		return new Promise(function (resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
+
 			data.forEach(function (file, i) {
 				var post = fs.readFileSync( path + "/" + file).toString();
 				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+				var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 

@@ -1,4 +1,5 @@
 var Parser = require('./parser');
+var nunjucks = require('nunjucks');
 
 var parser = new Parser();
 module.exports = {
@@ -8,6 +9,7 @@ module.exports = {
 			.then(parser.getConfig)
 			.then(function (data) {
 				GLOBAL.config = data;
+				GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + data.template));
 			})
 			.then(parser.getFiles)
 			.then(parser.getMarkdownMetadata)
