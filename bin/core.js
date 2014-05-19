@@ -10,7 +10,6 @@ module.exports = {
 			.then(parser.getMarkdownMetadata)
 			.then(parser.generateIndex)
 			.then(parser.generatePosts)
-			.then(parser.generateHomePage)
 			.then(parser.copyResources)
 			.then(null, function (e) {
 				console.log(e);

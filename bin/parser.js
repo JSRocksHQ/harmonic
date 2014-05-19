@@ -35,14 +35,6 @@ var Parser = function() {
 		});
 	};
 
-	this.generateHomePage = function(postsMetadata) {
-		return new Promise(function(resolve, reject) {
-			var i = 0,
-				len = postsMetadata.length,
-				content = '';
-		});
-	};
-
 	this.copyResources = function() {
 		return new Promise(function (resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
