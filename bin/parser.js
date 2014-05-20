@@ -35,14 +35,6 @@ var Parser = function() {
 		});
 	};
 
-	this.generateHomePage = function(postsMetadata) {
-		return new Promise(function(resolve, reject) {
-			var i = 0,
-				len = postsMetadata.length,
-				content = '';
-		});
-	};
-
 	this.copyResources = function() {
 		return new Promise(function (resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
@@ -69,6 +61,7 @@ var Parser = function() {
 						content : marked(markfile),
 						metadata : metadata
 					}
+
 					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
@@ -120,15 +113,6 @@ var Parser = function() {
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 
-				var _post = {
-					content : marked(markfile),
-					metadata : metadata
-				}
-				var postContent = nunjucks.compile(marked(post), nunjucksEnv);
-				var postHTMLFile = postContent.render({ post : _post, config : GLOBAL.config });
-				/* Removing header metadata */
-				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-
 				/* Markdown extra */
 				var metadata = markextra.metadata(markfile, function (md) {
 					var retObj = {};
@@ -138,6 +122,17 @@ var Parser = function() {
 					});
 					return retObj;
 				});
+
+				var _post = {
+					content : marked(markfile),
+					metadata : metadata
+				}
+
+				var postContent = nunjucks.compile(marked(post.split('<!--more-->')[0]), nunjucksEnv);
+				var postHTMLFile = postContent.render({ post : _post, config : GLOBAL.config });
+				/* Removing header metadata */
+				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+
 				metadata['content'] = postHTMLFile;
 				metadata['file'] = path + file;
 				metadata['filename'] = filename;
