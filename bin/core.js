@@ -6,6 +6,7 @@ module.exports = {
 	init : function () {
 		parser.start()
 			.then(parser.getConfig)
+			.then(parser.createPublicFolder)
 			.then(parser.getFiles)
 			.then(parser.getMarkdownMetadata)
 			.then(parser.generateIndex)
