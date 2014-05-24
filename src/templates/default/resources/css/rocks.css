@@ -137,30 +137,35 @@ body {
   background-color: #f1f1f1; }
 
 .postList {
-  width: 90%;
+  width: 80%;
   overflow: hidden;
+  padding: 1em 0;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0; }
-  @media (min-width: 360px) {
+  @media (min-width: 600px) {
     .postList {
-      width: 80%; } }
-  @media (min-width: 360px) {
-    .postList {
-      width: 60%; } }
+      width: 98%; } }
 
 .post {
   overflow: hidden;
   padding: 1rem 0;
+  background-color: #f1f1f1;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0; }
+  @media (min-width: 600px) {
+    .post {
+      float: left;
+      width: 45%;
+      min-height: 12rem;
+      padding: 2em 15px;
+      margin: 2.5%; } }
   @media (min-width: 840px) {
     .post {
       float: left;
-      width: 50%;
-      min-height: 12rem;
-      padding: 2em 5%; } }
+      width: 30%;
+      margin: 2.5% 1.5%; } }
   .post__date {
     display: block;
     font-family: monospace;
@@ -202,7 +207,8 @@ body {
     max-width: 30%; }
   .post__content {
     float: right;
-    max-width: 67.2%; }
+    max-width: 67.2%;
+    min-width: 10em; }
 
 .organizers {
   background-color: #fff;
@@ -259,7 +265,7 @@ body {
     transition: all 250ms linear 0; }
     @media (min-width: 840px) {
       .organizers__name {
-        font-size: 1.2rem;
+        font-size: 1rem;
         max-width: 6rem; } }
 
 .postContent__title h2 {

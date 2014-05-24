@@ -105,29 +105,36 @@
 
 .postList {
     @extend %container;
-    width: 90%;
+    width: 80%;
     overflow: hidden;
+    padding: 1em 0;
     @include transition;
 
-    @media #{$tp-s-1} {
-        width: 80%;
-    }
-
-    @media #{$tp-s-1} {
-        width: 60%;
+    @media #{$tp-s-3} {
+        width: 98%;
     }
 }
 
 .post {
     overflow: hidden;
     padding: 1rem 0;
+    background-color: $lightGrey;
     @include transition;
+
+    @media #{$tp-s-3} {
+        float: left;
+        width: 45%;
+        min-height: 12rem;
+        padding: 2em 15px;
+        margin: 2.5%;
+    }
 
     @media #{$bp-m} {
         float: left;
-        width: 50%;
-        min-height: 12rem;
-        padding: 2em 5%;
+        width: 30%;
+        //min-height: 12rem;
+        //padding: 2em 15px;
+        margin: 2.5% 1.5%;
     }
 
     &__date {
@@ -189,11 +196,16 @@
     &__authorInfo {
         float: left;
         max-width: 30%;
+
+        @media #{$tp-s-3} {
+        }
+
     }
 
     &__content {
         float: right;
         max-width: 67.2%;
+        min-width: 10em;
     }
 
 }
