@@ -18,6 +18,8 @@ ES6 is awesome, and is coming soon.
 You can use it today, and you can learn it today!
 The main mission here is to discuss everything about ES6, and help everyone to start learning.
 
+<!--more-->
+
 ES6Rocks is open for everyone.
 If you want to help, you can contribute sharing your ES6 knowledge and experience.
 You cant write an article, start a discussion, etc.

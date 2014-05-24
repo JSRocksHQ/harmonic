@@ -55,7 +55,8 @@ module.exports = {
 								'description:\n' +
 								'categories:\n' +
 							'-->';
-			var filename = path + title.split(' ').join('-') + '.md';
+			var str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase();
+			var filename = path + str + '.md';
 
 			/* create a new post */
 			fs.writeFile(filename, template, function (err) {

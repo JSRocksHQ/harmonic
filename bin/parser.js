@@ -1,6 +1,7 @@
 var fs = require('fs');
 var marked = require('marked');
 var path = './src/posts/';
+var nodePath = require('path');
 var markextra = require('markdown-extra');
 var _ = require('underscore');
 var nunjucks = require('nunjucks');
@@ -8,19 +9,31 @@ var co = require('co');
 var Promise = require('promise');
 var ncp = require('ncp').ncp;
 
-var Parser = function () {
+var Parser = function() {
 
-	this.start = function () {
+	this.start = function() {
 		return new Promise(function (resolve, reject) {
 			resolve('starting the parser');
+		});
+	};
+
+	this.createPublicFolder = function (argument) {
+		fs.exists('./public', function(exists) {
+			if(!exists){
+				fs.mkdirSync("public", 0766, function(err){
+			       	if (err) throw err;
+			    });
+				console.log('Successefuly generate public folder');
+			}
 		});
 	};
 
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
+			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
-			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString());
+			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
 			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
 
@@ -33,7 +46,7 @@ var Parser = function () {
 		});
 	};
 
-	this.copyResources = function () {
+	this.copyResources = function() {
 		return new Promise(function (resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
 			ncp(curTemplate + '/resources', './public', function (err) {
@@ -52,14 +65,15 @@ var Parser = function () {
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
 					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+					var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 					var markfile = data.toString();
 					var _post = {
 						content : marked(markfile),
 						metadata : metadata
 					}
-					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });					
 
+					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
@@ -90,8 +104,10 @@ var Parser = function () {
 
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
-			var config = fs.readFileSync( "./config.json").toString();
-			resolve(JSON.parse(config));
+			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
+			GLOBAL.config = config;
+			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
+			resolve(config);
 		});
 	};
 
@@ -99,10 +115,12 @@ var Parser = function () {
 		var posts = [];
 		return new Promise(function (resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
+
 			data.forEach(function (file, i) {
 				var post = fs.readFileSync( path + "/" + file).toString();
 				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString());
+				var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 				var markfile = post.toString();
 				var filename = file.split('.md')[0];
 
@@ -115,6 +133,18 @@ var Parser = function () {
 					});
 					return retObj;
 				});
+
+				var _post = {
+					content : marked(markfile),
+					metadata : metadata
+				}
+
+				var postContent = nunjucks.compile(marked(post.split('<!--more-->')[0]), nunjucksEnv);
+				var postHTMLFile = postContent.render({ post : _post, config : GLOBAL.config });
+				/* Removing header metadata */
+				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+
+				metadata['content'] = postHTMLFile;
 				metadata['file'] = path + file;
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
