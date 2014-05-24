@@ -168,10 +168,12 @@ body {
     text-align: center;
     clear: both; }
   .post__authorPic {
-    float: left;
+    display: block;
+    clear: both;
     width: 5em; }
   .post__title {
-    float: left;
+    display: block;
+    clear: both;
     max-width: 70%;
     margin-left: .25rem;
     font-size: 1.2em;
@@ -182,12 +184,25 @@ body {
       font-weight: bold;
       font-size: 1.5em; }
   .post__author {
-    float: left;
+    display: block;
     margin-top: .25em;
     margin-left: .5em;
     font-size: 1em;
     text-decoration: none;
     clear: both; }
+  .post__excerpt {
+    margin-left: .5em;
+    font-size: .8rem; }
+    .post__excerpt p {
+      display: none; }
+      .post__excerpt p:first-child {
+        display: block; }
+  .post__authorInfo {
+    float: left;
+    max-width: 30%; }
+  .post__content {
+    float: right;
+    max-width: 67.2%; }
 
 .organizers {
   background-color: #fff;

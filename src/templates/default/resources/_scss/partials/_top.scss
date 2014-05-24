@@ -139,12 +139,16 @@
     }
 
     &__authorPic {
-        float: left;
+        //float: left;
+        display: block;
+        clear: both;
         width: 5em;
     }
 
     &__title {
-        float: left;
+        //float: left;
+        display: block;
+        clear: both;
         max-width: 70%;
         margin-left: .25rem;
         font-size: 1.2em;
@@ -159,12 +163,37 @@
     }
 
     &__author {
-        float: left;
+        //float: left;
+        display: block;
         margin-top: .25em;
         margin-left: .5em;
         font-size: 1em;
         text-decoration: none;
         clear: both;
+    }
+
+    &__excerpt {
+        //float: left;
+        margin-left: .5em;
+        font-size: .8rem;
+
+        p {
+            display: none;
+
+            &:first-child {
+                display: block;
+            }
+        }
+    }
+
+    &__authorInfo {
+        float: left;
+        max-width: 30%;
+    }
+
+    &__content {
+        float: right;
+        max-width: 67.2%;
     }
 
 }

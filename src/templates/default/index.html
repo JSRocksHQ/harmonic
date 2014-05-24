@@ -17,12 +17,20 @@
                 <span class="post__date">
                     {{ post.date }}
                 </span>
-                <img class="post__authorPic" src="https://pbs.twimg.com/profile_images/{{ post.authorPicture }}.jpeg"/>
-                <a class="post__title" href="{{ post.link }}">{{ post.title }}</a>
-                <div class="harmonic__content">{{ post.content }}</div>
-                <a class="post__author" href="https://twitter.com/{{ post.authorTwitter }}" target="_blank">
-                    {{ post.authorName }}
-                </a>
+                <figure class="post__authorInfo">
+                    <img class="post__authorPic" src="https://pbs.twimg.com/profile_images/{{ post.authorPicture }}.jpeg"/>
+                    <a class="post__author" href="https://twitter.com/{{ post.authorTwitter }}" target="_blank">
+                        {{ post.authorName }}
+                    </a>
+                </figure>
+                <article class="post__content">
+                    <a class="post__title" href="{{ post.link }}">
+                        {{ post.title }}
+                    </a>
+                    <section class="post__excerpt">
+                        {{ post.content }}
+                    </section>
+                </article>
             </li>
             {% endfor %}
         </ul>
