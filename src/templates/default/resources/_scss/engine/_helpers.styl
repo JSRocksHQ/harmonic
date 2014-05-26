@@ -1,0 +1,40 @@
+// Transitions Mixin
+// You can use it with no parameters - customizing the defaults as you like
+// Or set parameters each time.
+// ::: Just remember: if you define one, you must define all :::
+transition(prop = all, time = 250ms, time-function = linear, delay = 0)
+    -ms-transition prop time time-function delay
+    -moz-transition prop time time-function delay
+    transition prop time time-function delay
+
+// Transform Mixin
+// Just fill the parameter with the transform value that you want
+transform(arguments)
+    -ms-transform arguments
+    -webkit-transform arguments
+    -moz-transform arguments
+    transform arguments
+
+
+// Animation Mixin
+// remember to use in conjunction with the  Keyframes Mixin
+// Bind the animation to the selector where it's used
+animation(arguments)
+    -ms-animation arguments
+    -webkit-animation arguments
+    -moz-animation arguments
+    animation arguments
+
+// placeholders
+$container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+// test placeholders
+//$testblock
+//    width 100%
+//    height 15em
+
+//$testline
+//    border 1px dashed firebrick
