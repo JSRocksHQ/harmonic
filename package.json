@@ -24,7 +24,9 @@
     "promise": "^5.0.0",
     "node-static": "~0.7.3",
     "ncp": "~0.5.1",
-    "co-prompt": "^1.0.0"
+    "co-prompt": "^1.0.0",
+    "permalinks": "^0.2.1",
+    "node-fs": "^0.1.7"
   },
   "devDependencies": {},
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",

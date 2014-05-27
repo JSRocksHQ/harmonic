@@ -8,6 +8,8 @@ var nunjucks = require('nunjucks');
 var co = require('co');
 var Promise = require('promise');
 var ncp = require('ncp').ncp;
+var permalinks = require('permalinks');
+var nodefs = require('node-fs');
 
 var Parser = function() {
 
@@ -61,13 +63,20 @@ var Parser = function() {
 
 	this.generatePosts = function(postsMetadata) {
 		return new Promise(function(resolve, reject) {
-			var curTemplate = GLOBAL.config.template;
+			var config = GLOBAL.config;
+			var curTemplate = config.template;
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
 					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-					var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+					var nunjucksEnv = config.nunjucksEnv;
 					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 					var markfile = data.toString();
+					var postPath = permalinks(config.permalink, { title : metadata.filename });
+					var filename = 'index.html';
+
+					console.log(postPath);
+					metadata.link = postPath;
+
 					var _post = {
 						content : marked(markfile),
 						metadata : metadata
@@ -77,11 +86,17 @@ var Parser = function() {
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
-					/* write post html file */
-					fs.writeFile('./public/' + metadata.filename + '.html', postHTMLFile, function (err) {
-						if (err) throw err;
-						console.log('Successefuly generate post html file ' + metadata.filename);
-						resolve(postsMetadata);
+					nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
+						if (err) {
+							console.log(err);
+						} else {
+							/* write post html file */
+							fs.writeFile('./public/' + postPath + '/' + filename, postHTMLFile, function (err) {
+								if (err) throw err;
+								console.log('Successefuly generate post html file ' + filename);
+								resolve(postsMetadata);
+							});	
+						}
 					});
 				});
 			});

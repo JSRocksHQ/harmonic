@@ -7,5 +7,5 @@
     "description": "",
     "bio": "",
     "template": "default",
-    "permalink" : ""
+    "permalink" : ":year/:month/:title"
 }

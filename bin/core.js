@@ -9,8 +9,8 @@ module.exports = {
 			.then(parser.createPublicFolder)
 			.then(parser.getFiles)
 			.then(parser.getMarkdownMetadata)
-			.then(parser.generateIndex)
 			.then(parser.generatePosts)
+			.then(parser.generateIndex)			
 			.then(parser.copyResources)
 			.then(null, function (e) {
 				console.log(e);
