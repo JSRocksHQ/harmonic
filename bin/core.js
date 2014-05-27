@@ -10,7 +10,8 @@ module.exports = {
 			.then(parser.getFiles)
 			.then(parser.getMarkdownMetadata)
 			.then(parser.generatePosts)
-			.then(parser.generateIndex)			
+			.then(parser.generateIndex)
+			.then(parser.generateTagsPages)
 			.then(parser.copyResources)
 			.then(null, function (e) {
 				console.log(e);

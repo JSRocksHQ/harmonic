@@ -30,6 +30,48 @@ var Parser = function() {
 		});
 	};
 
+	this.generateTagsPages = function (postsMetadata) {
+		var postsByTag = {};
+		var curTemplate = GLOBAL.config.template;
+		var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/tag_archives.html');
+		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
+		var indexContent = '';
+
+		return new Promise(function(resolve, reject) {
+			for (var i = 0; i < postsMetadata.length; i += 1) {
+				var tags = postsMetadata[i].categories;
+				for (var y = 0; y < tags.length; y += 1) {
+					var tag = tags[y]
+							.toLowerCase()
+							.trim()
+							.split(' ')
+							.join('-');
+
+					if (Array.isArray(postsByTag[tag])) {
+						postsByTag[tag].push(postsMetadata[i]);
+					} else {
+						postsByTag[tag] = [postsMetadata[i]];
+					}
+				}
+			}
+			
+			for (var i in postsByTag) {
+				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config });
+
+				nodefs.mkdirSync('./public/categories/' + i, 0777, true);
+				/* write tag arcive html file */
+				(function (y) {
+					fs.writeFile('./public/categories/' + y + '/index.html', tagContent, function (err) {
+						if (err) throw err;
+						console.log('Successefuly generate tag[' + y + '] archive html file');
+					});
+				}(i));
+			}
+			resolve(postsMetadata);
+		});
+	};
+
 	this.generateIndex = function (postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
@@ -73,9 +115,9 @@ var Parser = function() {
 					var markfile = data.toString();
 					var postPath = permalinks(config.permalink, { title : metadata.filename });
 					var filename = 'index.html';
-
-					console.log(postPath);
+					var categories = metadata.categories.split(',');
 					metadata.link = postPath;
+					metadata.categories = categories;
 
 					var _post = {
 						content : marked(markfile),
@@ -83,6 +125,7 @@ var Parser = function() {
 					}
 
 					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
+
 					/* Removing header metadata */
 					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 

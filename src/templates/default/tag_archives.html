@@ -5,7 +5,7 @@
     <title>{{ config.title }}</title>
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
 	{% include "partials/header.html" %}
@@ -21,9 +21,6 @@
                     <a class="post__title" href="/{{ post.link }}">
                         {{ post.title }}
                     </a>
-                    <section class="post__excerpt">
-                        {{ post.content }}
-                    </section>
                 </article>
                 <figure class="post__authorInfo">
                     <img class="post__authorPic" src="https://pbs.twimg.com/profile_images/{{ post.authorPicture }}.jpeg"/>
