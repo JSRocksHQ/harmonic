@@ -282,6 +282,7 @@ body {
   display: block;
   clear: both;
   width: 5em;
+  border-radius: 50%;
 }
 .post__title {
   display: block;
@@ -367,6 +368,7 @@ body {
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0;
+  border-radius: 50%;
 }
 @media (min-width: 360px) {
   .organizers__pic img {
@@ -387,7 +389,6 @@ body {
   text-align: center;
   font-size: 1rem;
   font-family: sans-serif;
-  border-top: solid 3px #366;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0;
@@ -437,6 +438,16 @@ body {
   height: 10rem;
   background: #fff url("../images/crowd.svg") repeat-x left bottom;
   background-size: auto 100%;
+  margin-top: 50px;
+}
+.categories {
+  text-align: center;
+  position: relative;
+  top: -40px;
+  font-size: 14px;
+}
+.categories span {
+  margin-left: 6px;
 }
 .licenses {
   position: absolute;
