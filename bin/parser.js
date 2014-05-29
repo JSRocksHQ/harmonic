@@ -25,7 +25,7 @@ var Parser = function() {
 				fs.mkdirSync("public", 0766, function(err){
 			       	if (err) throw err;
 			    });
-				console.log('Successefuly generate public folder');
+				console.log('Successfully generate public folder');
 			}
 		});
 	};
@@ -64,7 +64,7 @@ var Parser = function() {
 				(function (y) {
 					fs.writeFile('./public/categories/' + y + '/index.html', tagContent, function (err) {
 						if (err) throw err;
-						console.log('Successefuly generate tag[' + y + '] archive html file');
+						console.log('Successfully generate tag[' + y + '] archive html file');
 					});
 				}(i));
 			}
@@ -84,7 +84,7 @@ var Parser = function() {
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
 				if (err) throw err;
-				console.log('Successefuly generate index html file');
+				console.log('Successfully generate index html file');
 				resolve(postsMetadata);
 			});
 		});
@@ -136,7 +136,7 @@ var Parser = function() {
 							/* write post html file */
 							fs.writeFile('./public/' + postPath + '/' + filename, postHTMLFile, function (err) {
 								if (err) throw err;
-								console.log('Successefuly generate post html file ' + filename);
+								console.log('Successfully generate post ' + postPath);
 								resolve(postsMetadata);
 							});	
 						}

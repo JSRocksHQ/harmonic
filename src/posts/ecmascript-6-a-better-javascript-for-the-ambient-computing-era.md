@@ -1,7 +1,7 @@
 <!--
 layout: post
 title: ECMAScript 6 - A Better JavaScript for the Ambient Computing Era
-date: 27 may
+date: 2014-05-27T04:18:47.847Z
 comments: true
 published: true
 keywords: JavaScript, ES6, talks

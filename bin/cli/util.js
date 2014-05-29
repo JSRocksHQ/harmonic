@@ -48,7 +48,7 @@ module.exports = {
 			var template = '<!--\n' +
 								'layout: post\n' +
 								'title: ' + title + '\n'+
-								'date:\n' +
+								'date: ' + new Date().toJSON() + '\n' +
 								'comments: true\n' +
 								'published: true\n' +
 								'keywords:\n' +
