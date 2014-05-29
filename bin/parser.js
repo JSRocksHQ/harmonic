@@ -186,8 +186,9 @@ var Parser = function() {
 				var metadata = markextra.metadata(markfile, function (md) {
 					var retObj = {};
 					md.split('\n').forEach(function(line) {
-						var data = line.split(':');
-						retObj[data[0].trim()] = data[1].trim();
+						var data = line.split(':'),
+							first = data.splice(0, 1);
+						retObj[first[0].trim()] = data.join(':').trim();
 					});
 					return retObj;
 				});
