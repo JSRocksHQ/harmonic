@@ -107,6 +107,12 @@ var Parser = function() {
 		return new Promise(function(resolve, reject) {
 			var config = GLOBAL.config;
 			var curTemplate = config.template;
+
+			/* Order by date */
+			postsMetadata.sort(function (x,y) {
+				return x.date < y.date ? 1 : -1;
+			});
+
 			postsMetadata.forEach(function (metadata, i) {
 				fs.readFile(metadata.file, function (err, data) {
 					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
@@ -207,6 +213,7 @@ var Parser = function() {
 				metadata['file'] = path + file;
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
+				metadata.date = new Date(metadata.date);
 				posts.push(metadata);
 
 				if (i === data.length - 1) {
