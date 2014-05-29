@@ -250,10 +250,15 @@ body {
 .post {
   overflow: hidden;
   padding: 1rem 0;
+  margin : 10px;
   background-color: #f1f1f1;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  border: 1px solid #9F9B9B;
+  background: none repeat scroll 0% 0% #FFF;
 }
 @media (min-width: 600px) {
   .post {
@@ -275,7 +280,6 @@ body {
   display: block;
   font-family: monospace;
   font-weight: bold;
-  text-align: center;
   clear: both;
 }
 .post__authorPic {
@@ -321,8 +325,6 @@ body {
   max-width: 30%;
 }
 .post__content {
-  float: right;
-  max-width: 67.2%;
   min-width: 10em;
 }
 .organizers {
