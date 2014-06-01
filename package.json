@@ -28,7 +28,9 @@
     "permalinks": "^0.2.1",
     "node-fs": "^0.1.7"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "stylus": "^0.45.1"
+  },
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT"
 }

@@ -7,6 +7,7 @@ module.exports = {
 		parser.start()
 			.then(parser.getConfig)
 			.then(parser.createPublicFolder)
+			.then(parser.compileStylus)
 			.then(parser.getFiles)
 			.then(parser.getMarkdownMetadata)
 			.then(parser.generatePosts)

@@ -10,6 +10,7 @@ var Promise = require('promise');
 var ncp = require('ncp').ncp;
 var permalinks = require('permalinks');
 var nodefs = require('node-fs');
+var stylus = require('stylus');
 
 var Parser = function() {
 
@@ -19,18 +20,42 @@ var Parser = function() {
 		});
 	};
 
-	this.createPublicFolder = function (argument) {
+	this.createPublicFolder = function(argument) {
 		fs.exists('./public', function(exists) {
 			if(!exists){
 				fs.mkdirSync("public", 0766, function(err){
-			       	if (err) throw err;
-			    });
-				console.log('Successfully generate public folder');
+					if (err) throw err;
+				});
+				console.log('Successfully generated public folder');
 			}
 		});
 	};
 
-	this.generateTagsPages = function (postsMetadata) {
+	this.compileStylus = function() {
+		var __stylDir = './src/templates/default/resources/_stylus';
+		var __cssDir = './src/templates/default/resources/css';
+		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
+
+		stylus(code)
+			.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
+			.render(function(err, css){
+
+				if (err) {
+					throw err;
+				}
+
+				fs.writeFile(__cssDir + '/main.css', css, function(err) {
+					if(err) {
+						console.log(err);
+					} else {
+						console.log('Successfully generated CSS')
+					}
+				});
+
+			});
+	};
+
+	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
 		var curTemplate = GLOBAL.config.template;
 		var nunjucksEnv = GLOBAL.config.nunjucksEnv;
@@ -55,7 +80,7 @@ var Parser = function() {
 					}
 				}
 			}
-			
+
 			for (var i in postsByTag) {
 				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config });
 
@@ -64,7 +89,7 @@ var Parser = function() {
 				(function (y) {
 					fs.writeFile('./public/categories/' + y + '/index.html', tagContent, function (err) {
 						if (err) throw err;
-						console.log('Successfully generate tag[' + y + '] archive html file');
+						console.log('Successfully generated tag[' + y + '] archive html file');
 					});
 				}(i));
 			}
@@ -72,7 +97,7 @@ var Parser = function() {
 		});
 	};
 
-	this.generateIndex = function (postsMetadata) {
+	this.generateIndex = function(postsMetadata) {
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
@@ -84,7 +109,7 @@ var Parser = function() {
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
 				if (err) throw err;
-				console.log('Successfully generate index html file');
+				console.log('Successfully generated index html file');
 				resolve(postsMetadata);
 			});
 		});
@@ -142,9 +167,9 @@ var Parser = function() {
 							/* write post html file */
 							fs.writeFile('./public/' + postPath + '/' + filename, postHTMLFile, function (err) {
 								if (err) throw err;
-								console.log('Successfully generate post ' + postPath);
+								console.log('Successfully generated post ' + postPath);
 								resolve(postsMetadata);
-							});	
+							});
 						}
 					});
 				});
