@@ -1,6 +1,7 @@
 var fs = require('fs');
 var marked = require('marked');
-var path = './src/posts/';
+var postsPath = './src/posts/';
+var path = require('path');
 var pagesPath = './src/pages/';
 var nodePath = require('path');
 var markextra = require('markdown-extra');
@@ -38,7 +39,7 @@ var Helper =  {
 				var pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html');
 				var pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv);
 				var markfile = page.toString();
-				var filename = file.split('.md')[0];				
+				var filename = (path.basename(file, '.md') || path.basename(file, '.markdown'));
 
 				/* Markdown extra */
 				var metadata = markextra.metadata(markfile, function (md) {
@@ -63,7 +64,7 @@ var Helper =  {
 				pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
 				metadata['content'] = pageHTMLFile;
-				metadata['file'] = path + file;
+				metadata['file'] = postsPath + file;
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
 				metadata.date = new Date(metadata.date);
@@ -281,7 +282,7 @@ var Parser = function() {
 		return new Promise(function (resolve, reject) {
 
 			/* Reading posts dir */
-			fs.readdir(path, function (err, files) {
+			fs.readdir(postsPath, function (err, files) {
 				if (err) {
 					throw err;
 				}
@@ -306,12 +307,12 @@ var Parser = function() {
 			var curTemplate = GLOBAL.config.template;
 
 			data.forEach(function (file, i) {
-				var post = fs.readFileSync( path + "/" + file).toString();
+				var post = fs.readFileSync( postsPath + "/" + file).toString();
 				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
 				var nunjucksEnv = GLOBAL.config.nunjucksEnv;
 				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 				var markfile = post.toString();
-				var filename = file.split('.md')[0];
+				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
 
 				/* Markdown extra */
 				var metadata = markextra.metadata(markfile, function (md) {
@@ -335,7 +336,7 @@ var Parser = function() {
 				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
 				metadata['content'] = postHTMLFile;
-				metadata['file'] = path + file;
+				metadata['file'] = postsPath + file;
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
 				metadata.date = new Date(metadata.date);
