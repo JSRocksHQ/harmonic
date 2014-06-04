@@ -39,7 +39,7 @@ var Helper =  {
 				var pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html');
 				var pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv);
 				var markfile = page.toString();
-				var filename = (path.basename(file, '.md') || path.basename(file, '.markdown'));
+				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
 
 				/* Markdown extra */
 				var metadata = markextra.metadata(markfile, function (md) {
