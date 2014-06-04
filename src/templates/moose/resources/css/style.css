@@ -1,0 +1,43 @@
+body {
+	text-align: center;
+}
+
+.align-left {
+	text-align: left;
+}
+
+.pageTitle {
+	margin-top: 18px;
+	font-family: 'Lobster', cursive;
+	font-weight: 400;
+	font-size: 80px;
+}
+
+.container {
+	padding: 40px 0;
+}
+
+.post__excerpt {
+	margin: 16px 0;
+}
+
+.post__title, .organizers__title, .organizers__name {
+	font-family: 'Play', sans-serif;
+	font-weight: 400;
+	padding: 10px;
+	font-size: 30px;
+	color: black;
+	text-decoration: none;
+}
+
+.organizers__item {
+	padding: 10px 0;
+}
+
+.organizers__title {
+	font-size: 40px;
+}
+
+.organizers__name {
+	color: grey;
+}

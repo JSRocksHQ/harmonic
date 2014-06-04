@@ -6,7 +6,7 @@
     "author": "Jaydson",
     "description": "",
     "bio": "",
-    "template": "default",
+    "template": "moose",
     "posts_permalink" : ":year/:month/:title",
     "pages_permalink" : "pages/:title"
 }
