@@ -15,10 +15,10 @@
 	    <h2>
 	      {{ post.metadata.title }}
 	    </h2>
-	    <div class="categories">
+	    <div class="categories" style="text-align:center">
 	    	{% for category in post.metadata.categories %}
 	    		<span>
-	    			<a href="/categories/{{ category | lower | trim }}">
+	    			<a style="color:rgba(210, 130, 11, 1)" href="/categories/{{ category | lower | trim }}">
 	    				{{ category }}
 	    			</a>
 	    		</span>

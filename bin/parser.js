@@ -13,6 +13,7 @@ var ncp = require('ncp').ncp;
 var permalinks = require('permalinks');
 var nodefs = require('node-fs');
 var stylus = require('stylus');
+var mkmeta = require('marked-metadata');
 
 var Helper =  {
 	getPagesFiles : function () {
@@ -229,52 +230,59 @@ var Parser = function() {
 		});
 	};
 
-	this.generatePosts = function(postsMetadata) {
+	this.generatePosts = function (files) {
 		return new Promise(function(resolve, reject) {
-			var config = GLOBAL.config;
-			var curTemplate = config.template;
+			var config = GLOBAL.config,
+				posts = [],
+				curTemplate = config.template,
+				postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
+				nunjucksEnv = config.nunjucksEnv,
+				postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 
-			/* Order by date */
-			postsMetadata.sort(function (x,y) {
-				return x.date < y.date ? 1 : -1;
-			});
+			files.forEach(function(file, i) {
+				var md = new mkmeta(postsPath + '/' + file);
+				md.defineTokens('<!--', '-->');
+				var metadata = md.metadata();
+				var post = md.markdown();
+				var postCropped = md.markdown( { crop : '<!--more-->'});
+				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+				var postPath = permalinks(config.posts_permalink, { title : filename });
+				var categories = metadata.categories.split(',');
+				metadata.link = postPath;
+				metadata.categories = categories;
+				var _post = {
+					content : post,
+					metadata : metadata
+				}
+				var postHTMLFile = postsTemplateNJ
+					.render({ post : _post, config : GLOBAL.config })
+					.replace(/<!--[\s\S]*?-->/g, '');
 
-			postsMetadata.forEach(function (metadata, i) {
-				fs.readFile(metadata.file, function (err, data) {
-					var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-					var nunjucksEnv = config.nunjucksEnv;
-					var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
-					var markfile = data.toString();
-					var postPath = permalinks(config.posts_permalink, { title : metadata.filename });
-					var filename = 'index.html';
-					var categories = metadata.categories.split(',');
-					metadata.link = postPath;
-					metadata.categories = categories;
-
-					var _post = {
-						content : marked(markfile),
-						metadata : metadata
+				nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
+					if (err) {
+						reject(err);
+					} else {
+						/* write post html file */
+						fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile, function (err) {
+							if (err) {
+								reject(err);
+							}
+							console.log('Successfully generated post ' + postPath);
+						});
 					}
-
-					var postHTMLFile = postsTemplateNJ.render({ post : _post, config : GLOBAL.config });
-
-					/* Removing header metadata */
-					postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-
-					nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
-						if (err) {
-							console.log(err);
-						} else {
-							/* write post html file */
-							fs.writeFile('./public/' + postPath + '/' + filename, postHTMLFile, function (err) {
-								if (err) throw err;
-								console.log('Successfully generated post ' + postPath);
-								resolve(postsMetadata);
-							});
-						}
-					});
 				});
+				metadata['content'] = postCropped;
+				metadata['file'] = postsPath + file;
+				metadata['filename'] = filename;
+				metadata['link'] = postPath;
+				metadata.date = new Date(metadata.date);
+				posts.push(metadata);
+
+				if (i === files.length - 1) {
+					resolve(posts);
+				}
 			});
+
 		});
 	};
 
@@ -298,54 +306,6 @@ var Parser = function() {
 			GLOBAL.config = config;
 			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
 			resolve(config);
-		});
-	};
-
-	this.getMarkdownMetadata = function(data) {
-		var posts = [];
-		return new Promise(function (resolve, reject) {
-			var curTemplate = GLOBAL.config.template;
-
-			data.forEach(function (file, i) {
-				var post = fs.readFileSync( postsPath + "/" + file).toString();
-				var postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html');
-				var nunjucksEnv = GLOBAL.config.nunjucksEnv;
-				var postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
-				var markfile = post.toString();
-				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
-
-				/* Markdown extra */
-				var metadata = markextra.metadata(markfile, function (md) {
-					var retObj = {};
-					md.split('\n').forEach(function(line) {
-						var data = line.split(':'),
-							first = data.splice(0, 1);
-						retObj[first[0].trim()] = data.join(':').trim();
-					});
-					return retObj;
-				});
-
-				var _post = {
-					content : marked(markfile),
-					metadata : metadata
-				}
-
-				var postContent = nunjucks.compile(marked(post.split('<!--more-->')[0]), nunjucksEnv);
-				var postHTMLFile = postContent.render({ post : _post, config : GLOBAL.config });
-				/* Removing header metadata */
-				postHTMLFile = postHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-
-				metadata['content'] = postHTMLFile;
-				metadata['file'] = postsPath + file;
-				metadata['filename'] = filename;
-				metadata['link'] = '/' + filename + '.html';
-				metadata.date = new Date(metadata.date);
-				posts.push(metadata);
-
-				if (i === data.length - 1) {
-					resolve(posts);
-				}
-			});
 		});
 	};
 }

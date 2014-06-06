@@ -11,7 +11,7 @@ module.exports = {
 			.then(parser.compileStylus)
 			.then(parser.generatePages)
 			.then(parser.getFiles)
-			.then(parser.getMarkdownMetadata)
+			//.then(parser.getMarkdownMetadata)
 			.then(parser.generatePosts)
 			.then(parser.generateIndex)
 			.then(parser.generateTagsPages)
