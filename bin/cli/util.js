@@ -9,27 +9,31 @@ var _ = require('underscore');
 
 module.exports = {
 
-	init : function () {
+	config : function () {
 		co(function *() {
-			console.log("This guide will help you to create your Harmonic configuration file\n");
+			console.log("This guide will help you to create your Harmonic configuration file\nJust hit enter if you are ok with the default values");
 
 			var templateObj = {
-				"name" : "My Harmonic Website",
-				"title" : "My awesome Harmonic Website",
-				"subtitle" : "Harmonic sample",
-				"author": "Jaydson Gomes",
-				"description" : "A sample Harmonic Website",
-				"bio" : "",
-				"template" : "default"
+			    "name": "Awesome website",
+			    "title": "My awesome static website",
+			    "domain": "http://awesome.com",
+			    "subtitle": "Powered by Harmonic",
+			    "author": "Jaydson",
+			    "description": "This is the description",
+			    "bio": "Thats me",
+			    "template": "default",
+			    "posts_permalink" : ":year/:month/:title",
+			    "pages_permalink" : "pages/:title"
 			};
 
 			var config = {
-				name : yield prompt('Site name: '),
-				title : yield prompt('Title: '),
-				subtitle : yield prompt('Subtitle: '),
-				description : yield prompt('Description: '),
-				author : yield prompt('Author: '),
-				bio : yield prompt('Author bio: ')
+				name : (yield prompt('Site name: (' + templateObj.name + ')')) || templateObj.name,
+				title : (yield prompt('Title: (' + templateObj.title + ')')) || templateObj.title,
+				subtitle : (yield prompt('Subtitle: (' + templateObj.subtitle + ')')) || templateObj.subtitle,
+				description : (yield prompt('Description: (' + templateObj.description + ')')) || templateObj.description,
+				author : (yield prompt('Author: (' + templateObj.author + ')')) || templateObj.author,
+				bio : (yield prompt('Author bio: (' + templateObj.bio + ')')) || templateObj.bio,
+				template : (yield prompt('Template: (' + templateObj.template + ')')) || templateObj.template
 			}
 
 			/* create the configuration file */

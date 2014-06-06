@@ -9,11 +9,11 @@ program
 	.option('-b, --build', 'Build your static website');
 
 program
-	.command('init')
-	.description('Init your new static website')
+	.command('config')
+	.description('Config your static website')
 	.action(function () {
 		console.log(logo);
-		util.init();
+		util.config();
 	});
 
 program
