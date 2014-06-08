@@ -160,11 +160,6 @@ a:focus {
   background-color: #000;
   overflow: hidden;
 }
-.social .logo {
-  float: left;
-  width: auto;
-  height: 2em;
-}
 .social__list {
   text-align: right;
 }
@@ -172,6 +167,17 @@ a:focus {
   display: inline-block;
   font-size: 1.2rem;
   margin: 0.5em 1em;
+}
+.social__item.avatar {
+  float: left;
+}
+.social__item.avatar svg > path {
+  fill: #fff;
+}
+@media (min-width: 840px) {
+  .social__item.avatar {
+    display: none;
+  }
 }
 .social__link {
   color: #fff;

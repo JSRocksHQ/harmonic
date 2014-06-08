@@ -2,11 +2,6 @@
     background-color: #000
     overflow: hidden
 
-    .logo
-    	float: left
-    	width: auto
-    	height: 2em
-
 .social__list
     @extends $container
     text-align: right
@@ -16,6 +11,14 @@
     display: inline-block
     font-size: 1.2rem
     margin: .5em 1em
+
+    &.avatar
+        float: left
+
+        svg > path
+            fill: white
+        @media bp-m
+            display: none
 
 
 .social__link
