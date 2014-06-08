@@ -92,7 +92,7 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
+  font-family: inherit;
   vertical-align: baseline;
   color: #141414;
 }
@@ -466,11 +466,38 @@ a:focus {
     max-width: 6rem;
   }
 }
-.postContent__title h2 {
+.postContent__title {
+  margin: 1em 0 2em;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+@media (min-width: 840px) {
+  .postContent__title {
+    flex-flow: row;
+  }
+}
+.postContent__title h1 {
   font-size: 2.5rem;
   color: #366;
-  text-align: center;
   margin: 2rem 0;
+  text-align: center;
+}
+@media (min-width: 840px) {
+  .postContent__title h1 {
+    text-align: left;
+    flex-basis: 60%;
+  }
+}
+.postContent__title h2 {
+  display: none;
+}
+@media (min-width: 840px) {
+  .postContent__title h2 {
+    display: block;
+    height: 10em;
+  }
 }
 .postContent {
   margin: 0 auto;
@@ -497,8 +524,13 @@ a:focus {
   padding: 2rem 0;
 }
 .comments #disqus_thread {
-  width: 60%;
   margin: 0 auto;
+  width: 90%;
+}
+@media (min-width: 1000px) {
+  .comments #disqus_thread {
+    width: 60%;
+  }
 }
 .bottom {
   position: relative;

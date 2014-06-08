@@ -12,19 +12,22 @@
 {% include "partials/navigation.html" %}
 <body>
 	<header class="postContent__title">
-	    <h2>
+		<h2>
+			{% include "partials/components/es6rocks.html" %}
+		</h2>
+	    <h1>
 	      {{ post.metadata.title }}
-	    </h2>
-	    <div class="categories" style="text-align:center">
-	    	{% for category in post.metadata.categories %}
-	    		<span>
-	    			<a style="color:rgba(210, 130, 11, 1)" href="/categories/{{ category | lower | trim }}">
-	    				{{ category }}
-	    			</a>
-	    		</span>
-	    	{% endfor %}
-	    </div>
+	    </h1>
 	</header>
+    <aside class="categories" style="text-align:center">
+    	{% for category in post.metadata.categories %}
+    		<span>
+    			<a style="color:rgba(210, 130, 11, 1)" href="/categories/{{ category | lower | trim }}">
+    				{{ category }}
+    			</a>
+    		</span>
+    	{% endfor %}
+    </aside>
 
 	<article class="postContent">
 		{{ post.content }}

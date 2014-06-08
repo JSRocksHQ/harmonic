@@ -1,13 +1,31 @@
 .postContent__title
     @extends $container
+    margin: 1em 0 2em
+    display: flex
+    flex-flow: column
+    justify-content: center
+    align-items: center
 
+    @media bp-m
+        flex-flow: row
 
-.postContent__title h2
+.postContent__title h1
+    //float: right
     font-size: 2.5rem
     color: green
-    text-align: center
     margin: 2rem 0
+    text-align: center
 
+    @media bp-m
+        text-align: left
+        flex-basis: 60%
+
+.postContent__title h2
+    display: none
+
+    @media bp-m
+        display: block
+        height: 10em
 
 .postContent
     @extends $container
@@ -38,5 +56,8 @@
 
 
 .comments #disqus_thread
-    width: 60%
     margin: 0 auto
+    width: 90%
+
+    @media bp-l
+        width: 60%
