@@ -160,6 +160,11 @@ a:focus {
   background-color: #000;
   overflow: hidden;
 }
+.social .logo {
+  float: left;
+  width: auto;
+  height: 2em;
+}
 .social__list {
   text-align: right;
 }
@@ -242,6 +247,26 @@ a:focus {
   max-width: 60%;
   font-size: 1.2em;
   padding-top: 3em;
+}
+.categories {
+  margin: 1em 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.categoryTag {
+  margin: 0 1em;
+  padding: 0.25em 0.5em;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #808080;
+}
+.talks {
+  background-color: #d2820b;
+}
+.modules {
+  background-color: #532794;
 }
 .posts {
   background-color: #fff;

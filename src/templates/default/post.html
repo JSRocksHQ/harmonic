@@ -13,21 +13,23 @@
 <body>
 	<header class="postContent__title">
 		<h2>
-			{% include "partials/components/es6rocks.html" %}
+			<a href="http://es6rocks.com">
+				{% include "partials/components/es6rocks.html" %}
+			</a>
 		</h2>
 	    <h1>
 	      {{ post.metadata.title }}
 	    </h1>
 	</header>
-    <aside class="categories" style="text-align:center">
+    <ul class="categories">
     	{% for category in post.metadata.categories %}
-    		<span>
-    			<a style="color:rgba(210, 130, 11, 1)" href="/categories/{{ category | lower | trim }}">
+    		<li>
+    			<a class="categoryTag {{ category }}" href="/categories/{{ category | lower | trim }}">
     				{{ category }}
     			</a>
-    		</span>
+    		</li>
     	{% endfor %}
-    </aside>
+    </ul>
 
 	<article class="postContent">
 		{{ post.content }}
