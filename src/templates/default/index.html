@@ -12,7 +12,17 @@
 </head>
 <body>
 
-    {% include "partials/header.html" %}
+    {% include "partials/navigation.html" %}
+    <header class="topWrap">
+        <section class="lobby">
+            <h1 class="pageTitle">
+                {{ config.title }}
+            </h1>
+            <a href="/">
+                <img class="logo" src="/images/logo.svg" alt="ES6Rocks" />
+            </a>
+        </section>
+    </header>
 
     <section id="posts" class="posts">
         <ul class="postList">
