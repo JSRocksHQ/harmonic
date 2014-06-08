@@ -14,6 +14,8 @@ var permalinks = require('permalinks');
 var nodefs = require('node-fs');
 var stylus = require('stylus');
 var mkmeta = require('marked-metadata');
+var util = require('./cli/util');
+var clc = util.cli_color();
 
 var Helper =  {
 	getPagesFiles : function () {
@@ -77,7 +79,7 @@ var Helper =  {
 						/* write page html file */
 						fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile, function (err) {
 							if (err) throw err;
-							console.log('Successfully generated page ' + pagePermalink);
+							console.log(clc.info('Successfully generated page ' + pagePermalink));
 						});
 					}
 				});
@@ -104,7 +106,7 @@ var Parser = function() {
 			var exec = require('child_process').exec,
 				child = null;
 			child = exec('rm -rf ./public',function(err,out) { 
-			 	console.log('Cleaning up...');
+			 	console.log(clc.warn('Cleaning up...'));
 			 	resolve();
 			});
 		});
@@ -116,7 +118,7 @@ var Parser = function() {
 				fs.mkdirSync("public", 0766, function(err){
 					if (err) throw err;
 				});
-				console.log('Successfully generated public folder');
+				console.log(clc.info('Successfully generated public folder'));
 			}
 		});
 	};
@@ -136,9 +138,9 @@ var Parser = function() {
 
 				fs.writeFile(__cssDir + '/main.css', css, function(err) {
 					if(err) {
-						console.log(err);
+						console.log(clc.error(err));
 					} else {
-						console.log('Successfully generated CSS')
+						console.log(clc.info('Successfully generated CSS'));
 					}
 				});
 
@@ -179,7 +181,7 @@ var Parser = function() {
 				(function (y) {
 					fs.writeFile('./public/categories/' + y + '/index.html', tagContent, function (err) {
 						if (err) throw err;
-						console.log('Successfully generated tag[' + y + '] archive html file');
+						console.log(clc.info('Successfully generated tag[' + y + '] archive html file'));
 					});
 				}(i));
 			}
@@ -199,7 +201,7 @@ var Parser = function() {
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
 				if (err) throw err;
-				console.log('Successfully generated index html file');
+				console.log(clc.info('Successfully generated index html file'));
 				resolve(postsMetadata);
 			});
 		});
@@ -267,7 +269,7 @@ var Parser = function() {
 							if (err) {
 								reject(err);
 							}
-							console.log('Successfully generated post ' + postPath);
+							console.log(clc.info('Successfully generated post ' + postPath));
 						});
 					}
 				});
