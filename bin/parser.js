@@ -105,7 +105,7 @@ var Parser = function() {
 		return new Promise(function (resolve, reject) {
 			var exec = require('child_process').exec,
 				child = null;
-			child = exec('rm -rf ./public',function(err,out) { 
+			child = exec('rm -rf ./public',function(err,out) {
 			 	console.log(clc.warn('Cleaning up...'));
 			 	resolve();
 			});
@@ -125,26 +125,48 @@ var Parser = function() {
 
 	this.compileStylus = function() {
 		var __stylDir = './src/templates/default/resources/_stylus';
+		var __stylSubDirs;
 		var __cssDir = './src/templates/default/resources/css';
 		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
 
-		stylus(code)
-			.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
-			.render(function(err, css){
 
-				if (err) {
+		fs.readdir(__stylDir, function(err, files){
+			var dirList = [__stylDir];
+			if (err) {
 					throw err;
 				}
+			files.forEach(function(element) {
+				var filePath = __stylDir + '/' + element;
+				var stats = fs.lstatSync(filePath);
 
-				fs.writeFile(__cssDir + '/main.css', css, function(err) {
-					if(err) {
-						console.log(clc.error(err));
-					} else {
-						console.log(clc.info('Successfully generated CSS'));
-					}
-				});
 
+				if(stats.isFile()) {
+					return false;
+				} else {
+					dirList.push(filePath);
+				}
+				__stylSubDirs = dirList;
 			});
+
+			stylus(code)
+			    .set('paths', __stylSubDirs)
+				//.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
+				.render(function(err, css){
+
+					if (err) {
+						throw err;
+					}
+
+					fs.writeFile(__cssDir + '/main.css', css, function(err) {
+						if(err) {
+							console.log(clc.error(err));
+						} else {
+							console.log(clc.info('Successfully generated CSS'));
+						}
+					});
+				});
+		});
+
 	};
 
 	this.generateTagsPages = function(postsMetadata) {
