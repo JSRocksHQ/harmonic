@@ -124,10 +124,10 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
+		var __cssDir = './src/templates/default/resources/css';
 		var __stylDir = './src/templates/default/resources/_stylus';
 		var __stylSubDirs;
-		var __cssDir = './src/templates/default/resources/css';
-		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
+		var code; // = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
 
 
 		fs.readdir(__stylDir, function(err, files){
@@ -141,7 +141,8 @@ var Parser = function() {
 
 
 				if(stats.isFile()) {
-					return false;
+					//return false;
+					code = fs.readFileSync(filePath, 'utf8');
 				} else {
 					dirList.push(filePath);
 				}
@@ -150,7 +151,6 @@ var Parser = function() {
 
 			stylus(code)
 			    .set('paths', __stylSubDirs)
-				//.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
 				.render(function(err, css){
 
 					if (err) {
