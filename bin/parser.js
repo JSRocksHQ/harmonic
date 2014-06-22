@@ -243,7 +243,7 @@ var Parser = function() {
 
 			files.forEach(function(file, i) {
 				var md = new mkmeta(postsPath + '/' + file);
-				md.defineTokens('<!--', '-->');
+				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
 				var metadata = md.metadata();
 				var post = md.markdown();
 				var postCropped = md.markdown( { crop : '<!--more-->'});
