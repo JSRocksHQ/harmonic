@@ -8,5 +8,6 @@
     "bio": "",
     "template": "default",
     "posts_permalink" : ":year/:month/:title",
-    "pages_permalink" : "pages/:title"
+    "pages_permalink" : "pages/:title",
+    "header_tokens" : ["<!--","-->"]
 }
