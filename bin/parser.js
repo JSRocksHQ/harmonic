@@ -92,8 +92,12 @@ var Helper =  {
 		});
 	},
 
-	normalizeConfig : function (data) {
+	normalizeMetaData : function (data) {
 		data.title = data.title.replace(/\"/g,'');
+		return data;
+	},
+
+	normalizeContent : function (data) {
 		return data;
 	}
 }
@@ -129,8 +133,9 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
-		var __stylDir = './src/templates/default/resources/_stylus';
-		var __cssDir = './src/templates/default/resources/css';
+		var curTemplate = './src/templates/' + GLOBAL.config.template;
+		var __stylDir = curTemplate + '/resources/_stylus';
+		var __cssDir = curTemplate + '/resources/css';
 		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
 
 		stylus(code)
@@ -213,13 +218,31 @@ var Parser = function() {
 	};
 
 	this.copyResources = function() {
-		return new Promise(function (resolve, reject) {
+
+		var imagesP = new Promise(function(resolve, reject) {
+			ncp('./src/img', './public/img', function (err) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+		});
+
+		var resourcesP = new Promise(function(resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
 			ncp(curTemplate + '/resources', './public', function (err) {
 				if (err) {
 					reject(err);
 					return;
 				}
+				resolve();
+			});
+		});
+
+		return new Promise(function (resolve, reject) {
+			Promise.all([resourcesP, imagesP])
+			.then(function() {
 				resolve('Resources copied');
 			});
 		});
@@ -249,8 +272,8 @@ var Parser = function() {
 			files.forEach(function(file, i) {
 				var md = new mkmeta(postsPath + '/' + file);
 				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
-				var metadata = md.metadata();
-				var post = md.markdown();
+				var metadata = Helper.normalizeMetaData(md.metadata());
+				var post = Helper.normalizeContent(md.markdown());
 				var postCropped = md.markdown( { crop : '<!--more-->'});
 				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
 				var checkDate = new Date(filename.substr(0,10));
@@ -312,7 +335,7 @@ var Parser = function() {
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
 			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
-			GLOBAL.config = Helper.normalizeConfig(config);
+			GLOBAL.config = config;
 			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
 			resolve(config);
 		});
