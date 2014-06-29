@@ -90,6 +90,11 @@ var Helper =  {
 
 			});
 		});
+	},
+
+	normalizeConfig : function (data) {
+		data.title = data.title.replace(/\"/g,'');
+		return data;
 	}
 }
 
@@ -307,7 +312,7 @@ var Parser = function() {
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
 			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
-			GLOBAL.config = config;
+			GLOBAL.config = Helper.normalizeConfig(config);
 			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
 			resolve(config);
 		});
