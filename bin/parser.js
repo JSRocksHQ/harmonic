@@ -249,9 +249,7 @@ var Parser = function() {
 				var postCropped = md.markdown( { crop : '<!--more-->'});
 				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
 				var checkDate = new Date(filename.substr(0,10));
-				filename = isNaN(checkDate.getDate()) ? filename : filename.substr(10, filename.length).split('-')[1];
-				console.log('>>>>>',checkDate.getDate());
-				console.log(filename);
+				filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
 				var postPath = permalinks(config.posts_permalink, { title : filename });
 				var categories = metadata.categories.split(',');
 				metadata.link = postPath;
