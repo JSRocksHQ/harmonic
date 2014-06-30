@@ -200,6 +200,10 @@ var Parser = function() {
 	};
 
 	this.generateIndex = function(postsMetadata) {
+		postsMetadata.sort(function(a,b) {
+			return new Date(b.date) - new Date(a.date);
+		});
+
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.config.nunjucksEnv;

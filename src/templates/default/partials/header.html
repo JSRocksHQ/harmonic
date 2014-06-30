@@ -1,0 +1,24 @@
+<header class="topWrap">
+    <nav class="social">
+        <ul class="social__list">
+            <li class="social__item">
+                <a class="social__link" href="https://twitter.com/es6rocks">
+                    {% include "partials/components/twitter.html" %}
+                </a>
+            </li>
+            <li class="social__item">
+                <a class="social__link" href="https://github.com/es6rocks">
+                    {% include "partials/components/github.html" %}
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <section class="lobby">
+        <h1 class="pageTitle">
+            {{ config.title }}
+        </h1>
+        <a href="/">
+            <img class="logo" src="/images/logo.svg" alt="ES6Rocks" />
+        </a>
+    </section>
+</header>
