@@ -1,0 +1,42 @@
+.social
+    background-color: #000
+    overflow: hidden
+
+.social__list
+    @extends $container 
+    text-align: right
+
+.meni__list
+    @extends $container
+    text-align left
+    float left
+
+.meni__item
+    display: inline-block
+    font-size: 1.8rem
+    margin: .5em 1em
+
+.meni__list a
+    color: #fff
+
+.social__item
+    display: inline-block
+    font-size: 1.2rem
+    margin: .5em 1em
+
+    &.avatar
+        float: left
+
+        svg > path
+            fill: white
+        @media bp-m
+            display: none
+
+
+.social__link
+    color: #fff
+
+
+.social__link:hover path,
+.social__link:focus path
+    fill: yellow

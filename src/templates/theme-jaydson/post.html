@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" class="language-javascript">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.metadata.title }} - {{ config.title }}</title>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:image" content="http://es6rocks.com/images/es6rocks.png" />
+    <link rel="stylesheet" href="/css/main.css">
+    <link href="/css/vendor/prism.css" rel="stylesheet" />
+</head>
+<body>
+{% include "partials/navigation.html" %}
+<body>
+	<header class="topWrap">
+	    <section class="lobby">
+	        <h1 class="pageTitle">
+	        <a href="{{ post.metadata.url }}">
+				{{ post.metadata.title }}
+	        </a>
+	        </h1>
+	    </section>
+	</header>
+
+    <ul class="categories">
+    	{% for category in post.metadata.categories %}
+    		<li>
+    			<a class="categoryTag {{ category }}" href="/categories/{{ category | lower | trim }}">
+    				{{ category }}
+    			</a>
+    		</li>
+    	{% endfor %}
+    </ul>
+
+	<article class="postContent">
+		{{ post.content }}
+	</article>
+
+	{% include "partials/disqus.html" %}
+
+	{% include "partials/footer.html" %}

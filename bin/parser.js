@@ -161,7 +161,7 @@ var Parser = function() {
 		var postsByTag = {};
 		var curTemplate = GLOBAL.config.template;
 		var nunjucksEnv = GLOBAL.config.nunjucksEnv;
-		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/tag_archives.html');
+		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
 		var indexContent = '';
 
@@ -184,7 +184,7 @@ var Parser = function() {
 			}
 
 			for (var i in postsByTag) {
-				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config });
+				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config, category: i });
 
 				nodefs.mkdirSync('./public/categories/' + i, 0777, true);
 				/* write tag arcive html file */
