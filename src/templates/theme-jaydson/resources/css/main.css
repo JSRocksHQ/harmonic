@@ -255,22 +255,7 @@ a:focus {
   }
 }
 .logo {
-  width: 10em;
-  display: block;
-  margin: 0 auto;
-  -ms-transition: all 250ms linear 0;
-  -moz-transition: all 250ms linear 0;
-  transition: all 250ms linear 0;
-}
-@media (min-width: 840px) {
-  .logo {
-    width: 15em;
-  }
-}
-@media (min-width: 1000px) {
-  .logo {
-    width: 20em;
-  }
+  width: 1.2em;
 }
 .highlight {
   background-color: #f1f1f1;
@@ -633,6 +618,10 @@ a:focus {
 }
 article a {
   color: #163565;
+}
+time {
+  display: block;
+  text-align: center;
 }
 .bottom {
   position: relative;
