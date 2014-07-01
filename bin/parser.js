@@ -293,6 +293,10 @@ var Parser = function() {
 				var postHTMLFile = postsTemplateNJ
 					.render({ post : _post, config : GLOBAL.config })
 					.replace(/<!--[\s\S]*?-->/g, '');
+				
+				if(metadata.published && metadata.published === 'false') {
+					return;
+				}
 
 				nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
 					if (err) {
