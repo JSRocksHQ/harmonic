@@ -15,6 +15,7 @@ var nodefs = require('node-fs');
 var stylus = require('stylus');
 var mkmeta = require('marked-metadata');
 var util = require('./cli/util');
+var traceur = require('traceur');
 var clc = util.cli_color();
 
 var Helper =  {
@@ -99,6 +100,29 @@ var Helper =  {
 
 	normalizeContent : function (data) {
 		return data;
+	},
+
+	compileES6 : function (context, data) {		
+		var result = '',
+			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
+
+		harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(data));
+		console.log(harmonic_client);
+
+		switch (context) {
+			case 'posts' :
+				result = traceur.compile(harmonic_client, {
+					filename : 'harmonic-client.js'
+				});
+				console.log(result);
+
+				if (result.error) {
+				  throw result.error;
+				}
+
+				fs.writeFileSync('./public/harmonic.js', result.js);
+			break;
+		}
 	}
 }
 
@@ -319,6 +343,7 @@ var Parser = function() {
 				posts.push(metadata);
 
 				if (i === files.length - 1) {
+					Helper.compileES6('posts', posts);
 					resolve(posts);
 				}
 			});
