@@ -4,6 +4,10 @@ class Harmonic {
 		this.name = name;
 	}
 
+	getConfig () {
+		return {{config}};
+	}
+
 	getPosts () {
 		return {{posts}};
 	}

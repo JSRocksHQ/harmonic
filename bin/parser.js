@@ -32,6 +32,13 @@ var Helper =  {
 		});
 	},
 
+	sortPosts : function (posts) {
+		posts.sort(function(a,b) {
+			return new Date(b.date) - new Date(a.date);
+		});
+		return posts;
+	},
+
 	parsePages : function (files) {
 		return new Promise(function (resolve, reject) {
 			var pages = [];
@@ -105,9 +112,12 @@ var Helper =  {
 	compileES6 : function (context, data) {		
 		var result = '',
 			traceur_runtime = fs.readFileSync('./bin/client/traceur-runtime.js').toString(),
+			config = fs.readFileSync('./config.json').toString(),
 			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
 
-		harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(data));
+		harmonic_client = 
+			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))
+							.replace(/\{\{config\}\}/, config);
 
 		switch (context) {
 			case 'posts' :
