@@ -104,6 +104,7 @@ var Helper =  {
 
 	compileES6 : function (context, data) {		
 		var result = '',
+			traceur_runtime = fs.readFileSync('./bin/client/traceur-runtime.js').toString(),
 			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
 
 		harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(data));
@@ -118,7 +119,7 @@ var Helper =  {
 				  throw result.error;
 				}
 
-				fs.writeFileSync('./public/harmonic.js', result.js);
+				fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime + '\n//harmonic code\n' +result.js);
 			break;
 		}
 	}
