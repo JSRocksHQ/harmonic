@@ -223,17 +223,18 @@ var Parser = function() {
 	};
 
 	this.generateIndex = function(postsMetadata) {
+		var _posts = null;
 		postsMetadata.sort(function(a,b) {
 			return new Date(b.date) - new Date(a.date);
 		});
-
+		_posts = postsMetadata.slice(0,GLOBAL.config.index_posts || 10);
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
-			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
+			indexContent = indexTemplateNJ.render({ posts : _posts, config : GLOBAL.config });
 
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
