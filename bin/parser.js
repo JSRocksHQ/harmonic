@@ -107,14 +107,12 @@ var Helper =  {
 			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
 
 		harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(data));
-		console.log(harmonic_client);
 
 		switch (context) {
 			case 'posts' :
 				result = traceur.compile(harmonic_client, {
 					filename : 'harmonic-client.js'
 				});
-				console.log(result);
 
 				if (result.error) {
 				  throw result.error;
