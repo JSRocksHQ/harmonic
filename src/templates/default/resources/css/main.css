@@ -147,7 +147,7 @@ body {
 a {
   text-decoration: none;
   font-weight: bold;
-  color: #4f4f4f;
+  color: #05454a;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0;
@@ -295,6 +295,8 @@ a:focus {
   margin-bottom: 2.5rem;
   background-color: #f1f1f1;
   border-radius: 3px;
+  border: 1px solid #141414;
+  box-shadow: 6px 7px 5px 0px #747171;
   -ms-transition: all 250ms linear 0;
   -moz-transition: all 250ms linear 0;
   transition: all 250ms linear 0;
@@ -430,7 +432,7 @@ a:focus {
   }
 }
 .organizers__title {
-  font-size: 3rem;
+  font-size: 1rem;
   font-weight: bold;
   color: #a7a9ab;
   text-align: center;
@@ -443,7 +445,7 @@ a:focus {
     position: relative;
     top: -0.2em;
     text-align: right;
-    font-size: 4rem;
+    font-size: 1.4rem;
   }
 }
 .organizers__item {
@@ -545,11 +547,19 @@ a:focus {
   }
 }
 .postContent p {
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
 }
 .postContent blockquote {
   padding: 0 0.5em;
   border-left: solid 2px #a7a9ab;
+}
+.postContent h2 {
+  font-size: 1.2em;
+  border-bottom-width: 10px;
+  border-bottom: 8px solid #ccc;
+  padding-top: 30px;
+  margin-bottom: 21px;
+  padding-bottom: 10px;
 }
 .comments {
   padding: 2rem 0;
