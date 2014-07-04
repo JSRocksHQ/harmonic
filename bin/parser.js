@@ -166,17 +166,14 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
-<<<<<<< HEAD
 		var stylDir = './src/templates/default/resources/_stylus/';
 		var cssDir  = './src/templates/default/resources/css/';
 		var code    = fs.readFileSync(stylDir + 'index.styl', 'utf8');
 		var subDirs = ['./src/templates/default/resources/_stylus/'];
-=======
 		var curTemplate = './src/templates/' + GLOBAL.config.template;
 		var __stylDir = curTemplate + '/resources/_stylus';
 		var __cssDir = curTemplate + '/resources/css';
 		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
->>>>>>> 54e2790536afa56d5c0f09168a971f202275252e
 
 		return new Promise(function (resolve, reject) {
 			Helper.getStylusPaths(stylDir, subDirs).then(function() {
