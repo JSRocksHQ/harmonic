@@ -15,6 +15,7 @@ var nodefs = require('node-fs');
 var stylus = require('stylus');
 var mkmeta = require('marked-metadata');
 var util = require('./cli/util');
+var traceur = require('traceur');
 var clc = util.cli_color();
 
 var Helper =  {
@@ -31,29 +32,11 @@ var Helper =  {
 		});
 	},
 
-	getStylusPaths : function(root, array) {
-		return new Promise(function (resolve, reject) {
-			fs.readdir(root, function(err, files){
-				files.forEach(function(e) {
-					var ePath = root + e;
-					fs.stat(ePath, function(err, file) {
-						if (err) {
-							console.log(err);
-						} else {
-							if (file.isFile()) {
-								console.log('file');
-							} else {
-								return ePath;
-							}
-						}
-						return ePath;
-					});
-					files.push(ePath);
-					//console.log(array);
-				});
-			});
-			resolve(files);
+	sortPosts : function (posts) {
+		posts.sort(function(a,b) {
+			return new Date(b.date) - new Date(a.date);
 		});
+		return posts;
 	},
 
 	parsePages : function (files) {
@@ -115,6 +98,40 @@ var Helper =  {
 
 			});
 		});
+	},
+
+	normalizeMetaData : function (data) {
+		data.title = data.title.replace(/\"/g,'');
+		return data;
+	},
+
+	normalizeContent : function (data) {
+		return data;
+	},
+
+	compileES6 : function (context, data) {
+		var result = '',
+			traceur_runtime = fs.readFileSync('./bin/client/traceur-runtime.js').toString(),
+			config = fs.readFileSync('./config.json').toString(),
+			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
+
+		harmonic_client =
+			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))
+							.replace(/\{\{config\}\}/, config);
+
+		switch (context) {
+			case 'posts' :
+				result = traceur.compile(harmonic_client, {
+					filename : 'harmonic-client.js'
+				});
+
+				if (result.error) {
+				  throw result.error;
+				}
+
+				fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime + '\n//harmonic code\n' +result.js);
+			break;
+		}
 	}
 }
 
@@ -149,10 +166,17 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
+<<<<<<< HEAD
 		var stylDir = './src/templates/default/resources/_stylus/';
 		var cssDir  = './src/templates/default/resources/css/';
 		var code    = fs.readFileSync(stylDir + 'index.styl', 'utf8');
 		var subDirs = ['./src/templates/default/resources/_stylus/'];
+=======
+		var curTemplate = './src/templates/' + GLOBAL.config.template;
+		var __stylDir = curTemplate + '/resources/_stylus';
+		var __cssDir = curTemplate + '/resources/css';
+		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
+>>>>>>> 54e2790536afa56d5c0f09168a971f202275252e
 
 		return new Promise(function (resolve, reject) {
 			Helper.getStylusPaths(stylDir, subDirs).then(function() {
@@ -188,7 +212,7 @@ var Parser = function() {
 		var postsByTag = {};
 		var curTemplate = GLOBAL.config.template;
 		var nunjucksEnv = GLOBAL.config.nunjucksEnv;
-		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/tag_archives.html');
+		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
 		var indexContent = '';
 
@@ -211,7 +235,7 @@ var Parser = function() {
 			}
 
 			for (var i in postsByTag) {
-				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config });
+				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config, category: i });
 
 				nodefs.mkdirSync('./public/categories/' + i, 0777, true);
 				/* write tag arcive html file */
@@ -227,13 +251,18 @@ var Parser = function() {
 	};
 
 	this.generateIndex = function(postsMetadata) {
+		var _posts = null;
+		postsMetadata.sort(function(a,b) {
+			return new Date(b.date) - new Date(a.date);
+		});
+		_posts = postsMetadata.slice(0,GLOBAL.config.index_posts || 10);
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
-			indexContent = indexTemplateNJ.render({ posts : postsMetadata, config : GLOBAL.config });
+			indexContent = indexTemplateNJ.render({ posts : _posts, config : GLOBAL.config });
 
 			/* write index html file */
 			fs.writeFile('./public/index.html', indexContent, function (err) {
@@ -245,13 +274,31 @@ var Parser = function() {
 	};
 
 	this.copyResources = function() {
-		return new Promise(function (resolve, reject) {
+
+		var imagesP = new Promise(function(resolve, reject) {
+			ncp('./src/img', './public/img', function (err) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+		});
+
+		var resourcesP = new Promise(function(resolve, reject) {
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
 			ncp(curTemplate + '/resources', './public', function (err) {
 				if (err) {
 					reject(err);
 					return;
 				}
+				resolve();
+			});
+		});
+
+		return new Promise(function (resolve, reject) {
+			Promise.all([resourcesP, imagesP])
+			.then(function() {
 				resolve('Resources copied');
 			});
 		});
@@ -281,10 +328,12 @@ var Parser = function() {
 			files.forEach(function(file, i) {
 				var md = new mkmeta(postsPath + '/' + file);
 				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
-				var metadata = md.metadata();
-				var post = md.markdown();
+				var metadata = Helper.normalizeMetaData(md.metadata());
+				var post = Helper.normalizeContent(md.markdown());
 				var postCropped = md.markdown( { crop : '<!--more-->'});
 				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+				var checkDate = new Date(filename.substr(0,10));
+				filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
 				var postPath = permalinks(config.posts_permalink, { title : filename });
 				var categories = metadata.categories.split(',');
 				metadata.link = postPath;
@@ -296,6 +345,10 @@ var Parser = function() {
 				var postHTMLFile = postsTemplateNJ
 					.render({ post : _post, config : GLOBAL.config })
 					.replace(/<!--[\s\S]*?-->/g, '');
+
+				if(metadata.published && metadata.published === 'false') {
+					return;
+				}
 
 				nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
 					if (err) {
@@ -318,6 +371,7 @@ var Parser = function() {
 				posts.push(metadata);
 
 				if (i === files.length - 1) {
+					Helper.compileES6('posts', posts);
 					resolve(posts);
 				}
 			});
