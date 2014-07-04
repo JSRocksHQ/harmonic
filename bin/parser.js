@@ -31,6 +31,31 @@ var Helper =  {
 		});
 	},
 
+	getStylusPaths : function(root, array) {
+		return new Promise(function (resolve, reject) {
+			fs.readdir(root, function(err, files){
+				files.forEach(function(e) {
+					var ePath = root + e;
+					fs.stat(ePath, function(err, file) {
+						if (err) {
+							console.log(err);
+						} else {
+							if (file.isFile()) {
+								console.log('file');
+							} else {
+								return ePath;
+							}
+						}
+						return ePath;
+					});
+					files.push(ePath);
+					//console.log(array);
+				});
+			});
+			resolve(files);
+		});
+	},
+
 	parsePages : function (files) {
 		return new Promise(function (resolve, reject) {
 			var pages = [];
@@ -105,7 +130,7 @@ var Parser = function() {
 		return new Promise(function (resolve, reject) {
 			var exec = require('child_process').exec,
 				child = null;
-			child = exec('rm -rf ./public',function(err,out) { 
+			child = exec('rm -rf ./public',function(err,out) {
 			 	console.log(clc.warn('Cleaning up...'));
 			 	resolve();
 			});
@@ -124,27 +149,39 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
-		var __stylDir = './src/templates/default/resources/_stylus';
-		var __cssDir = './src/templates/default/resources/css';
-		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
+		var stylDir = './src/templates/default/resources/_stylus/';
+		var cssDir  = './src/templates/default/resources/css/';
+		var code    = fs.readFileSync(stylDir + 'index.styl', 'utf8');
+		var subDirs = ['./src/templates/default/resources/_stylus/'];
 
-		stylus(code)
-			.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
-			.render(function(err, css){
-
-				if (err) {
-					throw err;
-				}
-
-				fs.writeFile(__cssDir + '/main.css', css, function(err) {
-					if(err) {
-						console.log(clc.error(err));
-					} else {
-						console.log(clc.info('Successfully generated CSS'));
-					}
-				});
-
+		return new Promise(function (resolve, reject) {
+			Helper.getStylusPaths(stylDir, subDirs).then(function() {
+				//console.log(result);
+				//console.log(subDirs);
+				console.log('ok');
+			}, function(err) {
+				console.log('error on getStylusPaths');
+				console.log(subDirs);
 			});
+
+
+			stylus(code)
+				.set('paths', [stylDir, stylDir + 'engine', stylDir + 'partials'])
+				.render(function(err, css){
+
+					if (err) throw err;
+
+					fs.writeFile(cssDir + 'main.css', css, function(err) {
+						if(err) {
+							console.log(clc.error(err));
+						} else {
+							console.log(clc.info('Successfully generated CSS'));
+						}
+					});
+
+				});
+			resolve();
+		});
 	};
 
 	this.generateTagsPages = function(postsMetadata) {
