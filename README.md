@@ -30,7 +30,7 @@ You must write your posts in [Markdown](http://daringfireball.net/projects/markd
 ```
 harmonic new_post "Hello World"
 ```
-![New Post](/wiki/es6rocks/harmonic/img/new_post.png)
+![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
 
 After running **_new_post_**, the markdown file will be generated in _**/src/posts/**_ folder.  
 
