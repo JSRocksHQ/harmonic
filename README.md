@@ -24,6 +24,14 @@ npm link
 ```
 For more details, check out the full documentation: [Installing](/wiki/Installing)
 
+## Config
+The Harmonic config file is a simple JSON object.  
+You can configure your static website with the CLI _config_ command:  
+```shell
+harmonic config
+```
+For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
+
 ## Blogging
 Harmonic follow the pattern of others static site generators you may know.  
 You must write your posts in [Markdown](http://daringfireball.net/projects/markdown/) format.  
