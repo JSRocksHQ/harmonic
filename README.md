@@ -22,12 +22,6 @@ npm link
 ```
 For more details, check out the full documentation: [Installing](/wiki/Installing)
 
-##Init
-Harmonic init command helps you to create your harmonic configuration file.  
-```shell
-harmonic init
-```
-
 ## Build
 Harmonic is currently in alpha, but you already can generate posts, and the index page.  
 Just as usual, create your posts in the "/src/posts" folder using markdown syntax.  
