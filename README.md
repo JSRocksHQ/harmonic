@@ -11,9 +11,9 @@ Harmonic is being developed with some goals:
 Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rocks/harmonic/wiki/](https://github.com/es6rocks/harmonic/wiki/)
 
 ## Installing
-Attention:
-Harmonic uses some ES6 features. You'll need to install the latest node version.
-NVM or n is a good approach to have multiple node versions and do not break any existent node software that you already have installed. 
+**Attention:**  
+Harmonic uses some ES6 features. You'll need to install the latest node version.  
+[NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
 
 Clone the harmonic repository:  
 ```shell
