@@ -44,6 +44,7 @@ var Helper =  {
 			var pages = [];
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.nunjucksEnv;
+			var config = GLOBAL.config
 
 			files.forEach(function (file, i) {
 				var page = fs.readFileSync( pagesPath + "/" + file).toString();
@@ -51,21 +52,15 @@ var Helper =  {
 				var pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv);
 				var markfile = page.toString();
 				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+				var md = new mkmeta(pagesPath + '/' + file);
+				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
 
 				/* Markdown extra */
-				var metadata = markextra.metadata(markfile, function (md) {
-					var retObj = {};
-					md.split('\n').forEach(function(line) {
-						var data = line.split(':'),
-							first = data.splice(0, 1);
-						retObj[first[0].trim()] = data.join(':').trim();
-					});
-					return retObj;
-				});
+				var metadata = md.metadata();
 				var pagePermalink = permalinks(config.pages_permalink, { title : filename });
 
 				var _page = {
-					content : marked(markfile),
+					content : md.markdown(),
 					metadata : metadata
 				}
 
@@ -109,7 +104,7 @@ var Helper =  {
 		return data;
 	},
 
-	compileES6 : function (context, data) {		
+	compileES6 : function (context, data) {
 		var result = '',
 			traceur_runtime = fs.readFileSync('./bin/client/traceur-runtime.js').toString(),
 			config = fs.readFileSync('./config.json').toString(),
