@@ -26,7 +26,7 @@ For more details, check out the full documentation: [Installing](/wiki/Installin
 Harmonic follow the pattern of others static site generators you may know.  
 You must write your posts in [Markdown](http://daringfireball.net/projects/markdown/) format.  
 
-## New post:  
+### New post:  
 ```
 harmonic new_post "Hello World"
 ```
@@ -81,32 +81,9 @@ The code above will be parsed to something like this:
 
 
 ## Build
-Harmonic is currently in alpha, but you already can generate posts, and the index page.  
-Just as usual, create your posts in the "/src/posts" folder using markdown syntax.  
-You'll need to especify a header for each post.  
-Example:
-```
-<!--
-layout: post
-title: post test
-date: 2014-01-17 00:33
-comments: true
-published: true
-keywords: JavaScript, ES6
-description: my post description
-categories: my-category
--->
-```
-
-Now, just build your awesome website!  
+The build tool will generate all posts, pages, categories, compile styles and ES6.
 ```shell
 harmonic build
-```
-
-## New Post
-To create a new post, just run:
-```shell
-harmonic new_post "my awesome post"
 ```
 
 ## Run
