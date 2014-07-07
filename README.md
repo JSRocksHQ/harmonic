@@ -30,6 +30,7 @@ You can configure your static website with the CLI _config_ command:
 ```shell
 harmonic config
 ```
+![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)
 For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
 
 ## Blogging
