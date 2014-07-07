@@ -8,6 +8,8 @@ Harmonic is being developed with some goals:
 - Build a simple static site generator in node using ES6 features
 - Create the ES6 Rocks website with Harmonic! (Actually, the website is already online [ES6Rocks](http://es6rocks.com))  
 
+Check out the full documentation in Harmonic Wiki: [https://github.com/es6rocks/harmonic/wiki/](https://github.com/es6rocks/harmonic/wiki/)
+
 ## Installing
 Clone the harmonic repository:  
 ```shell
@@ -78,7 +80,7 @@ The code above will be parsed to something like this:
 <li>Item 3</li>
 </ul>
 ```
-
+For more details, you can check the full documentation: [Blogging](https://github.com/es6rocks/harmonic/wiki/Blogging).  
 
 ## Build
 The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
