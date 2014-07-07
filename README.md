@@ -1,6 +1,6 @@
 ![harmonic logo](harmonic-logo.png)  
 
-# Harmonic - The next static site generator
+# The next static site generator
 > Please note that this project is currently under development. Contributions are pretty welcome!
 
 Harmonic is being developed with some goals:  
