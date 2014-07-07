@@ -50,7 +50,7 @@ categories: JavaScript, ES6
 authorName: Jaydson
 -->
 ```
-You can check all possible header values in the [header page](markdown-header).  
+You can check all possible header values in the [header page](https://github.com/es6rocks/harmonic/wiki/markdown-header).  
 
 ### Markdown content
 Everything after the header is the post content.  
