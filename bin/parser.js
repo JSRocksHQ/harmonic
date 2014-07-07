@@ -43,7 +43,7 @@ var Helper =  {
 		return new Promise(function (resolve, reject) {
 			var pages = [];
 			var curTemplate = GLOBAL.config.template;
-			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+			var nunjucksEnv = GLOBAL.nunjucksEnv;
 
 			files.forEach(function (file, i) {
 				var page = fs.readFileSync( pagesPath + "/" + file).toString();
@@ -193,7 +193,7 @@ var Parser = function() {
 	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
 		var curTemplate = GLOBAL.config.template;
-		var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+		var nunjucksEnv = GLOBAL.nunjucksEnv;
 		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
 		var indexContent = '';
@@ -240,7 +240,7 @@ var Parser = function() {
 		_posts = postsMetadata.slice(0,GLOBAL.config.index_posts || 10);
 		return new Promise(function(resolve, reject) {
 			var curTemplate = GLOBAL.config.template;
-			var nunjucksEnv = GLOBAL.config.nunjucksEnv;
+			var nunjucksEnv = GLOBAL.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
@@ -304,7 +304,7 @@ var Parser = function() {
 				posts = [],
 				curTemplate = config.template,
 				postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
-				nunjucksEnv = config.nunjucksEnv,
+				nunjucksEnv = GLOBAL.nunjucksEnv,
 				postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 
 			files.forEach(function(file, i) {
@@ -377,10 +377,22 @@ var Parser = function() {
 
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
-			var config = JSON.parse(fs.readFileSync( "./config.json").toString());
-			GLOBAL.config = config;
-			GLOBAL.config.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
-			resolve(config);
+			var config = JSON.parse(fs.readFileSync("./config.json").toString());
+			var custom = null;
+			var newConfig = null;
+
+			try {
+				custom = JSON.parse(fs.readFileSync("./src/templates/" + config.template + "/config.json").toString());
+			} catch (e) {
+			}
+			if (custom) {
+				newConfig = _.extend(config, custom);
+			} else {
+				newConfig = config;
+			}
+			GLOBAL.config = newConfig;
+			GLOBAL.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
+			resolve(newConfig);
 		});
 	};
 }
