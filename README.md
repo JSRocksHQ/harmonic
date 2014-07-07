@@ -81,7 +81,7 @@ The code above will be parsed to something like this:
 
 
 ## Build
-The build tool will generate all posts, pages, categories, compile styles and ES6.
+The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
 ```shell
 harmonic build
 ```
