@@ -1,7 +1,7 @@
+![harmonic logo](harmonic-logo.png)  
+
 # Harmonic - The next static site generator
 > Please note that this project is currently under development. Contributions are pretty welcome!
-
-![harmonic logo](harmonic-logo.png)  
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
