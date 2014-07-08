@@ -166,15 +166,15 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
-		var stylDir = './src/templates/default/resources/_stylus/';
-		var cssDir  = './src/templates/default/resources/css/';
-		var code    = fs.readFileSync(stylDir + 'index.styl', 'utf8');
+		//var stylDir = './src/templates/default/resources/_stylus/';
+		//var cssDir  = './src/templates/default/resources/css/';
+		//var code    = fs.readFileSync(stylDir + 'index.styl', 'utf8');
 		var subDirs = ['./src/templates/default/resources/_stylus/'];
 		var curTemplate = './src/templates/' + GLOBAL.config.template;
-		var __stylDir = curTemplate + '/resources/_stylus';
-		var __cssDir = curTemplate + '/resources/css';
-		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
-
+		var stylDir = curTemplate + '/resources/_stylus';
+		var cssDir = curTemplate + '/resources/css';
+		var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+/*
 		return new Promise(function (resolve, reject) {
 			Helper.getStylusPaths(stylDir, subDirs).then(function() {
 				//console.log(result);
@@ -184,15 +184,16 @@ var Parser = function() {
 				console.log('error on getStylusPaths');
 				console.log(subDirs);
 			});
+*/
 
 
 			stylus(code)
-				.set('paths', [stylDir, stylDir + 'engine', stylDir + 'partials'])
+				.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
 				.render(function(err, css){
 
 					if (err) throw err;
 
-					fs.writeFile(cssDir + 'main.css', css, function(err) {
+					fs.writeFile(cssDir + '/main.css', css, function(err) {
 						if(err) {
 							console.log(clc.error(err));
 						} else {
@@ -201,8 +202,8 @@ var Parser = function() {
 					});
 
 				});
-			resolve();
-		});
+			//resolve();
+		//});
 	};
 
 	this.generateTagsPages = function(postsMetadata) {
