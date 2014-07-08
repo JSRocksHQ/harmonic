@@ -15,15 +15,6 @@
 	    <h2>
 	      {{ page.metadata.title }}
 	    </h2>
-	    <div class="categories">
-	    	{% for category in page.metadata.categories %}
-	    		<span>
-	    			<a href="/categories/{{ category | lower | trim }}">
-	    				{{ category }}
-	    			</a>
-	    		</span>
-	    	{% endfor %}
-	    </div>
 	</header>
 
 	<article class="postContent">

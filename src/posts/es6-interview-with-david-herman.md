@@ -8,8 +8,9 @@ keywords: ES6
 description: Interview with David Herman about ES6
 categories: ES6, Interview
 -->
-We did a nice interview with [David Herman](https://twitter.com/littlecalculist) about his thougths about ES6.  
+We did a nice interview with [David Herman](https://twitter.com/littlecalculist) about his thoughts about ES6.  
 David is the principal researcher and founder of Mozilla Research, where he works to expand the foundations of the Open Web. He participate in a number of Web platform projects, including: [task.js](http://taskjs.org/), [sweet.js](http://sweetjs.org/), [asm.js](http://asmjs.org/), [Rust](http://www.rust-lang.org/), [Servo](https://github.com/mozilla/servo/) and Parallel JS.  
+<!--more-->
 He also participate in open standards, in particular as a representative on [TC3](http://www.ecma-international.org/memento/TC39.htm), the committee that standardizes JavaScript.  
 
 ## Modules! One of the main features in ES6 are modules. Can you, as one of the specification core contributors, explain in a nutshell what modules will bring for JavaScript developers?  
