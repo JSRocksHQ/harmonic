@@ -186,6 +186,17 @@ a:focus {
 .social__link:focus path {
   fill: #fafa64;
 }
+.flags {
+  width: 165px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.flags li {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin: 0.5em 0.1em;
+}
 .lobby {
   width: 100%;
   background-color: #fff;
