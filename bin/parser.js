@@ -110,7 +110,7 @@ var Helper =  {
 			config = fs.readFileSync('./config.json').toString(),
 			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
 
-		harmonic_client = 
+		harmonic_client =
 			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))
 							.replace(/\{\{config\}\}/, config);
 
@@ -142,7 +142,7 @@ var Parser = function() {
 		return new Promise(function (resolve, reject) {
 			var exec = require('child_process').exec,
 				child = null;
-			child = exec('rm -rf ./public',function(err,out) { 
+			child = exec('rm -rf ./public',function(err,out) {
 			 	console.log(clc.warn('Cleaning up...'));
 			 	resolve();
 			});
@@ -161,28 +161,27 @@ var Parser = function() {
 	};
 
 	this.compileStylus = function() {
+		var subDirs = ['./src/templates/default/resources/_stylus/'];
 		var curTemplate = './src/templates/' + GLOBAL.config.template;
-		var __stylDir = curTemplate + '/resources/_stylus';
-		var __cssDir = curTemplate + '/resources/css';
-		var code = fs.readFileSync(__stylDir + '/index.styl', 'utf8');
+		var stylDir = curTemplate + '/resources/_stylus';
+		var cssDir = curTemplate + '/resources/css';
+		var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
 
-		stylus(code)
-			.set('paths', [__stylDir, __stylDir + '/engine', __stylDir + '/partials'])
-			.render(function(err, css){
+			stylus(code)
+				.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+				.render(function(err, css){
 
-				if (err) {
-					throw err;
-				}
+					if (err) throw err;
 
-				fs.writeFile(__cssDir + '/main.css', css, function(err) {
-					if(err) {
-						console.log(clc.error(err));
-					} else {
-						console.log(clc.info('Successfully generated CSS'));
-					}
+					fs.writeFile(cssDir + '/main.css', css, function(err) {
+						if(err) {
+							console.log(clc.error(err));
+						} else {
+							console.log(clc.info('Successfully generated CSS'));
+						}
+					});
+
 				});
-
-			});
 	};
 
 	this.generateTagsPages = function(postsMetadata) {
@@ -192,7 +191,7 @@ var Parser = function() {
 		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
 		var indexContent = '';
-		var categoryPath = null;
+		var tagPath = null;
 
 		return new Promise(function(resolve, reject) {
 			for (var lang in postsMetadata) {
@@ -204,7 +203,6 @@ var Parser = function() {
 								.trim()
 								.split(' ')
 								.join('-');
-								console.log(postsByTag[tag]);
 
 						if (Array.isArray(postsByTag[tag])) {
 							postsByTag[tag].push(postsMetadata[lang][i]);
@@ -215,18 +213,21 @@ var Parser = function() {
 				}
 
 				for (var i in postsByTag) {
+					tagContent = tagTemplateNJ.render({ posts : _.where(postsByTag[i], { lang: lang}), config : GLOBAL.config, category: i });
+
+					/* If is the default language, generate in the root path */
 					if (config.i18n.default === lang) {
-						categoryPath = './public/categories/' + i;
+						tagPath = './public/categories/' + i;
 					} else {
-						categoryPath = './public/categories/' + lang + '/' + i;
+						tagPath = './public/categories/' + lang + '/' + i;
 					}
-					tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config, category: i });
-					nodefs.mkdirSync(categoryPath, 0777, true);
-					fs.writeFileSync(categoryPath + '/index.html', tagContent);
-					console.log(clc.info('Successfully generated tag[' + categoryPath + '] archive html file'));
+
+					nodefs.mkdirSync(tagPath, 0777, true);
+					fs.writeFileSync(tagPath + '/index.html', tagContent);
+					console.log(clc.info('Successfully generated tag[' + i + '] archive html file'));
 				}
-			}
-			resolve(postsMetadata);
+				resolve(postsMetadata);	
+			}			
 		});
 	};
 
@@ -333,6 +334,14 @@ var Parser = function() {
 					}
 					metadata.link = postPath;
 					metadata.categories = categories;
+					metadata['content'] = postCropped;
+					metadata['file'] = postsPath + file;
+					metadata['filename'] = filename;
+					metadata['link'] = postPath;
+					metadata['lang'] = lang;
+					metadata['default_lang'] = config.i18n.default === lang ? false : true;
+					metadata.date = new Date(metadata.date);
+
 					var _post = {
 						content : post,
 						metadata : metadata
@@ -358,12 +367,6 @@ var Parser = function() {
 							});
 						}
 					});
-					metadata['content'] = postCropped;
-					metadata['file'] = postsPath + file;
-					metadata['filename'] = filename;
-					metadata['link'] = postPath;
-					metadata['lang'] = lang;
-					metadata.date = new Date(metadata.date);
 					if (posts[lang]) {
 						posts[lang].push(metadata);
 					} else {

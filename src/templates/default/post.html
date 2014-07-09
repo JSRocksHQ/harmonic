@@ -25,7 +25,8 @@
     <ul class="categories">
     	{% for category in post.metadata.categories %}
     		<li>
-    			<a class="categoryTag {{ category }}" href="/categories/{{ category | lower | trim }}">
+    			<a class="categoryTag {{ category }}" 
+    				href="/categories/{% if post.metadata.default_lang %}{{ post.metadata.lang }}/{% endif %}{{ category | lower | trim }}">
     				{{ category }}
     			</a>
     		</li>
