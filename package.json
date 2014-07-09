@@ -11,9 +11,6 @@
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
   },
-  "scripts": {
-    "install": "./install.sh"
-  },
   "dependencies": {
     "commander": "~2.2.0",
     "marked": "~0.3.2",
