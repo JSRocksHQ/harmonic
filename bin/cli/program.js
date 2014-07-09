@@ -38,7 +38,10 @@ program
 	.description('Run you static site locally. Port is optional')
 	.action(function(_port) {		
 		var port = _port ? _port : '9356';
-		util.run(port);
+		var core = require('../core');
+		core.init().then(function() {
+			util.run(port);
+		});		
 	});
 
 program.parse(process.argv);

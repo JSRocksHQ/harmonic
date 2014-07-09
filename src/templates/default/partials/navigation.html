@@ -1,17 +1,14 @@
 <nav class="social">
     <ul class="flags">
-        <li>
-            <a href="/pt-br">
-                <img src="/images/flag-pt-br.gif">
-            </a>
-        </li>
-        <li>
-            <a href="/">
-                <img src="/images/flag-en.jpg">
-            </a>
-        </li>
+        {% for flag in config.i18n.languages %}
+            <li>
+                <a href="{% if flag ==  config.i18n.default %}/ {% else %}/{{ flag }}{% endif %}">
+                    <img src="/images/flag-{{ flag }}.jpg">
+                </a>
+            </li>
+        {% endfor %}
     </ul>
-    
+
     <ul class="social__list">
         <li class="social__item avatar">
             <a href="https://es6rocks.com">

@@ -13,21 +13,22 @@ Para quem não conhece, o David é o principal pesquisador e fundador da Mozilla
 <!--more-->
 David ainda participa de padrões abertos, em particular como representante no [TC39](http://www.ecma-international.org/memento/TC39.htm), o comitê que padroniza o JavaScript.    
 
-## Modules! One of the main features in ES6 are modules. Can you, as one of the specification core contributors, explain in a nutshell what modules will bring for JavaScript developers?  
-Modules are well established as a good way to structure code, especially in Node but more and more in client-side development too.  
-What we're doing is unifying existing JavaScript module systems into a standard that can work in all platforms.  Additionally, we've provided dedicated syntax and some cleanups in behavior, including asynchronous loading without the need for build tools.  
-We've also taken into account the most popular patterns, such as modules that have a single or primary export (like jQuery and underscore), and given them sweet syntax to encourage and assist best practices.  
-We've created a web site giving developers a tutorial on modules, which explains a little bit more what they look like and how to use them:  
+## Módulos! Uma das principais features da ES6 são os módulos. Você, como um dos contribuidores core da especificação, pode explicar o que os módulos vão trazer para os desenvolvedores JavaScript?
+Os módulos podem ser descritos como uma boa forma de estruturar um código, especialmente no Node, mas cada vez mais no desenvolvimento do client-side também.
+O que estamos fazendo é unificar os já existententes sistemas de módulos no JavaScript em um padrão que pode funcionar em todas as plataformas.  
+Além disso, nós fornecemos uma sintaxe dedicada e algumas limpezas no comportamento, incluindo o carregamento assíncrono sem a necessidade de ferramentas de compilação.  
+Nós também levamos em conta os padrões mais populares, tais como módulos que possem um único ou principal export (como jQuery e underscore), fornecendo um _sweet syntax_ para encorajar e apoiar as melhores práticas.  
+Nós criamos um site dando aos desenvolvedores um tutorial sobre módulos, que explica um pouco mais como eles funcionam e como usá-los:
 [http://jsmodules.io](http://jsmodules.io)  
 
-## Classes are controversial. There are people who love them and others not so much. Can you tell us your opinion about classes in JavaScript? What's the real purpose and what are the benefits for the language?  
-I always like to point out first that the class syntax in ES6 is not introducing something new conceptually into JavaScript; it's just a surface syntax for the widespread patterns people already use with constructor functions and prototypes.  
-Classes are totally dynamic; for example you can write a class literal as an expression:  
+## Classes são controversas. Alguns amam e outros nem tanto. Pode nos dizer a sua opinião sobre classes no JavaScript? Qual é o real propósito e quais são os benefícios para a linguagem?  
+Eu sempre gosto de ressaltar primeiro que as classes na ES6 não estão introduzindo algo conceitualmente novo no JavaScript; é apenas um _syntax sugar_ para os padrões existentens que as pessoas já usam, com funções construtoras e prototypes.  
+Classes são totalmente dinâmicas; por exemplo, você pode escrever uma classe literal como uma expressão:  
 ```javascript
   var myClass = myMixin(class C { /* ... */ });
 ```
 
-just like you could do with existing patterns:  
+assim como você poderia fazer com padrões existentes:  
 ```javascript
   function C(/* ... */) { /* ... */ }
 
@@ -36,7 +37,7 @@ just like you could do with existing patterns:
   var myClass = myMixin(C);
 ```
 
-And classes are fully interoperable with prototypes. For example, classes can inherit from traditional constructors and vice versa:  
+E as classes são totalmente interoperáveis com prototypes. Por exemplo, as classes podem herdar de construtores tradicionais e vice-versa:  
 ```javascript
   // extend Node's EventEmitter class
   class MyEventEmitter extends events.EventEmitter {
@@ -48,9 +49,10 @@ And classes are fully interoperable with prototypes. For example, classes can in
   }
 ```  
 
-Notice the `super` call in the constructor -- this is way less painful than the patterns people are forced to use for their hand-rolled classes today. [1] ES6 supports `super` for both constructors and methods.  
+Observe a chamada `super` no construtor - este é o caminho menos doloroso que os padrões que as pessoas são forçadas a usar para as suas classes feitas à mão hoje.  
+[1] ES6 suporta `super` para ambos os construtores e métodos.  
 
-In other words, class syntax adds conveniences for common patterns, and eliminates the need for the various competing class abstractions that exist in the wild today.  
+Em outras palavras, classes adicionam métodos convenientes de padrões comuns, e elimina a necessidade abstraões de classe que existem hoje.  
 
 Another feature is the ability to subclass built-in classes like Arrays:  
 ```javascript

@@ -1,10 +1,12 @@
 var Parser = require('./parser');
+var Promise = require('promise');
 
 var parser = new Parser();
 module.exports = {
 
 	init : function () {
-		parser.start()
+		return new Promise(function (resolve, reject) {
+			parser.start()
 			.then(parser.clean)
 			.then(parser.getConfig)
 			.then(parser.createPublicFolder)
@@ -16,8 +18,7 @@ module.exports = {
 			.then(parser.generateIndex)
 			.then(parser.generateTagsPages)
 			.then(parser.copyResources)
-			.then(null, function (e) {
-				console.log(e);
-			});
+			.then(resolve);
+		});
 	}
 }

@@ -1,2 +1,2 @@
-#!/usr/bin/env nodeHarmony
-require('./bin/cli/program');
+#!/usr/bin/env node
+require('v8-argv')('--harmony', './bin/cli/program');
