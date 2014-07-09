@@ -26,7 +26,7 @@ cd harmonic
 npm install
 npm link
 ```
-For more details, check out the full documentation: [Installing](/wiki/Installing)
+For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
 
 ## Config
 The Harmonic config file is a simple JSON object.  
