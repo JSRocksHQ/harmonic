@@ -6,11 +6,6 @@
     "author": "Jaydson",
     "description": "",
     "bio": "",
-<<<<<<< HEAD
-    "template": "moose",
-    "posts_permalink" : ":year/:month/:title",
-    "pages_permalink" : "pages/:title"
-=======
     "template": "default",
     "posts_permalink" : ":language/:year/:month/:title",
     "pages_permalink" : "pages/:title",
@@ -20,5 +15,4 @@
         "default" : "en",
         "languages" : ["en","pt-br"]
     }
->>>>>>> upstream/master
 }
