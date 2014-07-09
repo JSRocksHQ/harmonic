@@ -1,14 +1,14 @@
 class Harmonic {
   
-	constructor (name) {
-		this.name = name;
-	}
+    constructor (name) {
+        this.name = name;
+    }
 
-	getConfig () {
-		return {{config}};
-	}
+    getConfig () {
+        return {{config}};
+    }
 
-	getPosts () {
-		return {{posts}};
-	}
+    getPosts () {
+        return {{posts}};
+    }
 }
