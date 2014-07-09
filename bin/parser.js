@@ -33,9 +33,9 @@ var Helper =  {
 	},
 
 	sortPosts : function (posts) {
-		posts.sort(function(a,b) {
+		/*posts.sort(function(a,b) {
 			return new Date(b.date) - new Date(a.date);
-		});
+		});*/
 		return posts;
 	},
 
@@ -192,61 +192,71 @@ var Parser = function() {
 		var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 		var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
 		var indexContent = '';
+		var categoryPath = null;
 
 		return new Promise(function(resolve, reject) {
-			for (var i = 0; i < postsMetadata.length; i += 1) {
-				var tags = postsMetadata[i].categories;
-				for (var y = 0; y < tags.length; y += 1) {
-					var tag = tags[y]
-							.toLowerCase()
-							.trim()
-							.split(' ')
-							.join('-');
+			for (var lang in postsMetadata) {
+				for (var i = 0; i < postsMetadata[lang].length; i += 1) {
+					var tags = postsMetadata[lang][i].categories;
+					for (var y = 0; y < tags.length; y += 1) {
+						var tag = tags[y]
+								.toLowerCase()
+								.trim()
+								.split(' ')
+								.join('-');
+								console.log(postsByTag[tag]);
 
-					if (Array.isArray(postsByTag[tag])) {
-						postsByTag[tag].push(postsMetadata[i]);
-					} else {
-						postsByTag[tag] = [postsMetadata[i]];
+						if (Array.isArray(postsByTag[tag])) {
+							postsByTag[tag].push(postsMetadata[lang][i]);
+						} else {
+							postsByTag[tag] = [postsMetadata[lang][i]];
+						}
 					}
 				}
-			}
 
-			for (var i in postsByTag) {
-				tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config, category: i });
-
-				nodefs.mkdirSync('./public/categories/' + i, 0777, true);
-				/* write tag arcive html file */
-				(function (y) {
-					fs.writeFile('./public/categories/' + y + '/index.html', tagContent, function (err) {
-						if (err) throw err;
-						console.log(clc.info('Successfully generated tag[' + y + '] archive html file'));
-					});
-				}(i));
+				for (var i in postsByTag) {
+					if (config.i18n.default === lang) {
+						categoryPath = './public/categories/' + i;
+					} else {
+						categoryPath = './public/categories/' + lang + '/' + i;
+					}
+					tagContent = tagTemplateNJ.render({ posts : postsByTag[i], config : GLOBAL.config, category: i });
+					nodefs.mkdirSync(categoryPath, 0777, true);
+					fs.writeFileSync(categoryPath + '/index.html', tagContent);
+					console.log(clc.info('Successfully generated tag[' + categoryPath + '] archive html file'));
+				}
 			}
 			resolve(postsMetadata);
 		});
 	};
 
 	this.generateIndex = function(postsMetadata) {
-		var _posts = null;
-		postsMetadata.sort(function(a,b) {
-			return new Date(b.date) - new Date(a.date);
-		});
-		_posts = postsMetadata.slice(0,GLOBAL.config.index_posts || 10);
 		return new Promise(function(resolve, reject) {
+			var _posts = null;
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.nunjucksEnv;
 			var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
 			var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
 			var indexContent = '';
-			indexContent = indexTemplateNJ.render({ posts : _posts, config : GLOBAL.config });
+			var indexPath = null;
 
-			/* write index html file */
-			fs.writeFile('./public/index.html', indexContent, function (err) {
-				if (err) throw err;
-				console.log(clc.info('Successfully generated index html file'));
-				resolve(postsMetadata);
-			});
+			for (var lang in postsMetadata) {
+				postsMetadata[lang].sort(function(a,b) {
+					return new Date(b.date) - new Date(a.date);
+				});
+				_posts = postsMetadata[lang].slice(0,GLOBAL.config.index_posts || 10);
+				indexContent = indexTemplateNJ.render({ posts : _posts, config : GLOBAL.config });
+
+				if (config.i18n.default === lang) {
+					indexPath = './public/';
+				} else {
+					indexPath = './public/' + lang;
+				}
+				nodefs.mkdirSync(indexPath, 0777, true);
+				fs.writeFileSync(indexPath + '/index.html', indexContent);
+				console.log(clc.info(lang + '/index file successfully created'));
+			}
+			resolve(postsMetadata);
 		});
 	};
 
@@ -296,77 +306,93 @@ var Parser = function() {
 	this.generatePosts = function (files) {
 		return new Promise(function(resolve, reject) {
 			var config = GLOBAL.config,
-				posts = [],
+				posts = {},
 				curTemplate = config.template,
 				postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
 				nunjucksEnv = GLOBAL.nunjucksEnv,
 				postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
 
-			files.forEach(function(file, i) {
-				var md = new mkmeta(postsPath + '/' + file);
-				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
-				var metadata = Helper.normalizeMetaData(md.metadata());
-				var post = Helper.normalizeContent(md.markdown());
-				var postCropped = md.markdown( { crop : '<!--more-->'});
-				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
-				var checkDate = new Date(filename.substr(0,10));
-				filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
-				var postPath = permalinks(config.posts_permalink, { title : filename });
-				var categories = metadata.categories.split(',');
-				metadata.link = postPath;
-				metadata.categories = categories;
-				var _post = {
-					content : post,
-					metadata : metadata
-				}
-				var postHTMLFile = postsTemplateNJ
-					.render({ post : _post, config : GLOBAL.config })
-					.replace(/<!--[\s\S]*?-->/g, '');
-				
-				if(metadata.published && metadata.published === 'false') {
-					return;
-				}
+			for (var lang in files) {
+				files[lang].forEach(function(file, i) {
+					var md = new mkmeta(postsPath + lang + '/' + file);
+					md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
+					var metadata = Helper.normalizeMetaData(md.metadata());
+					var post = Helper.normalizeContent(md.markdown());
+					var postCropped = md.markdown( { crop : '<!--more-->'});
+					var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+					var checkDate = new Date(filename.substr(0,10));
+					filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
+					var postPath = null;
+					var categories = metadata.categories.split(',');
 
-				nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
-					if (err) {
-						reject(err);
+					/* If is the default language, generate in the root path */
+					if (config.i18n.default === lang) {
+						postPath = permalinks(config.posts_permalink.split(':language/')[1], { title : filename });
 					} else {
-						/* write post html file */
-						fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile, function (err) {
-							if (err) {
-								reject(err);
-							}
-							console.log(clc.info('Successfully generated post ' + postPath));
-						});
+						postPath = permalinks(config.posts_permalink, { title : filename, language : lang });
+					}
+					metadata.link = postPath;
+					metadata.categories = categories;
+					var _post = {
+						content : post,
+						metadata : metadata
+					}
+					var postHTMLFile = postsTemplateNJ
+						.render({ post : _post, config : GLOBAL.config })
+						.replace(/<!--[\s\S]*?-->/g, '');
+					
+					if(metadata.published && metadata.published === 'false') {
+						return;
+					}
+
+					nodefs.mkdir('./public/' + postPath, 0777, true, function (err) {
+						if (err) {
+							reject(err);
+						} else {
+							/* write post html file */
+							fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile, function (err) {
+								if (err) {
+									reject(err);
+								}
+								console.log(clc.info('Successfully generated post ' + postPath));
+							});
+						}
+					});
+					metadata['content'] = postCropped;
+					metadata['file'] = postsPath + file;
+					metadata['filename'] = filename;
+					metadata['link'] = postPath;
+					metadata['lang'] = lang;
+					metadata.date = new Date(metadata.date);
+					if (posts[lang]) {
+						posts[lang].push(metadata);
+					} else {
+						posts[lang] = [metadata];
+					}
+
+					if (i === files[lang].length - 1) {
+						Helper.compileES6('posts', posts);
+						resolve(posts);
 					}
 				});
-				metadata['content'] = postCropped;
-				metadata['file'] = postsPath + file;
-				metadata['filename'] = filename;
-				metadata['link'] = postPath;
-				metadata.date = new Date(metadata.date);
-				posts.push(metadata);
-
-				if (i === files.length - 1) {
-					Helper.compileES6('posts', posts);
-					resolve(posts);
-				}
-			});
-
+			}
 		});
 	};
 
 	this.getFiles = function() {
 		return new Promise(function (resolve, reject) {
 
-			/* Reading posts dir */
-			fs.readdir(postsPath, function (err, files) {
-				if (err) {
-					throw err;
-				}
+			var config = GLOBAL.config,
+				langs = config.i18n.languages,
+				langsLen = langs.length,
+				i = 0,
+				files = {};
 
-				resolve(files);
-			});
+			for (i; i < langsLen; i += 1) {
+				files[langs[i]] = fs.readdirSync(postsPath  + langs[i]);
+			}
+
+			resolve(files);
 		});
 	};
 
