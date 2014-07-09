@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ config.title }}</title>
+    <meta name="author" content="{{ config.author }}">
+    <meta name="description" content="{{ config.description }}">
+
+    <!-- http://t.co/dKP3o1e -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:title" content="{{ config.title }}" />
+    <meta property="og:description" content="{{ config.description }}" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="canonical" href="{{ config.domain }}">
+    <link href="/favicon.png" rel="icon">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+	{% include "partials/navigation.html" %}
+  
+    {% include "partials/header.html" %}
+
+    <section id="posts" class="posts">
+        <ul class="postList">
+            {% for post in posts %}
+            <li class="post">
+                <span class="post__date">
+                    {{ post.date }}
+                </span>
+                <article class="post__content">
+                    <a class="post__title" href="/{{ post.link }}">
+                        {{ post.title }}
+                    </a>
+                </article>
+                <section class="post__author">
+                    <figure class="author">
+                        <img class="author__photo" src="{{ post.authorPicture }}" />
+                        <figcaption>
+                            <a class="author__link" href="{{ post.authorLink }}">@Jaydson</a>
+                        </figcaption>
+                    </figure>
+                    <section class="author__description">
+                        {{ post.authorDescription }}
+                    </section>
+                </section>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+</main>
+
+{% include "partials/footer.html" %}
+
+</body>
+</html>

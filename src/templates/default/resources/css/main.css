@@ -92,9 +92,9 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font: inherit;
+  font-family: inherit;
   vertical-align: baseline;
-  color: $txtColor;
+  color: #141414;
 }
 article,
 aside,
@@ -168,12 +168,34 @@ a:focus {
   font-size: 1.2rem;
   margin: 0.5em 1em;
 }
+.social__item.avatar {
+  float: left;
+}
+.social__item.avatar svg > path {
+  fill: #fff;
+}
+@media (min-width: 840px) {
+  .social__item.avatar {
+    display: none;
+  }
+}
 .social__link {
   color: #fff;
 }
 .social__link:hover path,
 .social__link:focus path {
   fill: #fafa64;
+}
+.flags {
+  width: 165px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.flags li {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin: 0.5em 0.1em;
 }
 .lobby {
   width: 100%;
@@ -242,6 +264,32 @@ a:focus {
   max-width: 60%;
   font-size: 1.2em;
   padding-top: 3em;
+}
+.categories {
+  margin: 1em 0 2em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.categoryTag {
+  margin: 0 1em;
+  padding: 0.25em 0.5em;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #808080;
+}
+.talks {
+  background-color: #d2820b;
+}
+.modules {
+  background-color: #532794;
+}
+.ES6 {
+  background-color: #d8b505;
+}
+.Interview {
+  background-color: #366;
 }
 .posts {
   background-color: #fff;
@@ -466,11 +514,38 @@ a:focus {
     max-width: 6rem;
   }
 }
-.postContent__title h2 {
+.postContent__title {
+  margin: 1em 0 2em;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+@media (min-width: 840px) {
+  .postContent__title {
+    flex-flow: row;
+  }
+}
+.postContent__title h1 {
   font-size: 2.5rem;
   color: #366;
-  text-align: center;
   margin: 2rem 0;
+  text-align: center;
+}
+@media (min-width: 840px) {
+  .postContent__title h1 {
+    text-align: left;
+    flex-basis: 60%;
+  }
+}
+.postContent__title h2 {
+  display: none;
+}
+@media (min-width: 840px) {
+  .postContent__title h2 {
+    display: block;
+    height: 10em;
+  }
 }
 .postContent {
   margin: 0 auto;
@@ -483,11 +558,14 @@ a:focus {
 }
 @media (min-width: 1000px) {
   .postContent {
-    width: 40%;
+    width: 55%;
   }
 }
+.postContent h2 {
+  margin: 2em 0 1em;
+}
 .postContent p {
-  margin-bottom: 1em;
+  margin: 1em 0;
 }
 .postContent blockquote {
   padding: 0 0.5em;
@@ -497,8 +575,13 @@ a:focus {
   padding: 2rem 0;
 }
 .comments #disqus_thread {
-  width: 60%;
   margin: 0 auto;
+  width: 90%;
+}
+@media (min-width: 1000px) {
+  .comments #disqus_thread {
+    width: 60%;
+  }
 }
 .bottom {
   position: relative;

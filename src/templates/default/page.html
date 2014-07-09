@@ -9,21 +9,12 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-{% include "partials/header.html" %}
+{% include "partials/navigation.html" %}
 <body>
 	<header class="postContent__title">
 	    <h2>
 	      {{ page.metadata.title }}
 	    </h2>
-	    <div class="categories">
-	    	{% for category in page.metadata.categories %}
-	    		<span>
-	    			<a href="/categories/{{ category | lower | trim }}">
-	    				{{ category }}
-	    			</a>
-	    		</span>
-	    	{% endfor %}
-	    </div>
 	</header>
 
 	<article class="postContent">

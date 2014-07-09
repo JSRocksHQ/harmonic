@@ -6,7 +6,7 @@ comments: false
 published: true
 keywords: JavaScript, ES6
 description: About page
-categories: about
+categories: 
 authorName: Jaydson
 authorLink: http://twitter.com/jaydson
 authorDescription: JavaScript enthusiast - FrontEnd Engineer at Terra Networks - BrazilJS and RSJS curator

@@ -1,93 +1,104 @@
-# Harmonic - The next static site generator
-> Please note that this project is currently under development. Contributions are pretty welcome!
-
 ![harmonic logo](harmonic-logo.png)  
+
+# The next static site generator
+> Please note that this project is currently under development. Contributions are pretty welcome!
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
 - Build a simple static site generator in node using ES6 features
-- Create the ES6 Rocks website with Harmonic!
+- Create the ES6 Rocks website with Harmonic! (Actually, the website is already online [ES6Rocks](http://es6rocks.com))  
 
-## How to start
-You'll need the last version of [node](http://nodejs.org/) (current stable is v0.10.28 and latest is 0.11.13).  
-In my tests i'm using node version v0.11.12.  
-Check your node version:  
+Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rocks/harmonic/wiki/](https://github.com/es6rocks/harmonic/wiki/)
+
+## Installing
+**Attention:**  
+Harmonic uses some ES6 features. You'll need to install the latest node version.  
+[NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
+
+Clone the harmonic repository:  
 ```shell
-node --version
+git clone git@github.com:es6rocks/harmonic.git
 ```
 
-## Installing on linux
+Install:  
 ```shell
-git clone https://github.com/es6rocks/harmonic.git
 cd harmonic
-./install.sh
-```
-## installing manually
-1 - Clone the harmonic repository
-```shell
-git clone https://github.com/es6rocks/harmonic.git
-```
-
-2 - Create a file "nodeHarmony" in your path /usr/local/bin with the following code:
-```shell
-#!/bin/sh
-node --harmony "$@"
-```
-3 - Give the right permission:
-```shell
-sudo chmod a+x nodeHarmony
-```
-
-Now, if your run in your console:  
-```shell
-nodeHarmony myfile.js
-```
-You will be running node with harmony flag.  
-Harmonic depends on this configuration.
-
-4 - Install the dependencies:  
-```
-cd harmonic
-[sudo] npm install
-```
-5 - Harmonic is not available on npm (yet), so you need to run the following code to get harmonic on your global path:  
-```
+npm install
 npm link
 ```
+For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
 
-##Init
-Harmonic init command helps you to create your harmonic configuration file.  
+## Config
+The Harmonic config file is a simple JSON object.  
+You can configure your static website with the CLI _config_ command:  
 ```shell
-harmonic init
+harmonic config
 ```
+![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
+For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
 
-## Build
-Harmonic is currently in alpha, but you already can generate posts, and the index page.  
-Just as usual, create your posts in the "/src/posts" folder using markdown syntax.  
-You'll need to especify a header for each post.  
-Example:
+## Blogging
+Harmonic follow the pattern of others static site generators you may know.  
+You must write your posts in [Markdown](http://daringfireball.net/projects/markdown/) format.  
+
+### New post:  
 ```
+harmonic new_post "Hello World"
+```
+![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
+
+After running **_new_post_**, the markdown file will be generated in _**/src/posts/**_ folder.  
+
+### Markdown header
+The markdown file have a header which defines the post meta-data.  
+Example:  
+```markdown
 <!--
 layout: post
-title: post test
-date: 2014-01-17 00:33
+title: hello world
+date: 2014-05-17T08:18:47.847Z
 comments: true
 published: true
 keywords: JavaScript, ES6
-description: my post description
-categories: my-category
+description: Hello world post
+categories: JavaScript, ES6
+authorName: Jaydson
 -->
 ```
+You can check all possible header values in the [header page](https://github.com/es6rocks/harmonic/wiki/markdown-header).  
 
-Now, just build your awesome website!  
+### Markdown content
+Everything after the header is the post content.  
+Exemple:  
+```markdown
+# Hello World  
+This is my awesome post using [harmonic](https://github.com/es6rocks/harmonic).  
+
+This is a list:  
+- Item 1
+- Item 2
+- Item 3
+```
+The code above will be parsed to something like this:  
+```html
+<h1 id="hello-world">Hello World</h1>
+<p>
+  This is my awesome post using 
+  <a href="https://github.com/es6rocks/harmonic">harmonic</a>.
+</p>
+<p>This is a list:  </p>
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Item 3</li>
+</ul>
+```
+For more details, you can check the full documentation: [Blogging](https://github.com/es6rocks/harmonic/wiki/Blogging).  
+
+## Build
+The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
 ```shell
 harmonic build
-```
-
-## New Post
-To create a new post, just run:
-```shell
-harmonic new_post "my awesome post"
 ```
 
 ## Run
