@@ -27,6 +27,7 @@ Simply:
 harmonic init [PATH]
 ```
 [PATH] is your website dir. The default path is the current dir.
+After init, enter in your website dir and start creating posts, etc.  
 
 ## Config
 The Harmonic config file is a simple JSON object.  
