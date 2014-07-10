@@ -26,6 +26,7 @@ Simply:
 ```shell
 harmonic init [PATH]
 ```
+[PATH] is your website dir. The default path is the current dir.
 
 ## Config
 The Harmonic config file is a simple JSON object.  
