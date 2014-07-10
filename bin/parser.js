@@ -1,3 +1,4 @@
+var rootdir = GLOBAL.rootdir;
 var fs = require('fs');
 var marked = require('marked');
 var postsPath = './src/posts/';
@@ -17,7 +18,6 @@ var mkmeta = require('marked-metadata');
 var util = require('./cli/util');
 var traceur = require('traceur');
 var clc = util.cli_color();
-var rootdir = GLOBAL.rootdir;
 
 var Helper =  {
 	getPagesFiles : function () {
@@ -152,10 +152,8 @@ var Parser = function() {
 
 	this.createPublicFolder = function(argument) {
 		fs.exists('./public', function(exists) {
-			if(!exists){
-				fs.mkdirSync("public", 0766, function(err){
-					if (err) throw err;
-				});
+			if(!exists) {
+				fs.mkdirSync("public", 0766);
 				console.log(clc.info('Successfully generated public folder'));
 			}
 		});
