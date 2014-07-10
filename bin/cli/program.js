@@ -1,10 +1,14 @@
+var fs = require('fs');
 var program = require('commander');
+
+GLOBAL.rootdir = __dirname + '/../../';
+GLOBAL.version = JSON.parse(fs.readFileSync(rootdir + "/package.json").toString()).version;
+
 var util = require('../cli/util');
 var logo = require('../cli/logo');
-GLOBAL.rootdir = __dirname + '/../../';
 
 program
-	.version('0.0.3')
+	.version(GLOBAL.version)
 
 	/* Options */
 	.option('-b, --build', 'Build your static website');
