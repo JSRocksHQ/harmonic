@@ -12,26 +12,28 @@ Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rock
 
 ## Installing
 **Attention:**  
-Harmonic uses some ES6 features. You'll need to install the latest node version.  
+Harmonic uses some ES6 features. You'll need to instal node 0.11.* version.  
 [NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
 
-Clone the harmonic repository:  
 ```shell
-git clone git@github.com:es6rocks/harmonic.git
-```
-
-Install:  
-```shell
-cd harmonic
-npm install
-npm link
+npm install harmonic -g
 ```
 For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
+
+## Init
+First thing you'll need to do is initialize a new Harmonic website.  
+Simply:  
+```shell
+harmonic init [PATH]
+```
+[PATH] is your website dir. The default path is the current dir.
+After init, enter in your website dir and start creating posts, etc.  
 
 ## Config
 The Harmonic config file is a simple JSON object.  
 You can configure your static website with the CLI _config_ command:  
 ```shell
+cd [PATH]
 harmonic config
 ```
 ![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
