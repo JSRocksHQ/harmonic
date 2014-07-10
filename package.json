@@ -2,7 +2,7 @@
   "name": "harmonic",
   "description": "The next static site generator",
   "homepage": "https://github.com/es6rocks/harmonic",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "preferGlobal": "true",
   "bin": {
     "harmonic": "harmonic.js"
