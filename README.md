@@ -12,7 +12,7 @@ Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rock
 
 ## Installing
 **Attention:**  
-Harmonic uses some ES6 features. You'll need to install the latest node version.  
+Harmonic uses some ES6 features. You'll need to instal node 0.11.* version.  
 [NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
 
 ```shell
