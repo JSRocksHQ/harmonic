@@ -47,6 +47,8 @@ var Helper =  {
 			var nunjucksEnv = GLOBAL.nunjucksEnv;
 			var config = GLOBAL.config
 
+			GLOBAL.pages = {};
+
 			files.forEach(function (file, i) {
 				var page = fs.readFileSync( pagesPath + "/" + file).toString();
 				var pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html');
@@ -75,6 +77,8 @@ var Helper =  {
 				metadata['filename'] = filename;
 				metadata['link'] = '/' + filename + '.html';
 				metadata.date = new Date(metadata.date);
+
+				GLOBAL.pages[filename] = metadata;
 
 				nodefs.mkdir('./public/' + pagePermalink, 0777, true, function (err) {
 					if (err) {
