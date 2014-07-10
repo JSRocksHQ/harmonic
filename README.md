@@ -32,6 +32,7 @@ harmonic init [PATH]
 The Harmonic config file is a simple JSON object.  
 You can configure your static website with the CLI _config_ command:  
 ```shell
+cd [PATH]
 harmonic config
 ```
 ![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
