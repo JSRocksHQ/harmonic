@@ -11,9 +11,6 @@
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
   },
-  "scripts": {
-    "install": "./install.sh"
-  },
   "dependencies": {
     "cli-color": "^0.3.2",
     "co": "~3.0.5",

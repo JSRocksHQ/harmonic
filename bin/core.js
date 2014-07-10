@@ -13,12 +13,14 @@ module.exports = {
 			.then(parser.compileStylus)
 			.then(parser.generatePages)
 			.then(parser.getFiles)
-			//.then(parser.getMarkdownMetadata)
 			.then(parser.generatePosts)
 			.then(parser.generateIndex)
 			.then(parser.generateTagsPages)
 			.then(parser.copyResources)
-			.then(resolve);
+			.then(resolve)
+			.catch(function (e) {
+				console.log(e);
+			});
 		});
 	}
 }

@@ -17,6 +17,7 @@ var mkmeta = require('marked-metadata');
 var util = require('./cli/util');
 var traceur = require('traceur');
 var clc = util.cli_color();
+var rootdir = GLOBAL.rootdir;
 
 var Helper =  {
 	getPagesFiles : function () {
@@ -106,9 +107,9 @@ var Helper =  {
 
 	compileES6 : function (context, data) {
 		var result = '',
-			traceur_runtime = fs.readFileSync('./bin/client/traceur-runtime.js').toString(),
-			config = fs.readFileSync('./config.json').toString(),
-			harmonic_client = fs.readFileSync('./bin/client/harmonic-client.js').toString();
+			traceur_runtime = fs.readFileSync(rootdir + '/bin/client/traceur-runtime.js').toString(),
+			config = fs.readFileSync('./harmonic.json').toString(),
+			harmonic_client = fs.readFileSync(rootdir + '/bin/client/harmonic-client.js').toString();
 
 		harmonic_client =
 			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))
@@ -401,12 +402,12 @@ var Parser = function() {
 
 	this.getConfig = function() {
 		return new Promise(function (resolve, reject) {
-			var config = JSON.parse(fs.readFileSync("./config.json").toString());
+			var config = JSON.parse(fs.readFileSync("./harmonic.json").toString());
 			var custom = null;
 			var newConfig = null;
 
 			try {
-				custom = JSON.parse(fs.readFileSync("./src/templates/" + config.template + "/config.json").toString());
+				custom = JSON.parse(fs.readFileSync("./src/templates/" + config.template + "/harmonic.json").toString());
 			} catch (e) {
 			}
 			if (custom) {

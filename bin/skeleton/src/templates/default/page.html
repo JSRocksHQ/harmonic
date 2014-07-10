@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page.metadata.title }} - {{ config.title }}</title>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:image" content="http://es6rocks.com/images/es6rocks.png" />
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+{% include "partials/navigation.html" %}
+<body>
+	<header class="postContent__title">
+	    <h2>
+	      {{ page.metadata.title }}
+	    </h2>
+	</header>
+
+	<article class="postContent">
+		{{ page.content }}
+	</article>
+
+	{% include "partials/disqus.html" %}
+
+	{% include "partials/footer.html" %}
+
+</body>
+</html>
+</body>
+</html>

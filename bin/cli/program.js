@@ -1,12 +1,22 @@
 var program = require('commander');
 var util = require('../cli/util');
 var logo = require('../cli/logo');
+GLOBAL.rootdir = __dirname + '/../../';
 
 program
 	.version('0.0.3')
 
 	/* Options */
 	.option('-b, --build', 'Build your static website');
+
+program
+	.command('init')
+	.description('Init your static website')
+	.action(function (path) {
+		console.log(logo);
+		util.init(typeof path === 'string' ? path : './');
+	});
+
 
 program
 	.command('config')

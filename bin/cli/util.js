@@ -6,8 +6,32 @@ var co = require('co');
 var prompt = require('co-prompt');
 var confirm = prompt.confirm;
 var _ = require('underscore');
+var ncp = require('ncp').ncp;
+var rootdir = GLOBAL.rootdir;
 
 module.exports = {
+
+	init : function (p) {
+		var sitePath = p,
+			skeletonPath = rootdir + '/bin/skeleton',
+			copySkeleton = function () {
+				console.log(skeletonPath, sitePath);
+				ncp(skeletonPath, sitePath, function (err) {
+					if (err) {
+						console.log(err);
+						return;
+					}
+					console.log('Harmonic skeleton started at: ' + sitePath);
+				});
+			}
+
+		fs.exists(sitePath, function(exists) {
+			if(!exists) {
+				fs.mkdirSync(sitePath, 0766);
+			}
+			copySkeleton();
+		});
+	},
 
 	cli_color : function () {
 		var clc = require('cli-color');
@@ -49,7 +73,7 @@ module.exports = {
 			}
 
 			/* create the configuration file */
-			fs.writeFile('./config.json', JSON.stringify(_.extend(templateObj, config), null, 4), function (err) {
+			fs.writeFile('./harmonic.json', JSON.stringify(_.extend(templateObj, config), null, 4), function (err) {
 				if (err) throw err;
 				console.log(clc.info('Config file was successefuly created/updated'));
 			});

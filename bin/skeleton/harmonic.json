@@ -1,0 +1,18 @@
+{
+    "name": "Harmonic",
+    "title": "Harmonic Static site generator",
+    "domain": "",
+    "subtitle": "Static website powered by Harmonic",
+    "author": "ES6Rocks",
+    "description": "This website was made using Harmonic",
+    "bio": "",
+    "template": "default",
+    "posts_permalink" : ":language/:year/:month/:title",
+    "pages_permalink" : "pages/:title",
+    "header_tokens" : ["<!--","-->"],
+    "index_posts" : 10,
+    "i18n" : {
+        "default" : "en",
+        "languages" : ["en","pt-br"]
+    }
+}
