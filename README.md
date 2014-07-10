@@ -15,18 +15,17 @@ Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rock
 Harmonic uses some ES6 features. You'll need to install the latest node version.  
 [NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
 
-Clone the harmonic repository:  
 ```shell
-git clone git@github.com:es6rocks/harmonic.git
-```
-
-Install:  
-```shell
-cd harmonic
-npm install
-npm link
+npm install harmonic -g
 ```
 For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
+
+## Init
+First thing you'll need to do is initialize a new Harmonic website.  
+Simply:  
+```shell
+harmonic init [PATH]
+```
 
 ## Config
 The Harmonic config file is a simple JSON object.  
