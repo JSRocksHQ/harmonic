@@ -192,7 +192,6 @@ var Parser = function() {
                 });
             }
         };
-        console.log(GLOBAL.config.preprocessor);
         compiler[GLOBAL.config.preprocessor]();
     }
 
