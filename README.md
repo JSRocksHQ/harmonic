@@ -28,8 +28,8 @@ Simply:
 ```shell
 harmonic init [PATH]
 ```
-[PATH] is your website dir. The default path is the current dir.
-Harmonic will prompt you asking for some data about your website:  
+[PATH] is your website dir. The default path is the current dir.  
+Harmonic will prompt you asking for some data about your website:   
 ![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
 
 The Harmonic config file is a simple JSON object.  
