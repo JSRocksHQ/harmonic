@@ -56,7 +56,7 @@ module.exports = {
 			    "description": "This is the description",
 			    "bio": "Thats me",
 			    "template": "default",
-                "preprocessor": "less",
+                "preprocessor": "stylus",
 			    "posts_permalink" : ":year/:month/:title",
 			    "pages_permalink" : "pages/:title",
 			    "header_tokens" : ["<!--","-->"],

@@ -7,7 +7,7 @@
     "description": "",
     "bio": "",
     "template": "default",
-    "preprocessor": "less",
+    "preprocessor": "stylus",
     "posts_permalink" : ":language/:year/:month/:title",
     "pages_permalink" : "pages/:title",
     "header_tokens" : ["<!--","-->"],
