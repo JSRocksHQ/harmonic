@@ -47,6 +47,7 @@ You must write your posts in [Markdown](http://daringfireball.net/projects/markd
 
 ### New post:  
 ```
+cd your_awesome_website
 harmonic new_post "Hello World"
 ```
 ![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
