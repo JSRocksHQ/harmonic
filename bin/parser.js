@@ -47,7 +47,7 @@ var Helper =  {
 			var nunjucksEnv = GLOBAL.nunjucksEnv;
 			var config = GLOBAL.config
 
-			GLOBAL.pages = {};
+			GLOBAL.pages = [];
 
 			files.forEach(function (file, i) {
 				var page = fs.readFileSync( pagesPath + "/" + file).toString();
@@ -78,7 +78,7 @@ var Helper =  {
 				metadata['link'] = '/' + filename + '.html';
 				metadata.date = new Date(metadata.date);
 
-				GLOBAL.pages[filename] = metadata;
+				GLOBAL.pages.push(metadata);
 
 				nodefs.mkdir('./public/' + pagePermalink, 0777, true, function (err) {
 					if (err) {
@@ -249,7 +249,12 @@ var Parser = function() {
 					return new Date(b.date) - new Date(a.date);
 				});
 				_posts = postsMetadata[lang].slice(0,GLOBAL.config.index_posts || 10);
-				indexContent = indexTemplateNJ.render({ posts : _posts, config : GLOBAL.config });
+
+				indexContent = indexTemplateNJ.render({
+					posts  : _posts,
+					config : GLOBAL.config,
+					pages  : GLOBAL.pages
+				});
 
 				if (config.i18n.default === lang) {
 					indexPath = './public/';
