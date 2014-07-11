@@ -4,10 +4,7 @@ var program = require('commander');
 var logo = require('../cli/logo');
 
 program
-	.version(localconfig.version)
-
-	/* Options */
-	.option('-b, --build', 'Build your static website');
+	.version(localconfig.version);
 
 program
 	.command('init')
@@ -55,7 +52,7 @@ program
 		var core = require('../core');
 		core.init().then(function() {
 			util.run(port);
-		});		
+		});
 	});
 
 program.parse(process.argv);

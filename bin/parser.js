@@ -229,8 +229,8 @@ var Parser = function() {
 					fs.writeFileSync(tagPath + '/index.html', tagContent);
 					console.log(clc.info('Successfully generated tag[' + i + '] archive html file'));
 				}
-				resolve(postsMetadata);	
-			}			
+				resolve(postsMetadata);
+			}
 		});
 	};
 
@@ -314,12 +314,14 @@ var Parser = function() {
 				curTemplate = config.template,
 				postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
 				nunjucksEnv = GLOBAL.nunjucksEnv,
-				postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
+				postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
+                tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
+                          config.header_tokens ? config.header_tokens[1] : '-->'];
 
 			for (var lang in files) {
 				files[lang].forEach(function(file, i) {
 					var md = new mkmeta(postsPath + lang + '/' + file);
-					md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
+					md.defineTokens(tokens[0], tokens[1]);
 					var metadata = Helper.normalizeMetaData(md.metadata());
 					var post = Helper.normalizeContent(md.markdown());
 					var postCropped = md.markdown( { crop : '<!--more-->'});
@@ -352,7 +354,7 @@ var Parser = function() {
 					var postHTMLFile = postsTemplateNJ
 						.render({ post : _post, config : GLOBAL.config })
 						.replace(/<!--[\s\S]*?-->/g, '');
-					
+
 					if(metadata.published && metadata.published === 'false') {
 						return;
 					}
