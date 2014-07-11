@@ -1,4 +1,4 @@
-var rootdir = GLOBAL.rootdir;
+var localconfig = require('./config');
 var fs = require('fs');
 var marked = require('marked');
 var postsPath = './src/posts/';
@@ -107,9 +107,9 @@ var Helper =  {
 
 	compileES6 : function (context, data) {
 		var result = '',
-			traceur_runtime = fs.readFileSync(rootdir + '/bin/client/traceur-runtime.js').toString(),
+			traceur_runtime = fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js').toString(),
 			config = fs.readFileSync('./harmonic.json').toString(),
-			harmonic_client = fs.readFileSync(rootdir + '/bin/client/harmonic-client.js').toString();
+			harmonic_client = fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js').toString();
 
 		harmonic_client =
 			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))

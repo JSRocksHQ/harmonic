@@ -1,3 +1,4 @@
+var localconfig = require('../config');
 var fs = require('fs');
 var path = './src/posts/';
 var Promise = require('promise');
@@ -7,15 +8,13 @@ var prompt = require('co-prompt');
 var confirm = prompt.confirm;
 var _ = require('underscore');
 var ncp = require('ncp').ncp;
-var rootdir = GLOBAL.rootdir;
 
 module.exports = {
 
 	init : function (p) {
 		var sitePath = p,
-			skeletonPath = rootdir + '/bin/skeleton',
+			skeletonPath = path.normalize(localconfig.rootdir + '/bin/skeleton'),
 			copySkeleton = function () {
-				console.log(skeletonPath, sitePath);
 				ncp(skeletonPath, sitePath, function (err) {
 					if (err) {
 						console.log(err);
