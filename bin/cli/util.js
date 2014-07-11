@@ -36,7 +36,7 @@ module.exports = {
 			copySkeleton().then(function (msg) {
 				console.log(clc.message(msg));
 				that.config(sitePath);
-			});			
+			});
 		});
 	},
 
@@ -56,6 +56,7 @@ module.exports = {
 			    "description": "This is the description",
 			    "bio": "Thats me",
 			    "template": "default",
+                "preprocessor": "less",
 			    "posts_permalink" : ":year/:month/:title",
 			    "pages_permalink" : "pages/:title",
 			    "header_tokens" : ["<!--","-->"],
@@ -81,7 +82,7 @@ module.exports = {
 				if (err) throw err;
 				console.log(clc.message('\nYour Harmonic website skeleton was successefuly created!\nNow, enter in the project dir and have fun.'));
 			});
-			
+
 			process.stdin.pause();
 
 		})();
