@@ -15,6 +15,8 @@ Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rock
 Harmonic uses some ES6 features. You'll need to instal node 0.11.* version.  
 [NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
 
+Harmonic is avaiable on npm:  
+
 ```shell
 npm install harmonic -g
 ```
@@ -26,17 +28,17 @@ Simply:
 ```shell
 harmonic init [PATH]
 ```
-[PATH] is your website dir. The default path is the current dir.
-After init, enter in your website dir and start creating posts, etc.  
+[PATH] is your website dir. The default path is the current dir.  
+Harmonic will prompt you asking for some data about your website:   
+![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
 
-## Config
 The Harmonic config file is a simple JSON object.  
-You can configure your static website with the CLI _config_ command:  
+Any time you want, you can configure your static website with the CLI _config_ command:  
 ```shell
 cd [PATH]
 harmonic config
 ```
-![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
+Now, enter in your website dir and start creating posts, etc.  
 For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
 
 ## Blogging
@@ -45,6 +47,7 @@ You must write your posts in [Markdown](http://daringfireball.net/projects/markd
 
 ### New post:  
 ```
+cd your_awesome_website
 harmonic new_post "Hello World"
 ```
 ![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
