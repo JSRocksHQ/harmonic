@@ -27,16 +27,16 @@ Simply:
 harmonic init [PATH]
 ```
 [PATH] is your website dir. The default path is the current dir.
-After init, enter in your website dir and start creating posts, etc.  
+Harmonic will prompt you asking for some data about your website:  
+![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
 
-## Config
 The Harmonic config file is a simple JSON object.  
-You can configure your static website with the CLI _config_ command:  
+Any time you want, you can configure your static website with the CLI _config_ command:  
 ```shell
 cd [PATH]
 harmonic config
 ```
-![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
+Now, enter in your website dir and start creating posts, etc.  
 For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
 
 ## Blogging
