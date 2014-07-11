@@ -1,4 +1,5 @@
 var localconfig = require('./config');
+var helpers = require('./helpers');
 var fs = require('fs');
 var marked = require('marked');
 var postsPath = './src/posts/';
@@ -17,7 +18,7 @@ var stylus = require('stylus');
 var mkmeta = require('marked-metadata');
 var util = require('./cli/util');
 var traceur = require('traceur');
-var clc = util.cli_color();
+var clc = helpers.cli_color();
 
 var Helper =  {
 	getPagesFiles : function () {
@@ -45,7 +46,9 @@ var Helper =  {
 			var pages = [];
 			var curTemplate = GLOBAL.config.template;
 			var nunjucksEnv = GLOBAL.nunjucksEnv;
-			var config = GLOBAL.config
+			var config = GLOBAL.config;
+			var tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
+						  config.header_tokens ? config.header_tokens[1] : '-->'];
 
 			files.forEach(function (file, i) {
 				var page = fs.readFileSync( pagesPath + "/" + file).toString();
@@ -54,7 +57,7 @@ var Helper =  {
 				var markfile = page.toString();
 				var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
 				var md = new mkmeta(pagesPath + '/' + file);
-				md.defineTokens(config.header_tokens[0] || '<!--', config.header_tokens[1] || '-->');
+				md.defineTokens(tokens[0], tokens[1]);
 
 				/* Markdown extra */
 				var metadata = md.metadata();
@@ -151,36 +154,37 @@ var Parser = function() {
 	};
 
 	this.createPublicFolder = function(argument) {
-		fs.exists('./public', function(exists) {
-			if(!exists) {
-				fs.mkdirSync("public", 0766);
-				console.log(clc.info('Successfully generated public folder'));
-			}
+		return new Promise(function(resolve, reject) {
+			fs.exists('./public', function(exists) {
+				if(!exists) {
+					fs.mkdirSync("public", 0766);
+					console.log(clc.info('Successfully generated public folder'));
+					resolve();
+				}
+			});
 		});
 	};
 
 	this.compileStylus = function() {
-		var subDirs = ['./src/templates/default/resources/_stylus/'];
-		var curTemplate = './src/templates/' + GLOBAL.config.template;
-		var stylDir = curTemplate + '/resources/_stylus';
-		var cssDir = curTemplate + '/resources/css';
-		var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+		return new Promise(function (resolve, reject) {
+			var subDirs = ['./src/templates/default/resources/_stylus/'];
+			var curTemplate = './src/templates/' + GLOBAL.config.template;
+			var stylDir = curTemplate + '/resources/_stylus';
+			var cssDir = curTemplate + '/resources/css';
+			var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
 
-			stylus(code)
-				.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
-				.render(function(err, css){
-
-					if (err) throw err;
-
-					fs.writeFile(cssDir + '/main.css', css, function(err) {
-						if(err) {
-							console.log(clc.error(err));
+				stylus(code)
+					.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+					.render(function(err, css) {
+						if (err) {
+							reject(err);
 						} else {
+							fs.writeFileSync(cssDir + '/main.css', css);
 							console.log(clc.info('Successfully generated CSS'));
+							resolve();
 						}
 					});
-
-				});
+		});
 	};
 
 	this.generateTagsPages = function(postsMetadata) {
