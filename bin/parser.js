@@ -165,7 +165,11 @@ var Parser = function() {
 		});
 	};
 
-	this.compileStylus = function() {
+    this.compileCss = function() {
+        this.compileCSS[GLOBAL.config.template]();
+    }
+
+	this.compileCss.stylus = function() {
 		return new Promise(function (resolve, reject) {
 			var subDirs = ['./src/templates/default/resources/_stylus/'];
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
@@ -173,19 +177,23 @@ var Parser = function() {
 			var cssDir = curTemplate + '/resources/css';
 			var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
 
-				stylus(code)
-					.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
-					.render(function(err, css) {
-						if (err) {
-							reject(err);
-						} else {
-							fs.writeFileSync(cssDir + '/main.css', css);
-							console.log(clc.info('Successfully generated CSS'));
-							resolve();
-						}
-					});
+			stylus(code)
+				.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+				.render(function(err, css) {
+					if (err) {
+						reject(err);
+					} else {
+						fs.writeFileSync(cssDir + '/main.css', css);
+						console.log(clc.info('Successfully generated CSS'));
+						resolve();
+					}
+				});
 		});
 	};
+
+    this.compileCss.less = function() {
+        console.log("less compiled");
+    };
 
 	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
