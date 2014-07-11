@@ -166,11 +166,16 @@ var Parser = function() {
 	};
 
     this.compileCss = function() {
+        var compiler = {
+            less: function() {
+                console.log("less compiled");
+            }
+        };
         console.log(GLOBAL.config.preprocessor);
-        this.compileCss[GLOBAL.config.preprocessor]();
+        compiler[GLOBAL.config.preprocessor]();
     }
 
-	this.compileCss.stylus = function() {
+	this.compileStylus = function() {
 		return new Promise(function (resolve, reject) {
 			var subDirs = ['./src/templates/default/resources/_stylus/'];
 			var curTemplate = './src/templates/' + GLOBAL.config.template;
@@ -191,10 +196,6 @@ var Parser = function() {
 				});
 		});
 	};
-
-    this.compileCss.less = function() {
-        console.log("less compiled");
-    };
 
 	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
