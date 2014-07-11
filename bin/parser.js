@@ -167,7 +167,7 @@ var Parser = function() {
 
     this.compileCss = function() {
         console.log(GLOBAL.config.preprocessor);
-        this.compileCSS[GLOBAL.config.preprocessor]();
+        this.compileCss[GLOBAL.config.preprocessor]();
     }
 
 	this.compileCss.stylus = function() {
