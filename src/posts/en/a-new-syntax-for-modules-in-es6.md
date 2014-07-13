@@ -1,6 +1,6 @@
 <!--
 layout: post
-title: A new syntax for modules at ES6
+title: A new syntax for modules in ES6
 date: 2014-07-11T07:18:47.847Z
 comments: true
 published: true
@@ -13,7 +13,7 @@ authorDescription: Internet craftsman, computer scientist and speaker. I am a fu
 authorPicture: https://avatars2.githubusercontent.com/u/353504?s=460
 -->
 
-TC39 - ECMAScript group is finishing the sixth version of ECMAScript specification. The [group schedule](http://www.2ality.com/2014/06/es6-schedule.html) points to next June as the release date. By now, no significant differences may appear. It is time to deepen your knowledge into the subject.
+TC39 - ECMAScript group is finishing the sixth version of ECMAScript specification. The [group schedule](http://www.2ality.com/2014/06/es6-schedule.html) points to next June as the release date. By now, no significant differences may appear. It is time to deepen your knowledge into the subject.  
 <!-- more -->
 This post will not cover the importance of writing modular code. ES6 modules are already well displayed by websites like [JavaScript Modules](http://jsmodules.io), by far the best reference. The objective here is to clarify and justify the necessities of releasing a new syntax to write modules.
 
@@ -27,7 +27,7 @@ Libraries are the most affected by this decision. The inconsistency can be norma
 
 Observing the formats evolution and adoption the appearance of the UMD project should be interpreted as a unified solution. This is wrong. The UMD project keeps more than ten variations and all of them deflect the module code of its objective: solve the problem that the code is written for. Look at this toy example of the UMD module `add2` that has `add` as dependency:
 
-~~~
+```javascript
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['add'], factory);
@@ -39,7 +39,7 @@ Observing the formats evolution and adoption the appearance of the UMD project s
     return add(2, param);
   };
 }));
-~~~
+```
 
 Write valid code for two module formats (or more) is not a good option. The solution is to analyse the formats to identify which one has more expressiveness power.
 
@@ -59,7 +59,7 @@ Nowadays the **only way to define scope in Javascript is beyond functions**. As 
 
 ES6 specs brings a new exclusive syntax to define module scope. Throught syntax, it is possible to define more than one module in a single file without reaching out to functions that made us give up on AMD format. The result is a significative gain in expressivity:
 
-```
+```javascript
 module 'foo' {
     // Module code
 }
@@ -76,57 +76,57 @@ Considering network protocol evolution and even thinking on present days, a modu
 
 **The module formats that we have nowadays does not allow static analysis**. Getting as an example the CommonJS module format, its [specification points](http://wiki.commonjs.org/wiki/Modules/1.0) that the `require` is just a function that accepts a module identifier. Like any other function, its argument might be evaluated in different ways. Analise the code bellow that suffers by its random argument evaluation and the influence of control flow too:
 
-~~~
+```javascript
 if (type == 'me') {
   var user = require('me');
 } else {
   var user = require('module' + Math.random());
 }
-~~~
+```
 
 I hope that it proves that it is not possible to identify the dependencies in nowadays formats without code execution. Tools like Browserify [doesn't convert modules that have dynamic dependencies](https://github.com/substack/node-browserify/issues/377) for example. That should cause confusion and break production code. Just with a specific syntax to require  modules is possible to prevent that code end up written like these.
 
 ES6 modules bring all the dependency declaration flexibility of the CommonJS modules allowing static analises of the code:
 
-~~~
+```javascript
 import asap from 'asap';
 import { later } from 'asap';
 import asap, { later } from 'asap';
-~~~
+```
 
 According to a [comment by Yehuda Katz](https://github.com/wycats/jsmodules/issues/8#issuecomment-47960446), it is not allowed to write code like `if (type == 'me') { import user from 'me'; }`. However, the specification doesn't leave apart the possibility to require dynamic dependencies using promises:
 
-~~~
+```javascript
 if (type == 'me') {
   this.import('me').then(function(user) {
     // do stuff here
   });
 }
-~~~
+```
 
 ## Code export (exports)
 
 CommonJS module format allow export code through object properties of an object stored at the variable `exports`. The result of module evaluation is just an object with properties. Node.js implementation also allows overwriting the default returned value to others types like functions, look at the `foo` module example:
 
-~~~
+```javascript
 module.exports = exports = function defaultFn() {
   return 'default';
 };
 
 exports.another = function () { return 'another'; };
-~~~
+```
 
 The above code should be required like `require('foo')()` and `require('foo').another()`. The side-effect of this approach is the addition of properties in the function object `defaultFn`.
 
 Using the new syntax, it is possible to declare a value to be required as default. In this case, the others exported values doesn't be assigned to properties of `defaultFn`. The code below is the translation to the new ES6 module syntax:
 
-~~~
+```javascript
 export default function defaultFn() {
   return 'default';
 };
 
 export function another() { return 'another'; };
-~~~
+```
 
 ## Final words
 

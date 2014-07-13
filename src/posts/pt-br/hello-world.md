@@ -1,6 +1,6 @@
 <!--
 layout: post
-title: hello world
+title: Hello World
 date: 2014-05-17T08:18:47.847Z
 comments: true
 published: true
@@ -12,19 +12,19 @@ authorLink: http://twitter.com/jaydson
 authorDescription: JavaScript enthusiast - FrontEnd Engineer at Terra Networks - BrazilJS and RSJS curator
 authorPicture: https://pbs.twimg.com/profile_images/453720347620032512/UM2nE21c_400x400.jpeg
 -->
-Hello everybody, welcome to ES6Rocks!
-The mission here is to discuss about [JavaScript's next version](http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts) , aka Harmony or ES.next.
+Olá pessoal, bem-vindos ao ES6Rocks!
+Nossa missão aqui é discutir sobre a [a nova versão do JavaScript](http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts), mais conhecida como Harmony ou ES.next.
 
 <!--more-->
-ES6 is awesome, and is coming soon.
-You can use it today, and you can learn it today!
-The main mission here is to discuss everything about ES6, and help everyone to start learning.
+ES6 é incrível e está vindo logo.
+Você já pode usa-la e também pode aprender sobre ES6 hoje mesmo!
+A principla missão aqui é discutir sobre tudo de ES6 e ajudar os desenvolvedores a começar a aprender.
 
-ES6Rocks is open for everyone.
-If you want to help, you can contribute sharing your ES6 knowledge and experience.
-You cant write an article, start a discussion, etc.
+O ES6Rocks é aberto para todos.
+Se você quer ajudar, você pode contribuir compartilhando o seu conhecimento e experiência com ES6.
+Você pode escrever um artigo, iniciar uma nova dicussão, etc.
 
+Esse site foi construído usando o nosso static site generator [Harmonic](https://github.com/es6rocks/harmonic/)(atualmente em pre-alpha).
 
-This website was built using our static site generator [Harmonic](https://github.com/es6rocks/harmonic/)(currently in pre-alpha).
-Feel free to hack on Harmonic and other tools we may have.
+Sinta-se livre para hackear o Harmonic e quaisquer outra ferramenta que possamos criar.
 

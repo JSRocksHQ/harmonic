@@ -35,10 +35,15 @@ var Helper =  {
 	},
 
 	sortPosts : function (posts) {
-		/*posts.sort(function(a,b) {
-			return new Date(b.date) - new Date(a.date);
-		});*/
-		return posts;
+        var new_posts = {};
+
+        for (var p in posts) {
+            posts[p].sort(function(a,b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+            new_posts[p] = posts[p];
+        }
+        return new_posts;
 	},
 
 	parsePages : function (files) {
