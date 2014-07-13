@@ -165,11 +165,16 @@ var Parser = function() {
 		});
 	};
 
-    this.compileCss = function() {
+    this.compileCSS = function() {
+        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
         var compiler = {
+
+            /* Less */
             less: function() {
-                console.log("less compiled");
+                console.log("Less is not implemented yet");
             },
+
+            /* Stylus */
             stylus: function() {
                 return new Promise(function (resolve, reject) {
                     var subDirs = ['./src/templates/default/resources/_stylus/'];
@@ -185,14 +190,15 @@ var Parser = function() {
                                 reject(err);
                             } else {
                                 fs.writeFileSync(cssDir + '/main.css', css);
-                                console.log(clc.info('Successfully generated CSS'));
+                                console.log(clc.info('Successfully generated CSS with Stylus preprocessor'));
                                 resolve();
                             }
                         });
                 });
             }
         };
-        compiler[GLOBAL.config.preprocessor]();
+
+        compiler[currentCSSCompiler]();
     }
 
 	this.generateTagsPages = function(postsMetadata) {
