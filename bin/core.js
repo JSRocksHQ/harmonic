@@ -10,7 +10,7 @@ module.exports = {
 			.then(parser.clean)
 			.then(parser.getConfig)
 			.then(parser.createPublicFolder)
-			.then(parser.compileStylus)
+			.then(parser.compileCSS)
 			.then(parser.generatePages)
 			.then(parser.getFiles)
 			.then(parser.generatePosts)

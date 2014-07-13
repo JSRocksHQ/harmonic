@@ -174,27 +174,41 @@ var Parser = function() {
 		});
 	};
 
-	this.compileStylus = function() {
-		return new Promise(function (resolve, reject) {
-			var subDirs = ['./src/templates/default/resources/_stylus/'];
-			var curTemplate = './src/templates/' + GLOBAL.config.template;
-			var stylDir = curTemplate + '/resources/_stylus';
-			var cssDir = curTemplate + '/resources/css';
-			var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+    this.compileCSS = function() {
+        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
+        var compiler = {
 
-				stylus(code)
-					.set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
-					.render(function(err, css) {
-						if (err) {
-							reject(err);
-						} else {
-							fs.writeFileSync(cssDir + '/main.css', css);
-							console.log(clc.info('Successfully generated CSS'));
-							resolve();
-						}
-					});
-		});
-	};
+            /* Less */
+            less: function() {
+                console.log("Less is not implemented yet");
+            },
+
+            /* Stylus */
+            stylus: function() {
+                return new Promise(function (resolve, reject) {
+                    var subDirs = ['./src/templates/default/resources/_stylus/'];
+                    var curTemplate = './src/templates/' + GLOBAL.config.template;
+                    var stylDir = curTemplate + '/resources/_stylus';
+                    var cssDir = curTemplate + '/resources/css';
+                    var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+
+                    stylus(code)
+                        .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+                        .render(function(err, css) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                fs.writeFileSync(cssDir + '/main.css', css);
+                                console.log(clc.info('Successfully generated CSS with Stylus preprocessor'));
+                                resolve();
+                            }
+                        });
+                });
+            }
+        };
+
+        compiler[currentCSSCompiler]();
+    }
 
 	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
