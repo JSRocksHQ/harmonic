@@ -115,31 +115,6 @@ var Helper =  {
 
 	normalizeContent : function (data) {
 		return data;
-	},
-
-	compileES6 : function (context, data) {
-		var result = '',
-			traceur_runtime = fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js').toString(),
-			config = fs.readFileSync('./harmonic.json').toString(),
-			harmonic_client = fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js').toString();
-
-		harmonic_client =
-			harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(data)))
-							.replace(/\{\{config\}\}/, config);
-
-		switch (context) {
-			case 'posts' :
-				result = traceur.compile(harmonic_client, {
-					filename : 'harmonic-client.js'
-				});
-
-				if (result.error) {
-				  throw result.error;
-				}
-
-				fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime + '\n//harmonic code\n' +result.js);
-			break;
-		}
 	}
 }
 
@@ -209,6 +184,29 @@ var Parser = function() {
 
         compiler[currentCSSCompiler]();
     }
+
+    this.compileES6 = function (postsMetadata) {
+        return new Promise(function (resolve, reject) {
+            var result = '',
+                traceur_runtime = fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js').toString(),
+                config = GLOBAL.config,
+                harmonic_client = fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js').toString();
+
+            harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(postsMetadata))
+                            .replace(/\{\{config\}\}/, JSON.stringify(config));
+
+                result = traceur.compile(harmonic_client, {
+                    filename : 'harmonic-client.js'
+                });
+
+                if (result.error) {
+                  throw result.error;
+                }
+
+                fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime + '\n//harmonic code\n' +result.js);
+                resolve(postsMetadata);
+        });
+    };
 
 	this.generateTagsPages = function(postsMetadata) {
 		var postsByTag = {};
@@ -365,7 +363,7 @@ var Parser = function() {
 					} else {
 						postPath = permalinks(config.posts_permalink, { title : filename, language : lang });
 					}
-					metadata.link = postPath;
+
 					metadata.categories = categories;
 					metadata['content'] = postCropped;
 					metadata['file'] = postsPath + file;
@@ -407,7 +405,6 @@ var Parser = function() {
 					}
 
 					if (i === files[lang].length - 1) {
-						Helper.compileES6('posts', posts);
 						resolve(posts);
 					}
 				});
