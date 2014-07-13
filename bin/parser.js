@@ -192,7 +192,7 @@ var Parser = function() {
                 config = GLOBAL.config,
                 harmonic_client = fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js').toString();
 
-            harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(postsMetadata))
+            harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
                             .replace(/\{\{config\}\}/, JSON.stringify(config));
 
                 result = traceur.compile(harmonic_client, {
