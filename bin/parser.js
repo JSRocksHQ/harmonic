@@ -337,6 +337,7 @@ var Parser = function() {
 		return new Promise(function(resolve, reject) {
 			var config = GLOBAL.config,
 				posts = {},
+				currentDate = new Date(),
 				curTemplate = config.template,
 				postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
 				nunjucksEnv = GLOBAL.nunjucksEnv,
@@ -382,6 +383,11 @@ var Parser = function() {
 						.replace(/<!--[\s\S]*?-->/g, '');
 
 					if(metadata.published && metadata.published === 'false') {
+						return;
+					}
+
+					if (metadata.date && metadata.date > currentDate) {
+						console.log(clc.info('Skipping future post ' + metadata.filename));
 						return;
 					}
 
