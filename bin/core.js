@@ -18,6 +18,7 @@ module.exports = {
 			.then(parser.generateIndex)
 			.then(parser.generateTagsPages)
 			.then(parser.copyResources)
+			.then(parser.createCNAMEFile)
 			.then(resolve)
 			.catch(function (e) {
 				console.log(e);
