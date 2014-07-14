@@ -55,6 +55,7 @@ module.exports = {
 			    "author": "Jaydson",
 			    "description": "This is the description",
 			    "bio": "Thats me",
+				"deployment_type": "",
 			    "template": "default",
                 "preprocessor": "stylus",
 			    "posts_permalink" : ":year/:month/:title",
