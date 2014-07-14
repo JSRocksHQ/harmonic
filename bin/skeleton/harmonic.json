@@ -6,6 +6,7 @@
     "author": "ES6Rocks",
     "description": "This website was made using Harmonic",
     "bio": "",
+    "deployment_type": "",
     "template": "default",
     "preprocessor": "stylus",
     "posts_permalink" : ":language/:year/:month/:title",

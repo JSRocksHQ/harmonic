@@ -449,6 +449,23 @@ var Parser = function() {
 			resolve(newConfig);
 		});
 	};
+
+	this.createCNAMEFile = function(argument) {
+		return new Promise(function(resolve, reject) {
+			var deploymentType = GLOBAL.config.deployment_type;
+			var domain = GLOBAL.config.domain.split('/')[2];
+
+			if (deploymentType.toUpperCase() === "GH-PAGES") {
+				fs.exists('./public', function(exists) {
+					if(exists) {
+						fs.writeFileSync("./public/CNAME",domain);
+						console.log(clc.info('Successfully generated CNAME file'));
+						resolve();
+					}
+				});
+			}
+		});
+	};
 }
 
 module.exports = Parser;

@@ -55,6 +55,7 @@ module.exports = {
 			    "author": "Jaydson",
 			    "description": "This is the description",
 			    "bio": "Thats me",
+				"deployment_type": "",
 			    "template": "default",
                 "preprocessor": "stylus",
 			    "posts_permalink" : ":year/:month/:title",
@@ -124,5 +125,34 @@ module.exports = {
 				file.serve(request, response);
 			}).resume();
 		}).listen(port);
+	},
+
+	publish : function() {
+		var clc = helpers.cli_color();
+		var exec = require('child_process').exec;
+		var os = require('os').type();
+		var deploymentType = GLOBAL.config.deployment_type;
+		var child;
+
+
+		if (deploymentType.toUpperCase() === "GH-PAGES") {
+			if (os === "Darwin" || os === "Linux") {
+				console.log(clc.info("Publishing to gh-pages, stand by..."));
+
+				child = exec('git subtree push --prefix public origin gh-pages',
+					function (error, stdout, stderr) {
+					console.log('stdout: ' + stdout);
+					console.log('stderr: ' + stderr);
+					console.log(clc.info('Site published to ' + GLOBAL.config.domain));
+					if (error !== null) {
+					  console.log(clc.warn('exec error: ' + error));
+					}
+				});
+
+			} else {
+				console.log(clc.warn("The publish command is not implemented for OS: " + os));
+			}
+		}
+
 	}
 }

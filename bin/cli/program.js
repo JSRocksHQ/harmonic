@@ -55,6 +55,17 @@ program
 		});
 	});
 
+program
+	.command('publish')
+	.description('Build and publish your static site. (only working with gh-pages)')
+	.action(function() {
+		var util = require('../cli/util');
+		var core = require('../core');
+		core.init().then(function() {
+			util.publish();
+		});
+	});
+
 program.parse(process.argv);
 
 /* Not enough arguments */
