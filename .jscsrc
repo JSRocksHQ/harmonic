@@ -14,10 +14,11 @@
     "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
 
     "excludeFiles": [
-      	"bin/client/traceur-runtime.js",
+        "bin/client/traceur-runtime.js",
+        "bin/skeleton/*",
 
-      	// JSCS vs ES6 incompatibilities
-      	"bin/cli/util.js",
-      	"bin/client/harmonic-client.js"
+        // JSCS vs ES6 incompatibilities
+        "bin/cli/util.js",
+        "bin/client/harmonic-client.js"
     ]
 }

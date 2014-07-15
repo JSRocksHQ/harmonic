@@ -35,5 +35,8 @@
         "stylus": "^0.45.1"
     },
     "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
-    "license": "MIT"
+    "license": "MIT",
+    "scripts": {
+        "test": "jshint **/*.js && jscs -r inline bin/"
+    }
 }

@@ -1,4 +1,5 @@
-var localconfig = require('./config'),
+var Helper, Parser,
+    localconfig = require('./config'),
     helpers = require('./helpers'),
     fs = require('fs'),
     postsPath = './src/posts/',
@@ -6,7 +7,6 @@ var localconfig = require('./config'),
     pagesPath = './src/pages/',
     _ = require('underscore'),
     nunjucks = require('nunjucks'),
-    Promise = require('promise'),
     ncp = require('ncp').ncp,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
@@ -15,7 +15,11 @@ var localconfig = require('./config'),
     traceur = require('traceur'),
     clc = helpers.cliColor();
 
-var Helper = {
+// JSHint ESNext option doesn't allow redefinition of Promise
+// But it's not supported yet in node --harmony
+var Promise = require('promise'); // jshint ignore: line
+
+Helper = {
     getPagesFiles: function() {
         return new Promise(function(resolve) {
 
@@ -133,7 +137,7 @@ var Helper = {
     }
 };
 
-var Parser = function() {
+Parser = function() {
 
     this.start = function() {
         return new Promise(function(resolve) {
