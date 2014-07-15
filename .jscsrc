@@ -1,0 +1,23 @@
+{
+    "preset": "google",
+
+    "requireParenthesesAroundIIFE": true,
+    "maximumLineLength": 100,
+    "validateLineBreaks": "LF",
+    "validateIndentation": 4,
+
+    "disallowKeywords": ["with"],
+    "disallowSpacesInsideObjectBrackets": null,
+    "disallowImplicitTypeConversion": ["string"],
+
+    // Temporary
+    "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
+
+    "excludeFiles": [
+      	"bin/client/traceur-runtime.js",
+
+      	// JSCS vs ES6 incompatibilities
+      	"bin/cli/util.js",
+      	"bin/client/harmonic-client.js"
+    ]
+}

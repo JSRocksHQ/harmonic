@@ -167,8 +167,10 @@ var Parser = function() {
     };
 
     this.compileCSS = function() {
-        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
-            compiler = {
+        var compiler,
+            currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
+
+        compiler = {
 
             // Less
             less: function() {
@@ -177,7 +179,7 @@ var Parser = function() {
 
             // Stylus
             stylus: function() {
-                return new Promise(function(resolve, reject) {
+                var promise = new Promise(function(resolve, reject) {
                     var curTemplate = './src/templates/' + GLOBAL.config.template,
                         stylDir = curTemplate + '/resources/_stylus',
                         cssDir = curTemplate + '/resources/css',
@@ -186,17 +188,19 @@ var Parser = function() {
                     stylus(code)
                         .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
                         .render(function(err, css) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            fs.writeFileSync(cssDir + '/main.css', css);
-                            console.log(
-                                clc.info('Successfully generated CSS with Stylus preprocessor')
-                            );
-                            resolve();
-                        }
-                    });
+                            if (err) {
+                                reject(err);
+                            } else {
+                                fs.writeFileSync(cssDir + '/main.css', css);
+                                console.log(
+                                    clc.info('Successfully generated CSS with Stylus preprocessor')
+                                );
+                                resolve();
+                            }
+                        });
                 });
+
+                return promise;
             }
         };
 
@@ -206,19 +210,19 @@ var Parser = function() {
     this.compileES6 = function(postsMetadata) {
         return new Promise(function(resolve) {
             var result = '',
-                traceur_runtime =
+                traceurRuntime =
                     fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js')
                         .toString(),
                 config = GLOBAL.config,
-                harmonic_client =
+                harmonicClient =
                     fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js')
                         .toString();
 
-            harmonic_client = harmonic_client
+            harmonicClient = harmonicClient
                 .replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
                 .replace(/\{\{config\}\}/, JSON.stringify(config));
 
-            result = traceur.compile(harmonic_client, {
+            result = traceur.compile(harmonicClient, {
                 filename: 'harmonic-client.js'
             });
 
@@ -226,7 +230,7 @@ var Parser = function() {
                 throw result.error;
             }
 
-            fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime +
+            fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceurRuntime +
                 '\n//harmonic code\n' + result.js);
 
             resolve(postsMetadata);
@@ -353,8 +357,8 @@ var Parser = function() {
         return new Promise(function(resolve) {
             Promise.all([resourcesP, imagesP])
                 .then(function() {
-                resolve('Resources copied');
-            });
+                    resolve('Resources copied');
+                });
         });
     };
 
@@ -384,8 +388,10 @@ var Parser = function() {
                 postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
                 nunjucksEnv = GLOBAL.nunjucksEnv,
                 postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
-                tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
-                    config.header_tokens ? config.header_tokens[1] : '-->'];
+                tokens = [
+                    config.header_tokens ? config.header_tokens[0] : '<!--',
+                    config.header_tokens ? config.header_tokens[1] : '-->'
+                ];
 
             langs.forEach(function(lang) {
                 files[lang].forEach(function(file, i) {
@@ -575,7 +581,6 @@ var Parser = function() {
                         config: GLOBAL.config,
                         pages: GLOBAL.pages
                     });
-
 
                     nodefs.mkdirSync(rssPath, 0777, true);
                     fs.writeFileSync(rssPath + '/rss.xml', rssContent);

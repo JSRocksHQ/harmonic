@@ -9,11 +9,10 @@ program
     .command('init')
     .description('Init your static website')
     .action(function(path) {
-    var util = require('../cli/util');
-    console.log(logo);
-    util.init(typeof path === 'string' ? path : './');
-});
-
+        var util = require('../cli/util');
+        console.log(logo);
+        util.init(typeof path === 'string' ? path : './');
+    });
 
 program
     .command('config')
