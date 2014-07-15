@@ -103,11 +103,15 @@ var Helper = {
                         reject(err);
                     } else {
                         /* write page html file */
-                        fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile, function(err) {
-                            if (err)
-                                throw err;
-                            console.log(clc.info('Successfully generated page ' + pagePermalink));
-                        });
+                        fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
+                            function(err) {
+                                if (err)
+                                    throw err;
+                                console.log(
+                                    clc.info('Successfully generated page ' + pagePermalink)
+                                );
+                            }
+                        );
                     }
                 });
 
@@ -187,7 +191,9 @@ var Parser = function() {
                             reject(err);
                         } else {
                             fs.writeFileSync(cssDir + '/main.css', css);
-                            console.log(clc.info('Successfully generated CSS with Stylus preprocessor'));
+                            console.log(
+                                clc.info('Successfully generated CSS with Stylus preprocessor')
+                            );
                             resolve();
                         }
                     });
@@ -201,12 +207,17 @@ var Parser = function() {
     this.compileES6 = function(postsMetadata) {
         return new Promise(function(resolve, reject) {
             var result = '',
-                traceur_runtime = fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js').toString(),
+                traceur_runtime =
+                    fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js')
+                        .toString(),
                 config = GLOBAL.config,
-                harmonic_client = fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js').toString();
+                harmonic_client =
+                    fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js')
+                        .toString();
 
-            harmonic_client = harmonic_client.replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/\{\{config\}\}/, JSON.stringify(config));
+            harmonic_client = harmonic_client
+                .replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
+                .replace(/\{\{config\}\}/, JSON.stringify(config));
 
             result = traceur.compile(harmonic_client, {
                 filename: 'harmonic-client.js'
@@ -216,7 +227,9 @@ var Parser = function() {
                 throw result.error;
             }
 
-            fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime + '\n//harmonic code\n' + result.js);
+            fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceur_runtime +
+                '\n//harmonic code\n' + result.js);
+
             resolve(postsMetadata);
         });
     };
@@ -267,7 +280,9 @@ var Parser = function() {
 
                     nodefs.mkdirSync(tagPath, 0777, true);
                     fs.writeFileSync(tagPath + '/index.html', tagContent);
-                    console.log(clc.info('Successfully generated tag[' + i + '] archive html file'));
+                    console.log(
+                        clc.info('Successfully generated tag[' + i + '] archive html file')
+                    );
                 }
                 resolve(postsMetadata);
             }
@@ -379,9 +394,16 @@ var Parser = function() {
                         crop: '<!--more-->'
                     });
 
-                    filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+                    filename = path.extname(file) === '.md' ?
+                        path.basename(file, '.md') :
+                        path.basename(file, '.markdown');
+
                     checkDate = new Date(filename.substr(0, 10));
-                    filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
+
+                    filename = isNaN(checkDate.getDate()) ?
+                        filename :
+                        filename.substr(11, filename.length);
+
                     postPath = null;
                     categories = metadata.categories.split(',');
 
@@ -431,12 +453,16 @@ var Parser = function() {
                             reject(err);
                         } else {
                             /* write post html file */
-                            fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile, function(err) {
-                                if (err) {
-                                    reject(err);
+                            fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile,
+                                function(err) {
+                                    if (err) {
+                                        reject(err);
+                                    }
+                                    console.log(
+                                        clc.info('Successfully generated post ' + postPath)
+                                    );
                                 }
-                                console.log(clc.info('Successfully generated post ' + postPath));
-                            });
+                            );
                         }
                     });
                     if (posts[lang]) {
@@ -477,15 +503,24 @@ var Parser = function() {
                 newConfig = null;
 
             try {
-                custom = JSON.parse(fs.readFileSync('./src/templates/' + config.template + '/harmonic.json').toString());
+                custom =
+                    JSON.parse(
+                        fs.readFileSync('./src/templates/' + config.template + '/harmonic.json')
+                            .toString()
+                    );
             } catch (e) {}
+
             if (custom) {
                 newConfig = _.extend(config, custom);
             } else {
                 newConfig = config;
             }
+
             GLOBAL.config = newConfig;
-            GLOBAL.nunjucksEnv = new nunjucks.Environment(new nunjucks.FileSystemLoader('./src/templates/' + config.template));
+            GLOBAL.nunjucksEnv = new nunjucks.Environment(
+                new nunjucks.FileSystemLoader('./src/templates/' + config.template)
+            );
+
             resolve(newConfig);
         });
     };

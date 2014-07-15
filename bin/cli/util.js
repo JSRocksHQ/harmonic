@@ -45,7 +45,10 @@ module.exports = {
             manifest = p ? p + '/harmonic.json' : './harmonic.json';
 
         co(function *() {
-            console.log(clc.message('This guide will help you to create your Harmonic configuration file\nJust hit enter if you are ok with the default values.\n\n'));
+            console.log(clc.message(
+                'This guide will help you to create your Harmonic configuration file\n' +
+                'Just hit enter if you are ok with the default values.\n\n'
+            ));
 
             var config,
                 templateObj = {
@@ -68,23 +71,39 @@ module.exports = {
                     }
                 };
 
+            function _p(message) {
+                return prompt(clc.message(message));
+            }
+
             config = {
-                name: (yield prompt(clc.message('Site name: (' + templateObj.name + ') '))) || templateObj.name,
-                title: (yield prompt(clc.message('Title: (' + templateObj.title + ') '))) || templateObj.title,
-                subtitle: (yield prompt(clc.message('Subtitle: (' + templateObj.subtitle + ') '))) || templateObj.subtitle,
-                description: (yield prompt(clc.message('Description: (' + templateObj.description + ') '))) || templateObj.description,
-                author: (yield prompt(clc.message('Author: (' + templateObj.author + ') '))) || templateObj.author,
-                bio: (yield prompt(clc.message('Author bio: (' + templateObj.bio + ') '))) || templateObj.bio,
-                template: (yield prompt(clc.message('Template: (' + templateObj.template + ') '))) || templateObj.template
+                name: (yield _p('Site name: (' + templateObj.name + ') ')) ||
+                    templateObj.name,
+                title: (yield _p('Title: (' + templateObj.title + ') ')) ||
+                    templateObj.title,
+                subtitle: (yield _p('Subtitle: (' + templateObj.subtitle + ') ')) ||
+                    templateObj.subtitle,
+                description: (yield _p('Description: (' + templateObj.description + ') ')) ||
+                    templateObj.description,
+                author: (yield _p('Author: (' + templateObj.author + ') ')) ||
+                    templateObj.author,
+                bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
+                    templateObj.bio,
+                template: (yield _p('Template: (' + templateObj.template + ') ')) ||
+                    templateObj.template
             }
 
             /* create the configuration file */
-            fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4), function(err) {
-                if (err) {
-                    throw err;
+            fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4),
+                function(err) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log(clc.message(
+                        '\nYour Harmonic website skeleton was successefuly created!' +
+                        '\nNow, enter in the project dir and have fun.'
+                    ));
                 }
-                console.log(clc.message('\nYour Harmonic website skeleton was successefuly created!\nNow, enter in the project dir and have fun.'));
-            });
+            );
 
             process.stdin.pause();
 
@@ -114,7 +133,9 @@ module.exports = {
                 /* create a new post */
                 fs.writeFileSync(path + langs[i] + '/' + filename, template);
             }
-            resolve(clc.info('Post "' + title + '" was successefuly created, check your /src/posts folder'));
+            resolve(clc.info(
+                'Post "' + title + '" was successefuly created, check your /src/posts folder'
+            ));
         });
     },
 
