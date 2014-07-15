@@ -1,7 +1,7 @@
-var Parser = require('./parser');
-var Promise = require('promise');
+var Parser = require('./parser'),
+    Promise = require('promise'),
+    parser = new Parser();
 
-var parser = new Parser();
 module.exports = {
 
     init: function() {
@@ -21,8 +21,8 @@ module.exports = {
                 .then(parser.copyResources)
                 .then(resolve)
                 .catch(function(e) {
-                console.log(e);
-            });
+                    console.log(e);
+                });
         });
     }
 }

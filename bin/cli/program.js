@@ -1,7 +1,7 @@
-var localconfig = require('../config');
-var fs = require('fs');
-var program = require('commander');
-var logo = require('../cli/logo');
+var localconfig = require('../config'),
+    fs = require('fs'),
+    program = require('commander'),
+    logo = require('../cli/logo');
 
 program
     .version(localconfig.version);

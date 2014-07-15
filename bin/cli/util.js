@@ -1,14 +1,14 @@
-var localconfig = require('../config');
-var helpers = require('../helpers');
-var fs = require('fs');
-var path = require('path');
-var Promise = require('promise');
-var staticServer = require('node-static');
-var co = require('co');
-var prompt = require('co-prompt');
-var confirm = prompt.confirm;
-var _ = require('underscore');
-var ncp = require('ncp').ncp;
+var localconfig = require('../config'),
+    helpers = require('../helpers'),
+    fs = require('fs'),
+    path = require('path'),
+    Promise = require('promise'),
+    staticServer = require('node-static'),
+    co = require('co'),
+    prompt = require('co-prompt'),
+    confirm = prompt.confirm,
+    _ = require('underscore'),
+    ncp = require('ncp').ncp;
 
 module.exports = {
 
@@ -47,7 +47,8 @@ module.exports = {
         co(function *() {
             console.log(clc.message("This guide will help you to create your Harmonic configuration file\nJust hit enter if you are ok with the default values.\n\n"));
 
-            var templateObj = {
+            var config,
+                templateObj = {
                 "name": "Awesome website",
                 "title": "My awesome static website",
                 "domain": "http://awesome.com",
@@ -67,7 +68,7 @@ module.exports = {
                 }
             };
 
-            var config = {
+            config = {
                 name: (yield prompt(clc.message('Site name: (' + templateObj.name + ') '))) || templateObj.name,
                 title: (yield prompt(clc.message('Title: (' + templateObj.title + ') '))) || templateObj.title,
                 subtitle: (yield prompt(clc.message('Subtitle: (' + templateObj.subtitle + ') '))) || templateObj.subtitle,
@@ -93,8 +94,8 @@ module.exports = {
     new_post: function(title) {
         var clc = helpers.cli_color();
         return new Promise(function(resolve, reject) {
-            var langs = helpers.getConfig().i18n.languages;
-            var template = '<!--\n' +
+            var langs = helpers.getConfig().i18n.languages,
+                template = '<!--\n' +
                     'layout: post\n' +
                     'title: ' + title + '\n' +
                     'date: ' + new Date().toJSON() + '\n' +
@@ -104,10 +105,10 @@ module.exports = {
                     'description:\n' +
                     'categories:\n' +
                     '-->\n' +
-                    '# ' + title;
-            var str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase();
-            var path = localconfig.postspath;
-            var filename = str + '.md';
+                    '# ' + title,
+                str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase(),
+                path = localconfig.postspath,
+                filename = str + '.md';
 
             for (var i = 0; i < langs.length; i += 1) {
                 /* create a new post */
@@ -118,8 +119,8 @@ module.exports = {
     },
 
     run: function(port) {
-        var clc = helpers.cli_color();
-        var file = new staticServer.Server('./public');
+        var clc = helpers.cli_color(),
+            file = new staticServer.Server('./public');
         console.log(clc.info('Harmonic site is running on http://localhost:' + port));
         require('http').createServer(function(request, response) {
                 request.addListener('end', function() {

@@ -1,24 +1,24 @@
-var localconfig = require('./config');
-var helpers = require('./helpers');
-var fs = require('fs');
-var marked = require('marked');
-var postsPath = './src/posts/';
-var path = require('path');
-var pagesPath = './src/pages/';
-var nodePath = require('path');
-var markextra = require('markdown-extra');
-var _ = require('underscore');
-var nunjucks = require('nunjucks');
-var co = require('co');
-var Promise = require('promise');
-var ncp = require('ncp').ncp;
-var permalinks = require('permalinks');
-var nodefs = require('node-fs');
-var stylus = require('stylus');
-var mkmeta = require('marked-metadata');
-var util = require('./cli/util');
-var traceur = require('traceur');
-var clc = helpers.cli_color();
+var localconfig = require('./config'),
+    helpers = require('./helpers'),
+    fs = require('fs'),
+    marked = require('marked'),
+    postsPath = './src/posts/',
+    path = require('path'),
+    pagesPath = './src/pages/',
+    nodePath = require('path'),
+    markextra = require('markdown-extra'),
+    _ = require('underscore'),
+    nunjucks = require('nunjucks'),
+    co = require('co'),
+    Promise = require('promise'),
+    ncp = require('ncp').ncp,
+    permalinks = require('permalinks'),
+    nodefs = require('node-fs'),
+    stylus = require('stylus'),
+    mkmeta = require('marked-metadata'),
+    util = require('./cli/util'),
+    traceur = require('traceur'),
+    clc = helpers.cli_color();
 
 var Helper = {
     getPagesFiles: function() {
@@ -35,9 +35,10 @@ var Helper = {
     },
 
     sortPosts: function(posts) {
-        var new_posts = {};
+        var p,
+            new_posts = {};
 
-        for (var p in posts) {
+        for (p in posts) {
             posts[p].sort(function(a, b) {
                 return new Date(b.date) - new Date(a.date);
             });
@@ -48,37 +49,41 @@ var Helper = {
 
     parsePages: function(files) {
         return new Promise(function(resolve, reject) {
-            var pages = [];
-            var curTemplate = GLOBAL.config.template;
-            var nunjucksEnv = GLOBAL.nunjucksEnv;
-            var config = GLOBAL.config;
-            var tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
+            var pages = [],
+                curTemplate = GLOBAL.config.template,
+                nunjucksEnv = GLOBAL.nunjucksEnv,
+                config = GLOBAL.config,
+                tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
                 config.header_tokens ? config.header_tokens[1] : '-->'];
 
             GLOBAL.pages = [];
 
             files.forEach(function(file, i) {
-                var page = fs.readFileSync(pagesPath + "/" + file).toString();
-                var pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html');
-                var pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv);
-                var markfile = page.toString();
-                var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
-                var md = new mkmeta(pagesPath + '/' + file);
+                var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                    page = fs.readFileSync(pagesPath + "/" + file).toString(),
+                    pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
+                    pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
+                    markfile = page.toString(),
+                    md = new mkmeta(pagesPath + '/' + file),
+                    filename = path.extname(file) === '.md' ?
+                        path.basename(file, '.md') :
+                        path.basename(file, '.markdown');
+
                 md.defineTokens(tokens[0], tokens[1]);
 
                 /* Markdown extra */
-                var metadata = md.metadata();
-                var pagePermalink = permalinks(config.pages_permalink, {
+                metadata = md.metadata();
+                pagePermalink = permalinks(config.pages_permalink, {
                     title: filename
                 });
 
-                var _page = {
+                _page = {
                     content: md.markdown(),
                     metadata: metadata
                 }
 
-                var pageContent = nunjucks.compile(page, nunjucksEnv);
-                var pageHTMLFile = pageTemplateNJ.render({
+                pageContent = nunjucks.compile(page, nunjucksEnv);
+                pageHTMLFile = pageTemplateNJ.render({
                     page: _page,
                     config: GLOBAL.config
                 });
@@ -158,8 +163,8 @@ var Parser = function() {
     };
 
     this.compileCSS = function() {
-        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
-        var compiler = {
+        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
+            compiler = {
 
             /* Less */
             less: function() {
@@ -169,11 +174,11 @@ var Parser = function() {
             /* Stylus */
             stylus: function() {
                 return new Promise(function(resolve, reject) {
-                    var subDirs = ['./src/templates/default/resources/_stylus/'];
-                    var curTemplate = './src/templates/' + GLOBAL.config.template;
-                    var stylDir = curTemplate + '/resources/_stylus';
-                    var cssDir = curTemplate + '/resources/css';
-                    var code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+                    var subDirs = ['./src/templates/default/resources/_stylus/'],
+                        curTemplate = './src/templates/' + GLOBAL.config.template,
+                        stylDir = curTemplate + '/resources/_stylus',
+                        cssDir = curTemplate + '/resources/css',
+                        code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
 
                     stylus(code)
                         .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
@@ -217,13 +222,13 @@ var Parser = function() {
     };
 
     this.generateTagsPages = function(postsMetadata) {
-        var postsByTag = {};
-        var curTemplate = GLOBAL.config.template;
-        var nunjucksEnv = GLOBAL.nunjucksEnv;
-        var tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
-        var tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
-        var indexContent = '';
-        var tagPath = null;
+        var postsByTag = {},
+            curTemplate = GLOBAL.config.template,
+            nunjucksEnv = GLOBAL.nunjucksEnv,
+            tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
+            tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
+            indexContent = '',
+            tagPath = null;
 
         return new Promise(function(resolve, reject) {
             for (var lang in postsMetadata) {
@@ -271,15 +276,16 @@ var Parser = function() {
 
     this.generateIndex = function(postsMetadata) {
         return new Promise(function(resolve, reject) {
-            var _posts = null;
-            var curTemplate = GLOBAL.config.template;
-            var nunjucksEnv = GLOBAL.nunjucksEnv;
-            var indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html');
-            var indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
-            var indexContent = '';
-            var indexPath = null;
+            var lang,
+                _posts = null,
+                curTemplate = GLOBAL.config.template,
+                nunjucksEnv = GLOBAL.nunjucksEnv,
+                indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
+                indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
+                indexContent = '',
+                indexPath = null;
 
-            for (var lang in postsMetadata) {
+            for (lang in postsMetadata) {
                 postsMetadata[lang].sort(function(a, b) {
                     return new Date(b.date) - new Date(a.date);
                 });
@@ -305,8 +311,9 @@ var Parser = function() {
     };
 
     this.copyResources = function() {
+        var imagesP, resourcesP;
 
-        var imagesP = new Promise(function(resolve, reject) {
+        imagesP = new Promise(function(resolve, reject) {
             ncp('./src/img', './public/img', function(err) {
                 if (err) {
                     reject(err);
@@ -316,7 +323,7 @@ var Parser = function() {
             });
         });
 
-        var resourcesP = new Promise(function(resolve, reject) {
+        resourcesP = new Promise(function(resolve, reject) {
             var curTemplate = './src/templates/' + GLOBAL.config.template;
             ncp(curTemplate + '/resources', './public', function(err) {
                 if (err) {
@@ -361,18 +368,22 @@ var Parser = function() {
 
             for (var lang in files) {
                 files[lang].forEach(function(file, i) {
-                    var md = new mkmeta(postsPath + lang + '/' + file);
+                    var metadata, post, postCropped, filename, checkDate, postPath, categories,
+                        _post, postHTMLFile,
+                        md = new mkmeta(postsPath + lang + '/' + file);
+
                     md.defineTokens(tokens[0], tokens[1]);
-                    var metadata = Helper.normalizeMetaData(md.metadata());
-                    var post = Helper.normalizeContent(md.markdown());
-                    var postCropped = md.markdown({
+                    metadata = Helper.normalizeMetaData(md.metadata());
+                    post = Helper.normalizeContent(md.markdown());
+                    postCropped = md.markdown({
                         crop: '<!--more-->'
                     });
-                    var filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
-                    var checkDate = new Date(filename.substr(0, 10));
+
+                    filename = path.extname(file) === '.md' ? path.basename(file, '.md') : path.basename(file, '.markdown');
+                    checkDate = new Date(filename.substr(0, 10));
                     filename = isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
-                    var postPath = null;
-                    var categories = metadata.categories.split(',');
+                    postPath = null;
+                    categories = metadata.categories.split(',');
 
                     /* If is the default language, generate in the root path */
                     if (config.i18n.default === lang) {
@@ -395,11 +406,11 @@ var Parser = function() {
                     metadata['default_lang'] = config.i18n.default === lang ? false : true;
                     metadata.date = new Date(metadata.date);
 
-                    var _post = {
+                    _post = {
                         content: post,
                         metadata: metadata
                     }
-                    var postHTMLFile = postsTemplateNJ
+                    postHTMLFile = postsTemplateNJ
                     .render({
                         post: _post,
                         config: GLOBAL.config
@@ -461,9 +472,9 @@ var Parser = function() {
 
     this.getConfig = function() {
         return new Promise(function(resolve, reject) {
-            var config = JSON.parse(fs.readFileSync("./harmonic.json").toString());
-            var custom = null;
-            var newConfig = null;
+            var config = JSON.parse(fs.readFileSync("./harmonic.json").toString()),
+                custom = null,
+                newConfig = null;
 
             try {
                 custom = JSON.parse(fs.readFileSync("./src/templates/" + config.template + "/harmonic.json").toString());
@@ -481,15 +492,15 @@ var Parser = function() {
 
     this.generateRSS = function(postsMetadata) {
         return new Promise(function(resolve, reject) {
-            var _posts = null;
-            var curTemplate = GLOBAL.config.template;
-            var nunjucksEnv = GLOBAL.nunjucksEnv;
-            var rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml');
-            var rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv);
-            var rssContent = '';
-            var rssPath = null;
-            var rssLink = "";
-            var rssAuthor = "";
+            var _posts = null,
+                curTemplate = GLOBAL.config.template,
+                nunjucksEnv = GLOBAL.nunjucksEnv,
+                rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml'),
+                rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
+                rssContent = '',
+                rssPath = null,
+                rssLink = "",
+                rssAuthor = "";
 
             fs.exists(__dirname + '/resources/rss.xml', function() {
                 for (var lang in postsMetadata) {
