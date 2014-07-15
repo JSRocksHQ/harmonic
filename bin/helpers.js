@@ -1,14 +1,14 @@
 var fs = require('fs');
 
 // CLI color
-exports.cli_color = function() {
+exports.cliColor = function() {
     var clc = require('cli-color');
     return {
         info: clc.green,
         error: clc.red,
         warn: clc.yellowBright,
         message: clc.yellow
-    }
+    };
 };
 
 exports.getConfig = function() {
@@ -18,4 +18,4 @@ exports.getConfig = function() {
     } catch (e) {
         console.log(e);
     }
-}
+};

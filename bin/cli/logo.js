@@ -1,6 +1,6 @@
 var localconfig = require('../config'),
 	helpers = require('../helpers'),
-	clc = helpers.cli_color(),
+	clc = helpers.cliColor(),
 	logo = '\n' +
         '|_| _  _ _ _  _  _ . _ \n' +
         '| |(_|| | | |(_)| ||(_ \n' +

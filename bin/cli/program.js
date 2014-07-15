@@ -1,5 +1,4 @@
 var localconfig = require('../config'),
-    fs = require('fs'),
     program = require('commander'),
     logo = require('../cli/logo');
 
@@ -28,7 +27,7 @@ program
 program
     .command('build')
     .description('Build your static website')
-    .action(function(env, options) {
+    .action(function() {
         var core = require('../core');
         core.init();
     });

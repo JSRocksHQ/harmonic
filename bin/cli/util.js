@@ -2,11 +2,14 @@ var localconfig = require('../config'),
     helpers = require('../helpers'),
     fs = require('fs'),
     path = require('path'),
-    Promise = require('promise'),
+
+    // JSHint ESNext option doesn't allow redefinition of Promise
+    // But it's not supported yet in node --harmony
+    Promise = require('promise'), // jshint ignore: line
+
     staticServer = require('node-static'),
     co = require('co'),
     prompt = require('co-prompt'),
-    confirm = prompt.confirm,
     _ = require('underscore'),
     ncp = require('ncp').ncp;
 
@@ -27,7 +30,7 @@ module.exports = {
                 });
             },
             that = this,
-            clc = helpers.cli_color();
+            clc = helpers.cliColor();
 
         fs.exists(sitePath, function(exists) {
             if (!exists) {
@@ -41,7 +44,7 @@ module.exports = {
     },
 
     config: function(p) {
-        var clc = helpers.cli_color(),
+        var clc = helpers.cliColor(),
             manifest = p ? p + '/harmonic.json' : './harmonic.json';
 
         co(function *() {
@@ -90,7 +93,7 @@ module.exports = {
                     templateObj.bio,
                 template: (yield _p('Template: (' + templateObj.template + ') ')) ||
                     templateObj.template
-            }
+            };
 
             // create the configuration file
             fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4),
@@ -111,8 +114,8 @@ module.exports = {
     },
 
     new_post: function(title) {
-        var clc = helpers.cli_color();
-        return new Promise(function(resolve, reject) {
+        var clc = helpers.cliColor();
+        return new Promise(function(resolve) {
             var langs = helpers.getConfig().i18n.languages,
                 template = '<!--\n' +
                     'layout: post\n' +
@@ -141,7 +144,7 @@ module.exports = {
     },
 
     run: function(port) {
-        var clc = helpers.cli_color(),
+        var clc = helpers.cliColor(),
             file = new staticServer.Server('./public');
         console.log(clc.info('Harmonic site is running on http://localhost:' + port));
         require('http').createServer(function(request, response) {
@@ -150,4 +153,4 @@ module.exports = {
                     }).resume();
             }).listen(port);
     }
-}
+};

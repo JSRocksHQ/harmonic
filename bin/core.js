@@ -5,7 +5,7 @@ var Parser = require('./parser'),
 module.exports = {
 
     init: function() {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function(resolve) {
             parser.start()
                 .then(parser.clean)
                 .then(parser.getConfig)
@@ -25,4 +25,4 @@ module.exports = {
                 });
         });
     }
-}
+};
