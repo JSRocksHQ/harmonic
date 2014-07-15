@@ -449,6 +449,61 @@ var Parser = function() {
 			resolve(newConfig);
 		});
 	};
+
+	this.generateRSS = function(postsMetadata) {
+		return new Promise(function(resolve, reject) {
+			var _posts = null;
+			var curTemplate = GLOBAL.config.template;
+			var nunjucksEnv = GLOBAL.nunjucksEnv;
+			var rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml');
+			var rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv);
+			var rssContent = '';
+			var rssPath = null;
+			var rssLink = "";
+			var rssAuthor = "";
+
+			fs.exists(__dirname + '/resources/rss.xml', function() {
+				for (var lang in postsMetadata) {
+					postsMetadata[lang].sort(function(a,b) {
+						return new Date(b.date) - new Date(a.date);
+					});
+					_posts = postsMetadata[lang].slice(0,GLOBAL.config.index_posts || 10);
+
+					if (GLOBAL.config.author_email) {
+						rssAuthor = GLOBAL.config.author_email + " ("+GLOBAL.config.author+")";
+					} else {
+						rssAuthor = GLOBAL.config.author;
+					}
+
+					if (config.i18n.default === lang) {
+						rssPath = './public/';
+						rssLink = GLOBAL.config.domain  + "/rss.xml";
+					} else {
+						rssPath = './public/' + lang;
+						rssLink = GLOBAL.config.domain  + "/" + lang + "/rss.xml";
+					}
+
+					rssContent = rssTemplateNJ.render({
+						rss    : {
+							date   : new Date().toUTCString(),
+							link: rssLink,
+							author: rssAuthor,
+							lang: lang
+						},
+						posts  : _posts,
+						config : GLOBAL.config,
+						pages  : GLOBAL.pages
+					});
+
+
+					nodefs.mkdirSync(rssPath, 0777, true);
+					fs.writeFileSync(rssPath + '/rss.xml', rssContent);
+					console.log(clc.info(lang + '/rss.xml file successfully created'));
+				}
+				resolve(postsMetadata);
+			});
+		});
+	};
 }
 
 module.exports = Parser;

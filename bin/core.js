@@ -14,6 +14,7 @@ module.exports = {
 			.then(parser.generatePages)
 			.then(parser.getFiles)
             .then(parser.generatePosts)
+			.then(parser.generateRSS)
 			.then(parser.compileES6)
 			.then(parser.generateIndex)
 			.then(parser.generateTagsPages)
