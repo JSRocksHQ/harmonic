@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-/* CLI color */
+// CLI color
 exports.cli_color = function() {
     var clc = require('cli-color');
     return {

@@ -23,7 +23,8 @@ var localconfig = require('./config'),
 var Helper = {
     getPagesFiles: function() {
         return new Promise(function(resolve, reject) {
-            /* Reading pages dir */
+
+            // Reading pages dir
             fs.readdir(pagesPath, function(err, files) {
                 if (err) {
                     throw err;
@@ -71,7 +72,7 @@ var Helper = {
 
                 md.defineTokens(tokens[0], tokens[1]);
 
-                /* Markdown extra */
+                // Markdown extra
                 metadata = md.metadata();
                 pagePermalink = permalinks(config.pages_permalink, {
                     title: filename
@@ -87,7 +88,8 @@ var Helper = {
                     page: _page,
                     config: GLOBAL.config
                 });
-                /* Removing header metadata */
+
+                // Removing header metadata
                 pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
                 metadata['content'] = pageHTMLFile;
@@ -102,7 +104,8 @@ var Helper = {
                     if (err) {
                         reject(err);
                     } else {
-                        /* write page html file */
+
+                        // write page html file
                         fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
                             function(err) {
                                 if (err)
@@ -170,12 +173,12 @@ var Parser = function() {
         var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
             compiler = {
 
-            /* Less */
+            // Less
             less: function() {
                 console.log('Less is not implemented yet');
             },
 
-            /* Stylus */
+            // Stylus
             stylus: function() {
                 return new Promise(function(resolve, reject) {
                     var subDirs = ['./src/templates/default/resources/_stylus/'],
@@ -271,7 +274,7 @@ var Parser = function() {
                         category: i
                     });
 
-                    /* If is the default language, generate in the root path */
+                    // If is the default language, generate in the root path
                     if (config.i18n.default === lang) {
                         tagPath = './public/categories/' + i;
                     } else {
@@ -407,7 +410,7 @@ var Parser = function() {
                     postPath = null;
                     categories = metadata.categories.split(',');
 
-                    /* If is the default language, generate in the root path */
+                    // If is the default language, generate in the root path
                     if (config.i18n.default === lang) {
                         postPath = permalinks(config.posts_permalink.split(':language/')[1], {
                             title: filename
@@ -452,7 +455,8 @@ var Parser = function() {
                         if (err) {
                             reject(err);
                         } else {
-                            /* write post html file */
+
+                            // write post html file
                             fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile,
                                 function(err) {
                                     if (err) {

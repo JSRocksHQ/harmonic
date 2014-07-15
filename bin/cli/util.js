@@ -92,7 +92,7 @@ module.exports = {
                     templateObj.template
             }
 
-            /* create the configuration file */
+            // create the configuration file
             fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4),
                 function(err) {
                     if (err) {
@@ -130,7 +130,8 @@ module.exports = {
                 filename = str + '.md';
 
             for (var i = 0; i < langs.length; i += 1) {
-                /* create a new post */
+
+                // create a new post
                 fs.writeFileSync(path + langs[i] + '/' + filename, template);
             }
             resolve(clc.info(

@@ -57,7 +57,7 @@ program
 
 program.parse(process.argv);
 
-/* Not enough arguments */
+// Not enough arguments
 if (!program.args.length) {
     console.log(logo);
     program.help();
