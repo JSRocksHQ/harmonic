@@ -60,7 +60,7 @@ var Helper = {
 
             files.forEach(function(file, i) {
                 var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                    page = fs.readFileSync(pagesPath + "/" + file).toString(),
+                    page = fs.readFileSync(pagesPath + '/' + file).toString(),
                     pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
                     pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
                     markfile = page.toString(),
@@ -154,7 +154,7 @@ var Parser = function() {
         return new Promise(function(resolve, reject) {
             fs.exists('./public', function(exists) {
                 if (!exists) {
-                    fs.mkdirSync("public", 0766);
+                    fs.mkdirSync('public', 0766);
                     console.log(clc.info('Successfully generated public folder'));
                     resolve();
                 }
@@ -168,7 +168,7 @@ var Parser = function() {
 
             /* Less */
             less: function() {
-                console.log("Less is not implemented yet");
+                console.log('Less is not implemented yet');
             },
 
             /* Stylus */
@@ -472,12 +472,12 @@ var Parser = function() {
 
     this.getConfig = function() {
         return new Promise(function(resolve, reject) {
-            var config = JSON.parse(fs.readFileSync("./harmonic.json").toString()),
+            var config = JSON.parse(fs.readFileSync('./harmonic.json').toString()),
                 custom = null,
                 newConfig = null;
 
             try {
-                custom = JSON.parse(fs.readFileSync("./src/templates/" + config.template + "/harmonic.json").toString());
+                custom = JSON.parse(fs.readFileSync('./src/templates/' + config.template + '/harmonic.json').toString());
             } catch (e) {}
             if (custom) {
                 newConfig = _.extend(config, custom);
@@ -499,8 +499,8 @@ var Parser = function() {
                 rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
                 rssContent = '',
                 rssPath = null,
-                rssLink = "",
-                rssAuthor = "";
+                rssLink = '',
+                rssAuthor = '';
 
             fs.exists(__dirname + '/resources/rss.xml', function() {
                 for (var lang in postsMetadata) {
@@ -510,17 +510,17 @@ var Parser = function() {
                     _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
 
                     if (GLOBAL.config.author_email) {
-                        rssAuthor = GLOBAL.config.author_email + " (" + GLOBAL.config.author + ")";
+                        rssAuthor = GLOBAL.config.author_email + ' (' + GLOBAL.config.author + ')';
                     } else {
                         rssAuthor = GLOBAL.config.author;
                     }
 
                     if (config.i18n.default === lang) {
                         rssPath = './public/';
-                        rssLink = GLOBAL.config.domain + "/rss.xml";
+                        rssLink = GLOBAL.config.domain + '/rss.xml';
                     } else {
                         rssPath = './public/' + lang;
-                        rssLink = GLOBAL.config.domain + "/" + lang + "/rss.xml";
+                        rssLink = GLOBAL.config.domain + '/' + lang + '/rss.xml';
                     }
 
                     rssContent = rssTemplateNJ.render({

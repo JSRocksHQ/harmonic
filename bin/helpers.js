@@ -13,7 +13,7 @@ exports.cli_color = function() {
 
 exports.getConfig = function() {
     try {
-        var config = JSON.parse(fs.readFileSync("./harmonic.json").toString());
+        var config = JSON.parse(fs.readFileSync('./harmonic.json').toString());
         return config;
     } catch (e) {
         console.log(e);

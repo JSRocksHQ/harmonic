@@ -45,28 +45,28 @@ module.exports = {
             manifest = p ? p + '/harmonic.json' : './harmonic.json';
 
         co(function *() {
-            console.log(clc.message("This guide will help you to create your Harmonic configuration file\nJust hit enter if you are ok with the default values.\n\n"));
+            console.log(clc.message('This guide will help you to create your Harmonic configuration file\nJust hit enter if you are ok with the default values.\n\n'));
 
             var config,
                 templateObj = {
-                "name": "Awesome website",
-                "title": "My awesome static website",
-                "domain": "http://awesome.com",
-                "subtitle": "Powered by Harmonic",
-                "author": "Jaydson",
-                "description": "This is the description",
-                "bio": "Thats me",
-                "template": "default",
-                "preprocessor": "stylus",
-                "posts_permalink": ":year/:month/:title",
-                "pages_permalink": "pages/:title",
-                "header_tokens": ["<!--", "-->"],
-                "index_posts": 10,
-                "i18n": {
-                    "default": "en",
-                    "languages": ["en", "pt-br"]
-                }
-            };
+                    name: 'Awesome website',
+                    title: 'My awesome static website',
+                    domain: 'http://awesome.com',
+                    subtitle: 'Powered by Harmonic',
+                    author: 'Jaydson',
+                    description: 'This is the description',
+                    bio: 'Thats me',
+                    template: 'default',
+                    preprocessor: 'stylus',
+                    posts_permalink: ':year/:month/:title',
+                    pages_permalink: 'pages/:title',
+                    header_tokens: ['<!--', '-->'],
+                    index_posts: 10,
+                    i18n: {
+                        'default': 'en',
+                        'languages': ['en', 'pt-br']
+                    }
+                };
 
             config = {
                 name: (yield prompt(clc.message('Site name: (' + templateObj.name + ') '))) || templateObj.name,
