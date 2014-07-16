@@ -146,7 +146,7 @@ Parser = function() {
     };
 
     this.clean = function() {
-        return new Promise(function(resolve) {
+        return new Promise(function(resolve, reject) {
             var rimfaf = require('rimraf');
             rimfaf('./public', function(err) {
                 if (err) {
