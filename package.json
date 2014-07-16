@@ -34,6 +34,10 @@
         "v8-argv": "^0.2.0",
         "stylus": "^0.45.1"
     },
+    "devDependencies": {
+        "jscs": "^1.5.8",
+        "jshint": "^2.5.2"
+    },
     "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
     "license": "MIT",
     "scripts": {
