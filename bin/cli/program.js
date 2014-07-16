@@ -3,7 +3,8 @@ var localconfig = require('../config'),
     logo = require('../cli/logo');
 
 program
-    .version(localconfig.version);
+    .version(localconfig.version)
+    .option('-w, --watch', 'Watch files and rerun your website');
 
 program
     .command('init')
@@ -44,10 +45,15 @@ program
 program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
-    .action(function(_port) {
+    .action(function(_port, options) {
+    	var watch = program.watch || false;
         var util = require('../cli/util');
         var port = _port ? _port : '9356';
         var core = require('../core');
+
+        if (watch) {
+        	util.watch();
+        }
         core.init().then(function() {
             util.run(port);
         });

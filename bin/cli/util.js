@@ -2,6 +2,7 @@ var localconfig = require('../config'),
     helpers = require('../helpers'),
     fs = require('fs'),
     path = require('path'),
+    chokidar = require('chokidar'),
 
     // JSHint ESNext option doesn't allow redefinition of Promise
     // But it's not supported yet in node --harmony
@@ -41,6 +42,13 @@ module.exports = {
                 that.config(sitePath);
             });
         });
+    },
+
+    watch: function () {
+    	console.log('Watching...');
+    	var watcher = chokidar.watch(localconfig.srcpath, { ignored: /[\/\\]\./, persistent: true });
+    	watcher
+  			.on('change', function (path) { console.log('File', path, 'has been changed'); });
     },
 
     config: function(p) {
