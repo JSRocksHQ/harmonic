@@ -126,16 +126,19 @@ var Parser = function() {
 		});
 	};
 
-	this.clean = function() {
-		return new Promise(function (resolve, reject) {
-			var exec = require('child_process').exec,
-				child = null;
-			child = exec('rm -rf ./public',function(err,out) {
-			 	console.log(clc.warn('Cleaning up...'));
-			 	resolve();
-			});
-		});
-	};
+    this.clean = function() {
+        return new Promise(function (resolve, reject) {
+            var rimfaf = require('rimraf');
+            rimfaf('./public', function(err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    console.log(clc.warn('Cleaning up...'));
+                    resolve();
+                }
+            });
+        });
+    };
 
 	this.createPublicFolder = function(argument) {
 		return new Promise(function(resolve, reject) {
