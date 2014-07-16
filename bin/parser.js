@@ -146,13 +146,14 @@ Parser = function() {
     };
 
     this.clean = function() {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var rimfaf = require('rimraf');
             rimfaf('./public', function(err) {
                 if (err) {
                     reject(err);
                 } else {
                     console.log(clc.warn('Cleaning up...'));
+                    resolve();
                 }
             });
         });
