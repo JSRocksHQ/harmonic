@@ -1,4 +1,5 @@
 ![harmonic logo](harmonic-logo.png)  
+[![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)  
 
 # The next static site generator
 > Please note that this project is currently under development. Contributions are pretty welcome!
