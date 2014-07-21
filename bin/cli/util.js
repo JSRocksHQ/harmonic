@@ -46,9 +46,26 @@ module.exports = {
 
     watch: function () {
     	console.log('Watching...');
-    	var watcher = chokidar.watch(localconfig.srcpath, { ignored: /[\/\\]\./, persistent: true });
+    	var watcher = chokidar.watch(localconfig.srcpath, { ignored: /[\/\\]\./, persistent: true, interval: 1000 });
+    	var Parser = require('../parser');
+    	var parser = new Parser();
+
     	watcher
-  			.on('change', function (path) { console.log('File', path, 'has been changed'); });
+  			.on('change', function (path) {
+  				parser.start()
+                .then(parser.getConfig)
+                .then(parser.generatePages)
+                .then(parser.getFiles)
+                .then(parser.generatePosts)
+                .then(parser.generateRSS)
+                .then(parser.compileES6)
+                .then(parser.generateIndex)
+                .then(parser.generateTagsPages)
+                .then(parser.copyResources)
+                .catch(function(e) {
+                    console.log(e);
+                });
+  			});
     },
 
     config: function(p) {
