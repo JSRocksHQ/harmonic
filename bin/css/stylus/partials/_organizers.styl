@@ -1,0 +1,83 @@
+.organizers
+    padding-bottom 4rem
+
+.organizers__list
+    @extends $container
+    display flex
+    flex-direction column
+    justify-content space-around
+    align-items center
+    padding-top 3rem
+    overflow hidden
+    transition()
+
+    @media tp-s-3
+        flex-direction row
+
+    @media bp-m
+        width 80%
+        margin 0 auto
+
+    @media bp-m
+        width 60%
+
+.organizers__title
+    font-size 3rem
+    font-weight bold
+    color grey
+    text-align center
+    font-style italic
+    line-height 1
+    //text-shadow 5px 1px lightGrey
+    trannsition()
+
+    @media tp-s-3
+        max-width 40%
+        position relative
+        top -.2em
+        text-align right
+        font-size 4rem
+
+.organizers__item
+    float left
+    //width 50%
+    padding .2rem
+    transition()
+
+    @media bp-m
+        //width 25%
+        padding 0
+
+.organizers__pic img
+    display block
+    width 50%
+    margin 0 auto
+    border-radius 5px 5px 0 0
+    transition()
+
+    @media tp-s-1
+        width 30%
+
+
+    @media tp-s-2
+        width 90%
+        max-width 5rem
+
+.organizers__name
+    display block
+    margin 0 auto
+    max-width 80%
+    padding-top .2rem
+    text-align center
+    font-size 1rem
+    font-family titleFont
+    border-top solid 3px green
+    transition()
+
+    @media bp-m
+        font-size 1rem
+        max-width 6rem
+
+
+
+

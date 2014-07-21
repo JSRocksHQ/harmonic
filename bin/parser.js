@@ -10,7 +10,6 @@ var Helper, Parser,
     ncp = require('ncp').ncp,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
-    stylus = require('stylus'),
     mkmeta = require('marked-metadata'),
     traceur = require('traceur'),
     clc = helpers.cliColor();
@@ -172,44 +171,9 @@ Parser = function() {
     };
 
     this.compileCSS = function() {
-        var compiler,
-            currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
-
-        compiler = {
-
-            // Less
-            less: function() {
-                console.log('Less is not implemented yet');
-            },
-
-            // Stylus
-            stylus: function() {
-                var promise = new Promise(function(resolve, reject) {
-                    var curTemplate = './src/templates/' + GLOBAL.config.template,
-                        stylDir = curTemplate + '/resources/_stylus',
-                        cssDir = curTemplate + '/resources/css',
-                        code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
-
-                    stylus(code)
-                        .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
-                        .render(function(err, css) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                fs.writeFileSync(cssDir + '/main.css', css);
-                                console.log(
-                                    clc.info('Successfully generated CSS with Stylus preprocessor')
-                                );
-                                resolve();
-                            }
-                        });
-                });
-
-                return promise;
-            }
-        };
-
-        compiler[currentCSSCompiler]();
+        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
+			compiler = require('./css/' + currentCSSCompiler);
+        compiler().then(function () {}, function (e) { console.log(e)});
     };
 
     this.compileES6 = function(postsMetadata) {
