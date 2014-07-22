@@ -171,9 +171,12 @@ Parser = function() {
     };
 
     this.compileCSS = function() {
-        var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
-			compiler = require('./css/' + currentCSSCompiler);
-        compiler().then(function () {}, function (e) { console.log(e)});
+    	return new Promise(function (resolve, reject) {
+    		var currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus',
+				compiler = require('./css/' + currentCSSCompiler);
+
+	        compiler().then(resolve, function (e) { console.log(e)});
+    	});
     };
 
     this.compileES6 = function(postsMetadata) {

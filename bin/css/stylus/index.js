@@ -7,16 +7,16 @@ var stylus = require('stylus'),
 var Stylus = function() {
     return new Promise(function(resolve, reject) {
         var stylDir = localconfig.rootdir + 'bin/css/stylus/',
-            cssDir = './public/css',
+            cssDir = localconfig.sitedir + '/public/css',
             code = fs.readFileSync(stylDir + 'index.styl', 'utf8');
 
         stylus(code)
-            .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+            .set('paths', [stylDir, stylDir + 'engine', stylDir + 'partials'])
             .render(function(err, css) {
                 if (err) {
                     reject(err);
                 } else {
-                    fs.writeFileSync(cssDir + '/main.css', css);
+                    fs.writeFileSync(cssDir, css);
                     console.log(
                         clc.info('Successfully generated CSS with Stylus preprocessor')
                     );

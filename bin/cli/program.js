@@ -49,6 +49,7 @@ program
         var port = _port ? _port : '9356';
         var core = require('../core');
         core.init().then(function() {
+            console.log('THEN');
             util.run(port);
         });
     });
