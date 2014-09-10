@@ -401,7 +401,7 @@ Parser = function() {
             langs.forEach(function(lang) {
                 files[lang].forEach(function(file, i) {
                     var metadata, post, postCropped, filename, checkDate, postPath, categories,
-                        _post, postHTMLFile,
+                        _post, postHTMLFile, postDate, month, year,
                         md = new mkmeta(postsPath + lang + '/' + file);
 
                     md.defineTokens(tokens[0], tokens[1]);
@@ -423,17 +423,36 @@ Parser = function() {
 
                     postPath = null;
                     categories = metadata.categories.split(',');
+                    postDate = new Date(metadata.date);
+                    year = postDate.getFullYear();
+                    month = (postDate.getMonth() + 1) < 10 ? '0' + (postDate.getMonth() + 1) :
+                    postDate.getMonth() + 1;
 
                     // If is the default language, generate in the root path
+                    var options = {
+                        replacements: [{
+                            pattern: ':year',
+                            replacement: year,
+                        },
+                        {
+                            pattern: ':month',
+                            replacement: month
+                        },
+                        {
+                            pattern: ':title',
+                            replacement: filename
+                        },
+                        {
+                            pattern: ':language',
+                            replacement: lang
+                        }]
+                    };
                     if (config.i18n.default === lang) {
-                        postPath = permalinks(config.posts_permalink.split(':language/')[1], {
-                            title: filename
-                        });
+                        options.structure = config.posts_permalink.split(':language/')[1];
+                        postPath = permalinks(options);
                     } else {
-                        postPath = permalinks(config.posts_permalink, {
-                            title: filename,
-                            language: lang
-                        });
+                        options.structure = config.posts_permalink;
+                        postPath = permalinks(options);
                     }
 
                     metadata.categories = categories;
