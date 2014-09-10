@@ -145,11 +145,17 @@ module.exports = {
 
     run: function(port) {
         var clc = helpers.cliColor(),
-            file = new staticServer.Server('./public');
+            file = new staticServer.Server(path.join(process.cwd(), 'public'));
         console.log(clc.info('Harmonic site is running on http://localhost:' + port));
         require('http').createServer(function(request, response) {
                 request.addListener('end', function() {
-                        file.serve(request, response);
+                        file.serve(request, response, function (err) {
+                            if (err) {
+                                console.log(clc.error("Error serving " + request.url + " - " + err.message));
+                                response.writeHead(err.status, err.headers);
+                                response.end();
+                            }
+                        });
                     }).resume();
             }).listen(port);
     }
