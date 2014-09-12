@@ -11,13 +11,13 @@ var Helper, Parser,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
     stylus = require('stylus'),
-    mkmeta = require('marked-metadata'),
+    MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
-    clc = helpers.cliColor();
+    clc = helpers.cliColor(),
 
-// JSHint ESNext option doesn't allow redefinition of Promise
-// But it's not supported yet in node --harmony
-var Promise = require('promise'); // jshint ignore: line
+    // JSHint ESNext option doesn't allow redefinition of Promise
+    // But it's not supported yet in node --harmony
+    Promise = require('promise'); // jshint ignore: line
 
 Helper = {
     getPagesFiles: function() {
@@ -65,7 +65,7 @@ Helper = {
                     page = fs.readFileSync(pagesPath + '/' + file).toString(),
                     pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
                     pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
-                    md = new mkmeta(pagesPath + '/' + file),
+                    md = new MkMeta(pagesPath + '/' + file),
                     filename = path.extname(file) === '.md' ?
                         path.basename(file, '.md') :
                         path.basename(file, '.markdown');
@@ -146,7 +146,7 @@ Parser = function() {
     };
 
     this.clean = function() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var rimfaf = require('rimraf');
             rimfaf('./public', function(err) {
                 if (err) {
@@ -387,7 +387,7 @@ Parser = function() {
 
     this.generatePosts = function(files) {
         return new Promise(function(resolve, reject) {
-            var langs = Object.keys( files ),
+            var langs = Object.keys(files),
                 config = GLOBAL.config,
                 posts = {},
                 currentDate = new Date(),
@@ -403,8 +403,8 @@ Parser = function() {
             langs.forEach(function(lang) {
                 files[lang].forEach(function(file, i) {
                     var metadata, post, postCropped, filename, checkDate, postPath, categories,
-                        _post, postHTMLFile, postDate, month, year,
-                        md = new mkmeta(postsPath + lang + '/' + file);
+                        _post, postHTMLFile, postDate, month, year, options,
+                        md = new MkMeta(postsPath + lang + '/' + file);
 
                     md.defineTokens(tokens[0], tokens[1]);
                     metadata = Helper.normalizeMetaData(md.metadata());
@@ -431,10 +431,10 @@ Parser = function() {
                     postDate.getMonth() + 1;
 
                     // If is the default language, generate in the root path
-                    var options = {
+                    options = {
                         replacements: [{
                             pattern: ':year',
-                            replacement: year,
+                            replacement: year
                         },
                         {
                             pattern: ':month',

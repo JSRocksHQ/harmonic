@@ -1,4 +1,6 @@
 {
+    "preset": "airbnb",
+
     "requireParenthesesAroundIIFE": true,
     "maximumLineLength": 100,
     "validateLineBreaks": "LF",
