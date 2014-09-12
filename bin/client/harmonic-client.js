@@ -11,4 +11,8 @@ class Harmonic {
     getPosts() {
         return {{posts}};
     }
+
+    getPages() {
+    	return {{pages}};
+    }
 }
