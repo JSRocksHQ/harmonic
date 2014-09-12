@@ -1,6 +1,4 @@
 {
-    "preset": "google",
-
     "requireParenthesesAroundIIFE": true,
     "maximumLineLength": 100,
     "validateLineBreaks": "LF",
