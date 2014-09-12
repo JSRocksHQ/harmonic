@@ -42,6 +42,16 @@ program
     });
 
 program
+    .command('new_page ["title"]')
+    .description('Create a new page')
+    .action(function(title) {
+        var util = require('../cli/util');
+        util.new_page(title).then(function(data) {
+            console.log(data);
+        });
+    });
+
+program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
     .action(function(_port) {

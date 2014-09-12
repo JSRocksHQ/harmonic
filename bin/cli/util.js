@@ -113,6 +113,43 @@ module.exports = {
         })();
     },
 
+    new_page: function(title) {
+        var clc = helpers.cliColor();
+        return new Promise(function(resolve) {
+            var langs = helpers.getConfig().i18n.languages,
+                template = '<!--\n' +
+                    'layout: page\n' +
+                    'title: ' + title + '\n' +
+                    'date: ' + new Date().toJSON() + '\n' +
+                    'comments: true\n' +
+                    'published: true\n' +
+                    'keywords:\n' +
+                    'description:\n' +
+                    'categories:\n' +
+                    '-->\n' +
+                    '# ' + title,
+                str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase(),
+                path = localconfig.pagespath,
+                filename = str + '.md';
+
+            for (var i = 0; i < langs.length; i += 1) {
+
+                // create a new page
+                try {
+                    if (!fs.existsSync(path + langs[i])) {
+                        fs.mkdirSync(path + langs[i], 0766);
+                    }
+                    fs.writeFileSync(path + langs[i] + '/' + filename, template);
+                } catch(e) {
+                    reject(e);
+                }
+                resolve(clc.info(
+                    'Page "' + title + '" was successefuly created, check your /src/pages folder'
+                ));
+            }
+        });
+    },
+
     new_post: function(title) {
         var clc = helpers.cliColor();
         return new Promise(function(resolve) {
