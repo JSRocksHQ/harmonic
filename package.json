@@ -35,7 +35,7 @@
     "stylus": "^0.45.1"
   },
   "devDependencies": {
-    "jscs": "^1.5.8",
+    "jscs": "^1.6.1",
     "jshint": "^2.5.2"
   },
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
