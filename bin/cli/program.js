@@ -1,6 +1,9 @@
 var localconfig = require('../config'),
     program = require('commander'),
-    logo = require('../cli/logo');
+    logo = require('../cli/logo'),
+    util = require('../cli/util');
+
+util.loadPlugins();
 
 program
     .version(localconfig.version);

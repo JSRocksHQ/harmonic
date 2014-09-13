@@ -1,6 +1,7 @@
 var localconfig = require('../config'),
     helpers = require('../helpers'),
     fs = require('fs'),
+    api = require('../cli/api'),
     path = require('path'),
 
     // JSHint ESNext option doesn't allow redefinition of Promise
@@ -195,5 +196,17 @@ module.exports = {
                         });
                     }).resume();
             }).listen(port);
+    },
+
+    loadPlugins: function() {
+        var config = localconfig.package,
+            dependencies = config.dependencies,
+            i = null,
+            pattern = /plugin\-harmonic\-/;
+        for (i in dependencies) {
+            if(i.match(pattern)) {
+                require(i)(api);
+            }
+        }
     }
 };
