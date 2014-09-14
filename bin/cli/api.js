@@ -1,8 +1,9 @@
-var localconfig = require('../config');
+var localconfig = require('../config'),
+	EventEmitter = require("events").EventEmitter;
 
-module.exports = {
-	version : localconfig.version,
-	getHello : function () {
-		return "Hello from API";
-	}
+module.exports = new EventEmitter();
+module.exports.version = localconfig.version;
+module.exports.getHello = function () {
+	module.exports.emit('start');
+	return "Hello from API";
 }
