@@ -23,14 +23,17 @@ Helper = {
     getPagesFiles: function() {
         return new Promise(function(resolve) {
 
-            // Reading pages dir
-            fs.readdir(pagesPath, function(err, files) {
-                if (err) {
-                    throw err;
-                }
+            var config = GLOBAL.config,
+                langs = config.i18n.languages,
+                langsLen = langs.length,
+                i = 0,
+                files = {};
 
-                resolve(files);
-            });
+            for (i; i < langsLen; i += 1) {
+                files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+            }
+
+            resolve(files);
         });
     },
 
@@ -50,8 +53,10 @@ Helper = {
     },
 
     parsePages: function(files) {
+        console.log(files);
         return new Promise(function(resolve, reject) {
             var pages = [],
+                langs = Object.keys( files ),
                 curTemplate = GLOBAL.config.template,
                 nunjucksEnv = GLOBAL.nunjucksEnv,
                 config = GLOBAL.config,
@@ -60,69 +65,71 @@ Helper = {
 
             GLOBAL.pages = [];
 
-            files.forEach(function(file, i) {
-                var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                    page = fs.readFileSync(pagesPath + '/' + file).toString(),
-                    pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
-                    pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
-                    md = new mkmeta(pagesPath + '/' + file),
-                    filename = path.extname(file) === '.md' ?
-                        path.basename(file, '.md') :
-                        path.basename(file, '.markdown');
+            langs.forEach(function(lang) {
+                files[lang].forEach(function(file, i) {
+                    var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                        page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
+                        pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
+                        pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
+                        md = new mkmeta(pagesPath + lang + '/' + file),
+                        filename = path.extname(file) === '.md' ?
+                            path.basename(file, '.md') :
+                            path.basename(file, '.markdown');
 
-                md.defineTokens(tokens[0], tokens[1]);
+                    md.defineTokens(tokens[0], tokens[1]);
 
-                // Markdown extra
-                metadata = md.metadata();
-                pagePermalink = permalinks(config.pages_permalink, {
-                    title: filename
-                });
+                    // Markdown extra
+                    metadata = md.metadata();
+                    pagePermalink = permalinks(config.pages_permalink, {
+                        title: filename
+                    });
 
-                _page = {
-                    content: md.markdown(),
-                    metadata: metadata
-                };
+                    _page = {
+                        content: md.markdown(),
+                        metadata: metadata
+                    };
 
-                pageContent = nunjucks.compile(page, nunjucksEnv);
-                pageHTMLFile = pageTemplateNJ.render({
-                    page: _page,
-                    config: GLOBAL.config
-                });
+                    pageContent = nunjucks.compile(page, nunjucksEnv);
+                    pageHTMLFile = pageTemplateNJ.render({
+                        page: _page,
+                        config: GLOBAL.config
+                    });
 
-                // Removing header metadata
-                pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+                    // Removing header metadata
+                    pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
-                metadata.content = pageHTMLFile;
-                metadata.file = postsPath + file;
-                metadata.filename = filename;
-                metadata.link = '/' + filename + '.html';
-                metadata.date = new Date(metadata.date);
+                    metadata.content = pageHTMLFile;
+                    metadata.file = postsPath + file;
+                    metadata.filename = filename;
+                    metadata.link = '/' + filename + '.html';
+                    metadata.date = new Date(metadata.date);
 
-                GLOBAL.pages.push(metadata);
+                    GLOBAL.pages.push(metadata);
 
-                nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
-                    if (err) {
-                        reject(err);
-                    } else {
+                    nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
+                        if (err) {
+                            reject(err);
+                        } else {
 
-                        // write page html file
-                        fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
-                            function(err) {
-                                if (err) {
-                                    throw err;
+                            // write page html file
+                            fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
+                                function(err) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    console.log(
+                                        clc.info('Successfully generated page ' + pagePermalink)
+                                    );
                                 }
-                                console.log(
-                                    clc.info('Successfully generated page ' + pagePermalink)
-                                );
-                            }
-                        );
+                            );
+                        }
+                    });
+
+                    if (i === files[lang].length - 1) {
+                        resolve(pages);
                     }
+
                 });
-
-                if (i === files.length - 1) {
-                    resolve(pages);
-                }
-
             });
         });
     },
