@@ -53,9 +53,9 @@ harmonic new_post "Hello World"
 ```
 ![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
 
-After running **_new_post_**, the markdown file will be generated in _**/src/posts/**_ folder.  
+After running **_new_post_**, the markdown file will be generated in _**/src/posts/[lang]**_ folder.  
 
-### Markdown header
+#### Markdown header
 The markdown file have a header which defines the post meta-data.  
 Example:  
 ```markdown
@@ -73,7 +73,7 @@ authorName: Jaydson
 ```
 You can check all possible header values in the [header page](https://github.com/es6rocks/harmonic/wiki/markdown-header).  
 
-### Markdown content
+#### Markdown content
 Everything after the header is the post content.  
 Exemple:  
 ```markdown
@@ -100,6 +100,12 @@ The code above will be parsed to something like this:
 </ul>
 ```
 For more details, you can check the full documentation: [Blogging](https://github.com/es6rocks/harmonic/wiki/Blogging).  
+## New Page
+```
+cd your_awesome_website
+harmonic new_page "Hello World Page"
+```
+After running **_new_page_**, the markdown file will be generated in _**/src/pages/[lang]**_ folder.  
 
 ## Build
 The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
