@@ -21,7 +21,7 @@ var Promise = require('promise'); // jshint ignore: line
 
 Helper = {
     getPagesFiles: function() {
-        return new Promise(function(resolve) {
+        return new Promise(function(resolve, reject) {
 
             var config = GLOBAL.config,
                 langs = config.i18n.languages,
@@ -30,7 +30,11 @@ Helper = {
                 files = {};
 
             for (i; i < langsLen; i += 1) {
-                files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+                if (!fs.existsSync(pagesPath + langs[i])) {
+                    fs.mkdirSync(pagesPath + langs[i], 0766);
+                } else {
+                    files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+                }
             }
 
             resolve(files);
@@ -53,7 +57,6 @@ Helper = {
     },
 
     parsePages: function(files) {
-        console.log(files);
         return new Promise(function(resolve, reject) {
             var pages = [],
                 langs = Object.keys( files ),
@@ -463,6 +466,7 @@ Parser = function() {
                         options.structure = config.posts_permalink;
                         postPath = permalinks(options);
                     }
+                    console.log(postPath);
 
                     metadata.categories = categories;
                     metadata.content = postCropped;
