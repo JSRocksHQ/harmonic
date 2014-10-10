@@ -63,7 +63,7 @@ Helper = {
     parsePages: function(files) {
         return new Promise(function(resolve, reject) {
             var pages = [],
-                langs = Object.keys( files ),
+                langs = Object.keys(files),
                 curTemplate = GLOBAL.config.template,
                 nunjucksEnv = GLOBAL.nunjucksEnv,
                 config = GLOBAL.config,
@@ -73,13 +73,15 @@ Helper = {
             GLOBAL.pages = [];
 
             langs.forEach(function(lang) {
-                if(files[lang].length > 0) {
+                if (files[lang].length > 0) {
                     files[lang].forEach(function(file, i) {
                         var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
                             page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
-                            pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
-                            pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
-                            md = new mkmeta(pagesPath + lang + '/' + file),
+                            tplSrc = './src/templates/' + curTemplate + '/page.html',
+                            pageTpl = fs.readFileSync(tplSrc),
+                            pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
+                            md = new MkMeta(pagesPath + lang + '/' + file),
+                            pageSrc = '',
                             filename = path.extname(file) === '.md' ?
                                 path.basename(file, '.md') :
                                 path.basename(file, '.markdown');
@@ -98,7 +100,7 @@ Helper = {
                         };
 
                         pageContent = nunjucks.compile(page, nunjucksEnv);
-                        pageHTMLFile = pageTemplateNJ.render({
+                        pageHTMLFile = pageTplNJ.render({
                             page: _page,
                             config: GLOBAL.config
                         });
@@ -111,6 +113,7 @@ Helper = {
                         metadata.filename = filename;
                         metadata.link = '/' + filename + '.html';
                         metadata.date = new Date(metadata.date);
+                        pageSrc = './public/' + pagePermalink + '/' + 'index.html', pageHTMLFile;
 
                         GLOBAL.pages.push(metadata);
 
@@ -120,7 +123,7 @@ Helper = {
                             } else {
 
                                 // write page html file
-                                fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
+                                fs.writeFile(pageSrc,
                                     function(err) {
                                         if (err) {
                                             throw err;
