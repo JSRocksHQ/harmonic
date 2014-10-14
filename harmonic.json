@@ -1,19 +1,25 @@
 {
-    "name": "ES6 Rocks",
-    "title": "ES6 Rocks",
-    "domain": "es6rocks.com",
-    "subtitle": "ES6 Rocks",
-    "author": "Jaydson",
-    "description": "",
-    "bio": "",
+    "name": "teste",
+    "title": "tete",
+    "domain": "http://awesome.com",
+    "subtitle": "Powered by Harmonic",
+    "author": "robsonaraujojunior",
+    "description": "This is the description",
+    "bio": "Thats me",
     "template": "default",
-    "preprocessor": "stylus",
-    "posts_permalink" : ":language/:year/:month/:title",
-    "pages_permalink" : "pages/:title",
-    "header_tokens" : ["<!--","-->"],
-    "index_posts" : 10,
-    "i18n" : {
-        "default" : "en",
-        "languages" : ["en","pt-br"]
+    "preprocessor": "less",
+    "posts_permalink": ":year/:month/:title",
+    "pages_permalink": "pages/:title",
+    "header_tokens": [
+        "<!--",
+        "-->"
+    ],
+    "index_posts": 10,
+    "i18n": {
+        "default": "en",
+        "languages": [
+            "en",
+            "pt-br"
+        ]
     }
 }
