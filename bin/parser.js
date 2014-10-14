@@ -11,13 +11,13 @@ var Helper, Parser,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
     stylus = require('stylus'),
-    mkmeta = require('marked-metadata'),
+    MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
-    clc = helpers.cliColor();
+    clc = helpers.cliColor(),
 
-// JSHint ESNext option doesn't allow redefinition of Promise
-// But it's not supported yet in node --harmony
-var Promise = require('promise'); // jshint ignore: line
+    // JSHint ESNext option doesn't allow redefinition of Promise
+    // But it's not supported yet in node --harmony
+    Promise = require('promise'); // jshint ignore: line
 
 Helper = {
     getPagesFiles: function() {
@@ -33,7 +33,11 @@ Helper = {
                 if (!fs.existsSync(pagesPath + langs[i])) {
                     fs.mkdirSync(pagesPath + langs[i], 0766);
                 } else {
-                    files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+                    try {
+                        files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+                    } catch (e) {
+                        reject(e);
+                    }
                 }
             }
 
@@ -59,7 +63,7 @@ Helper = {
     parsePages: function(files) {
         return new Promise(function(resolve, reject) {
             var pages = [],
-                langs = Object.keys( files ),
+                langs = Object.keys(files),
                 curTemplate = GLOBAL.config.template,
                 nunjucksEnv = GLOBAL.nunjucksEnv,
                 config = GLOBAL.config,
@@ -69,70 +73,78 @@ Helper = {
             GLOBAL.pages = [];
 
             langs.forEach(function(lang) {
-                files[lang].forEach(function(file, i) {
-                    var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                        page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
-                        pageTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/page.html'),
-                        pageTemplateNJ = nunjucks.compile(pageTemplate.toString(), nunjucksEnv),
-                        md = new mkmeta(pagesPath + lang + '/' + file),
-                        filename = path.extname(file) === '.md' ?
-                            path.basename(file, '.md') :
-                            path.basename(file, '.markdown');
 
-                    md.defineTokens(tokens[0], tokens[1]);
+                if (files[lang].length > 0) {
+                    files[lang].forEach(function(file, i) {
+                        var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                            page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
+                            tplSrc = './src/templates/' + curTemplate + '/page.html',
+                            pageTpl = fs.readFileSync(tplSrc),
+                            pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
+                            md = new MkMeta(pagesPath + lang + '/' + file),
+                            pageSrc = '',
+                            filename = path.extname(file) === '.md' ?
+                                path.basename(file, '.md') :
+                                path.basename(file, '.markdown');
 
-                    // Markdown extra
-                    metadata = md.metadata();
-                    pagePermalink = permalinks(config.pages_permalink, {
-                        title: filename
-                    });
+                        md.defineTokens(tokens[0], tokens[1]);
 
-                    _page = {
-                        content: md.markdown(),
-                        metadata: metadata
-                    };
+                        // Markdown extra
+                        metadata = md.metadata();
+                        pagePermalink = permalinks(config.pages_permalink, {
+                            title: filename
+                        });
 
-                    pageContent = nunjucks.compile(page, nunjucksEnv);
-                    pageHTMLFile = pageTemplateNJ.render({
-                        page: _page,
-                        config: GLOBAL.config
-                    });
+                        _page = {
+                            content: md.markdown(),
+                            metadata: metadata
+                        };
 
-                    // Removing header metadata
-                    pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+                        pageContent = nunjucks.compile(page, nunjucksEnv);
+                        pageHTMLFile = pageTplNJ.render({
+                            page: _page,
+                            config: GLOBAL.config
+                        });
 
-                    metadata.content = pageHTMLFile;
-                    metadata.file = postsPath + file;
-                    metadata.filename = filename;
-                    metadata.link = '/' + filename + '.html';
-                    metadata.date = new Date(metadata.date);
+                        // Removing header metadata
+                        pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
-                    GLOBAL.pages.push(metadata);
+                        metadata.content = pageHTMLFile;
+                        metadata.file = postsPath + file;
+                        metadata.filename = filename;
+                        metadata.link = '/' + filename + '.html';
+                        metadata.date = new Date(metadata.date);
+                        pageSrc = './public/' + pagePermalink + '/' + 'index.html', pageHTMLFile;
 
-                    nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
-                        if (err) {
-                            reject(err);
-                        } else {
+                        GLOBAL.pages.push(metadata);
 
-                            // write page html file
-                            fs.writeFile('./public/' + pagePermalink + '/' + 'index.html', pageHTMLFile,
-                                function(err) {
-                                    if (err) {
-                                        throw err;
+                        nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
+                            if (err) {
+                                reject(err);
+                            } else {
+
+                                // write page html file
+                                fs.writeFile(pageSrc,
+                                    function(err) {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                        console.log(
+                                            clc.info('Successfully generated page ' + pagePermalink)
+                                        );
                                     }
-                                    console.log(
-                                        clc.info('Successfully generated page ' + pagePermalink)
-                                    );
-                                }
-                            );
+                                );
+                            }
+                        });
+
+                        if (i === files[lang].length - 1) {
+                            resolve(pages);
                         }
+
                     });
-
-                    if (i === files[lang].length - 1) {
-                        resolve(pages);
-                    }
-
-                });
+                } else {
+                    resolve([]);
+                }
             });
         });
     },
@@ -156,7 +168,7 @@ Parser = function() {
     };
 
     this.clean = function() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             var rimfaf = require('rimraf');
             rimfaf('./public', function(err) {
                 if (err) {
@@ -397,7 +409,7 @@ Parser = function() {
 
     this.generatePosts = function(files) {
         return new Promise(function(resolve, reject) {
-            var langs = Object.keys( files ),
+            var langs = Object.keys(files),
                 config = GLOBAL.config,
                 posts = {},
                 currentDate = new Date(),
@@ -413,8 +425,8 @@ Parser = function() {
             langs.forEach(function(lang) {
                 files[lang].forEach(function(file, i) {
                     var metadata, post, postCropped, filename, checkDate, postPath, categories,
-                        _post, postHTMLFile, postDate, month, year,
-                        md = new mkmeta(postsPath + lang + '/' + file);
+                        _post, postHTMLFile, postDate, month, year, options,
+                        md = new MkMeta(postsPath + lang + '/' + file);
 
                     md.defineTokens(tokens[0], tokens[1]);
                     metadata = Helper.normalizeMetaData(md.metadata());
@@ -441,10 +453,10 @@ Parser = function() {
                     postDate.getMonth() + 1;
 
                     // If is the default language, generate in the root path
-                    var options = {
+                    options = {
                         replacements: [{
                             pattern: ':year',
-                            replacement: year,
+                            replacement: year
                         },
                         {
                             pattern: ':month',
