@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ config.title }}</title>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:image" content="http://es6rocks.com/images/es6rocks.png" />
+    <meta property="og:title" content="ES6Rocks" />
+    <meta property="og:description" content="Articles and News about ECMA6: Harmony" />
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+    {% include "partials/navigation.html" %}
+    <header class="topWrap">
+        <section class="lobby">
+            <h1 class="pageTitle">
+                {{ config.title }}
+            </h1>
+            <a href="/">
+                <img class="logo" src="/images/logo.svg" alt="ES6Rocks" />
+            </a>
+        </section>
+    </header>
+
+    <section id="posts" class="posts">
+        <ul class="postList">
+            {% for post in posts %}
+            <li class="post">
+                <span class="post__date">
+                    {{ post.date }}
+                </span>
+                <article class="post__content">
+                    <a class="post__title" href="/{{ post.link }}">
+                        {{ post.title }}
+                    </a>
+                    <section class="post__excerpt">
+                        {{ post.content }}
+                    </section>
+                </article>
+                <!--
+                <section class="post__author">
+                    <figure class="author">
+                        <img class="author__photo" src="{{ post.authorPicture }}" />
+                        <figcaption>
+                            <a class="author__link" href="{{ post.authorLink }}">@Jaydson</a>
+                        </figcaption>
+                    </figure>
+                    <section class="author__description">
+                        {{ post.authorDescription }}
+                    </section>
+                </section>
+                -->
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+</main>
+{% include "partials/organizers.html" %}
+{% include "partials/footer.html" %}
