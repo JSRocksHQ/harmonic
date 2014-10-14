@@ -44,5 +44,4 @@
     "scripts": {
         "test": "jshint **/*.js && jscs -r inline bin/"
     }
->>>>>>> robsonaraujojunior-lessImplementation
 }

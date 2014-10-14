@@ -10,13 +10,9 @@ var Helper, Parser,
     ncp = require('ncp').ncp,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
-    stylus = require('stylus'),
-<<<<<<< HEAD
-    MkMeta = require('marked-metadata'),
-=======
     less = require('less'),
-    mkmeta = require('marked-metadata'),
->>>>>>> robsonaraujojunior-lessImplementation
+    stylus = require('stylus'),
+    MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
     clc = helpers.cliColor(),
 
