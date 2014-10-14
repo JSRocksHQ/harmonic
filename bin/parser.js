@@ -240,7 +240,7 @@ Parser = function() {
 
                         fs.writeFileSync(options.outputDir + options.outputfile, cssString, 'utf8');
 
-                        console.log('Successfully generated CSS with LESS preprocessor');
+                        clc.info('Successfully generated CSS with LESS preprocessor')
                     });
 
                 });
