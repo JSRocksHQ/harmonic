@@ -11,7 +11,12 @@ var Helper, Parser,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
     stylus = require('stylus'),
+<<<<<<< HEAD
     MkMeta = require('marked-metadata'),
+=======
+    less = require('less'),
+    mkmeta = require('marked-metadata'),
+>>>>>>> robsonaraujojunior-lessImplementation
     traceur = require('traceur'),
     clc = helpers.cliColor(),
 
@@ -194,13 +199,66 @@ Parser = function() {
 
     this.compileCSS = function() {
         var compiler,
-            currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
+            currentCSSCompiler = GLOBAL.config.preprocessor || 'less' || 'stylus';
 
         compiler = {
 
             // Less
             less: function() {
-                console.log('Less is not implemented yet');
+
+                var curTemplate = './src/templates/' + GLOBAL.config.template,
+                    lessDir = curTemplate + '/resources/_less',
+                    cssDir = curTemplate + '/resources/css';
+
+
+                fs.readFile(lessDir+'/index.less', function(error, data) {
+
+                    var dataString = data.toString();
+                    var options = {
+                        paths: [lessDir],            // .less file search paths
+                        outputDir: cssDir,           // output directory, note the '/'
+                        optimization: 1,            // optimization level, higher is better but more volatile - 1 is a good value
+                        filename: "main.less",      // root .less file
+                        compress: false,            // compress?
+                        yuicompress: false          // use YUI compressor?
+                    };
+
+
+                    options.outputfile = options.filename.split(".less")[0] + (options.compress ? ".min" : "") + ".css";
+                    options.outputDir = path.resolve(process.cwd(), options.outputDir) + "/";
+                    verifyDirectory(options.outputDir);
+
+
+                    var parser = new less.Parser(options);
+                    parser.parse(dataString, function(error, cssTree) {
+
+                        if (error) {
+                            less.writeError(error, options);
+                            return false;
+                        }
+
+                        var cssString = cssTree.toCSS({
+                            compress: options.compress,
+                            yuicompress: options.yuicompress
+                        });
+
+                        fs.writeFileSync(options.outputDir + options.outputfile, cssString, 'utf8');
+
+                        console.log('Successfully generated CSS with LESS preprocessor');
+                    });
+
+                });
+
+
+                var verifyDirectory = function(filepath) {
+                    var existsSync = fs.existsSync || path.existsSync;
+
+                    var dir = filepath;
+
+                    if ( !existsSync(dir) ) {
+                        fs.mkdirSync(dir);
+                    }
+                };
             },
 
             // Stylus
@@ -218,9 +276,7 @@ Parser = function() {
                                 reject(err);
                             } else {
                                 fs.writeFileSync(cssDir + '/main.css', css);
-                                console.log(
-                                    clc.info('Successfully generated CSS with Stylus preprocessor')
-                                );
+                                console.log( clc.info('Successfully generated CSS with Stylus preprocessor') );
                                 resolve();
                             }
                         });
