@@ -57,10 +57,13 @@ program
     .action(function(_port) {
         var util = require('../cli/util'),
             port = _port ? _port : '9356',
-            core = require('../core');
-        core.init().then(function() {
-            util.run(port);
-        });
+            core = require('../core'),
+            build = core.init();
+        if (build) {
+            build.then(function() {
+                util.run(port);
+            });
+        }
     });
 
 program.parse(process.argv);
