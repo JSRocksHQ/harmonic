@@ -1,3 +1,9 @@
 node_modules/
 .sass-cache/
 public/
+
+# IDE/text editors
+*.sublime-*
+.project
+.idea/
+nbproject/
