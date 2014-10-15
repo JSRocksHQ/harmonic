@@ -64,7 +64,7 @@ module.exports = {
                     bio: 'Thats me',
                     template: 'default',
                     preprocessor: 'stylus',
-                    posts_permalink: ':year/:month/:title',
+                    posts_permalink: ':language/:year/:month/:title',
                     pages_permalink: 'pages/:title',
                     header_tokens: ['<!--', '-->'],
                     index_posts: 10,
