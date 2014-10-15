@@ -372,7 +372,7 @@ Parser = function() {
             writePromises = [];
 
         langs.forEach(function(lang) {
-            files[lang].forEach(function(file, i) {
+            files[lang].forEach(function(file) {
                 var metadata, post, postCropped, filename, checkDate, postPath, categories,
                     _post, postHTMLFile, postDate, month, year, options,
                     md = new MkMeta(postsPath + lang + '/' + file);
