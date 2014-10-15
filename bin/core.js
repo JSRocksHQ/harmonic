@@ -1,5 +1,6 @@
 var Parser = require('./parser'),
     parser = new Parser(),
+    helpers = require('./helpers'),
 
     // JSHint ESNext option doesn't allow redefinition of Promise
     // But it's not supported yet in node --harmony
@@ -8,7 +9,8 @@ var Parser = require('./parser'),
 module.exports = {
 
     init: function() {
-        return parser.start()
+        return helpers.isHarmonicProject() &&
+            parser.start()
             .then(parser.clean)
             .then(parser.getConfig)
             .then(parser.createPublicFolder)
