@@ -357,137 +357,140 @@ Parser = function() {
     };
 
     this.generatePosts = function(files) {
-        return new Promise(function(resolve, reject) {
-            var langs = Object.keys(files),
-                config = GLOBAL.config,
-                posts = {},
-                currentDate = new Date(),
-                curTemplate = config.template,
-                postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
-                nunjucksEnv = GLOBAL.nunjucksEnv,
-                postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
-                tokens = [
-                    config.header_tokens ? config.header_tokens[0] : '<!--',
-                    config.header_tokens ? config.header_tokens[1] : '-->'
-                ];
+        var langs = Object.keys(files),
+            config = GLOBAL.config,
+            posts = {},
+            currentDate = new Date(),
+            curTemplate = config.template,
+            postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
+            nunjucksEnv = GLOBAL.nunjucksEnv,
+            postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
+            tokens = [
+                config.header_tokens ? config.header_tokens[0] : '<!--',
+                config.header_tokens ? config.header_tokens[1] : '-->'
+            ],
+            writePromises = [];
 
-            langs.forEach(function(lang) {
-                files[lang].forEach(function(file, i) {
-                    var metadata, post, postCropped, filename, checkDate, postPath, categories,
-                        _post, postHTMLFile, postDate, month, year, options,
-                        md = new MkMeta(postsPath + lang + '/' + file);
+        langs.forEach(function(lang) {
+            files[lang].forEach(function(file, i) {
+                var metadata, post, postCropped, filename, checkDate, postPath, categories,
+                    _post, postHTMLFile, postDate, month, year, options,
+                    md = new MkMeta(postsPath + lang + '/' + file);
 
-                    md.defineTokens(tokens[0], tokens[1]);
-                    metadata = Helper.normalizeMetaData(md.metadata());
-                    post = Helper.normalizeContent(md.markdown());
-                    postCropped = md.markdown({
-                        crop: '<!--more-->'
-                    });
+                md.defineTokens(tokens[0], tokens[1]);
+                metadata = Helper.normalizeMetaData(md.metadata());
+                post = Helper.normalizeContent(md.markdown());
+                postCropped = md.markdown({
+                    crop: '<!--more-->'
+                });
 
-                    filename = path.extname(file) === '.md' ?
-                        path.basename(file, '.md') :
-                        path.basename(file, '.markdown');
+                filename = path.extname(file) === '.md' ?
+                    path.basename(file, '.md') :
+                    path.basename(file, '.markdown');
 
-                    checkDate = new Date(filename.substr(0, 10));
+                checkDate = new Date(filename.substr(0, 10));
 
-                    filename = isNaN(checkDate.getDate()) ?
-                        filename :
-                        filename.substr(11, filename.length);
+                filename = isNaN(checkDate.getDate()) ?
+                    filename :
+                    filename.substr(11, filename.length);
 
-                    postPath = null;
-                    categories = metadata.categories.split(',');
-                    postDate = new Date(metadata.date);
-                    year = postDate.getFullYear();
-                    month = (postDate.getMonth() + 1) < 10 ? '0' + (postDate.getMonth() + 1) :
-                    postDate.getMonth() + 1;
+                postPath = null;
+                categories = metadata.categories.split(',');
+                postDate = new Date(metadata.date);
+                year = postDate.getFullYear();
+                month = (postDate.getMonth() + 1) < 10 ? '0' + (postDate.getMonth() + 1) :
+                postDate.getMonth() + 1;
 
-                    // If is the default language, generate in the root path
-                    options = {
-                        replacements: [{
-                            pattern: ':year',
-                            replacement: year
-                        },
-                        {
-                            pattern: ':month',
-                            replacement: month
-                        },
-                        {
-                            pattern: ':title',
-                            replacement: filename
-                        },
-                        {
-                            pattern: ':language',
-                            replacement: lang
-                        }]
-                    };
-                    if (config.i18n.default === lang) {
-                        options.structure = config.posts_permalink.split(':language/')[1];
-                        postPath = permalinks(options);
-                    } else {
-                        options.structure = config.posts_permalink;
-                        postPath = permalinks(options);
-                    }
+                // If is the default language, generate in the root path
+                options = {
+                    replacements: [{
+                        pattern: ':year',
+                        replacement: year
+                    },
+                    {
+                        pattern: ':month',
+                        replacement: month
+                    },
+                    {
+                        pattern: ':title',
+                        replacement: filename
+                    },
+                    {
+                        pattern: ':language',
+                        replacement: lang
+                    }]
+                };
+                if (config.i18n.default === lang) {
+                    options.structure = config.posts_permalink.split(':language/')[1];
+                    postPath = permalinks(options);
+                } else {
+                    options.structure = config.posts_permalink;
+                    postPath = permalinks(options);
+                }
 
-                    metadata.categories = categories;
-                    metadata.content = postCropped;
-                    metadata.file = postsPath + file;
-                    metadata.filename = filename;
-                    metadata.link = postPath;
-                    metadata.lang = lang;
-                    metadata.default_lang = config.i18n.default === lang ? false : true;
-                    metadata.date = new Date(metadata.date);
+                metadata.categories = categories;
+                metadata.content = postCropped;
+                metadata.file = postsPath + file;
+                metadata.filename = filename;
+                metadata.link = postPath;
+                metadata.lang = lang;
+                metadata.default_lang = config.i18n.default === lang ? false : true;
+                metadata.date = new Date(metadata.date);
 
-                    _post = {
-                        content: post,
-                        metadata: metadata
-                    };
+                _post = {
+                    content: post,
+                    metadata: metadata
+                };
 
-                    postHTMLFile = postsTemplateNJ
-                    .render({
-                        post: _post,
-                        config: GLOBAL.config
-                    })
-                    .replace(/<!--[\s\S]*?-->/g, '');
+                postHTMLFile = postsTemplateNJ
+                .render({
+                    post: _post,
+                    config: GLOBAL.config
+                })
+                .replace(/<!--[\s\S]*?-->/g, '');
 
-                    if (metadata.published && metadata.published === 'false') {
-                        return;
-                    }
+                if (metadata.published && metadata.published === 'false') {
+                    return;
+                }
 
-                    if (metadata.date && metadata.date > currentDate) {
-                        console.log(clc.info('Skipping future post ' + metadata.filename));
-                        return;
-                    }
+                if (metadata.date && metadata.date > currentDate) {
+                    console.log(clc.info('Skipping future post ' + metadata.filename));
+                    return;
+                }
 
+                writePromises.push(new Promise(function(resolve, reject) {
                     nodefs.mkdir('./public/' + postPath, 0777, true, function(err) {
                         if (err) {
                             reject(err);
-                        } else {
-
-                            // write post html file
-                            fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile,
-                                function(err) {
-                                    if (err) {
-                                        reject(err);
-                                    }
-                                    console.log(
-                                        clc.info('Successfully generated post ' + postPath)
-                                    );
-                                }
-                            );
+                            return;
                         }
+                        // write post html file
+                        fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile,
+                            function(err) {
+                                if (err) {
+                                    reject(err);
+                                    return;
+                                }
+                                console.log(
+                                    clc.info('Successfully generated post ' + postPath)
+                                );
+                                resolve();
+                            }
+                        );
                     });
-                    if (posts[lang]) {
-                        posts[lang].push(metadata);
-                    } else {
-                        posts[lang] = [metadata];
-                    }
+                }));
 
-                    if (i === files[lang].length - 1) {
-                        resolve(posts);
-                    }
-                });
+                if (posts[lang]) {
+                    posts[lang].push(metadata);
+                } else {
+                    posts[lang] = [metadata];
+                }
             });
         });
+        return Promise.all(writePromises)
+            .then(function() {
+                return posts;
+            });
     };
 
     this.getFiles = function() {
