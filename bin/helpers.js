@@ -15,14 +15,16 @@ exports.cliColor = function() {
 exports.isHarmonicProject = function() {
     var config = null,
         clc = this.cliColor(),
-        errorMessage = 'It seems this is not an Harmonic project yet. \n' +
-                       'Check your directory or run harmonic init to start a new Harmonic project.';
+        errorMessage = clc.warn('It seems this is not an Harmonic project yet. \n') +
+                       clc.warn('Check your directory or run ') +
+                       clc.info.bgWhite.italic(' harmonic init ') +
+                       clc.warn(' to start a new Harmonic project.');
 
     try {
         config = this.getConfig();
         return true;
     } catch (e) {
-        console.log(clc.warn(errorMessage));
+        console.log(errorMessage);
         return false;
     }
 };
