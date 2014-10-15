@@ -24,6 +24,8 @@ module.exports = {
             .catch(function(e) {
                 console.log(e);
                 console.log(e.stack);
+                // re-throw to keep promise in rejected state
+                throw e;
             });
     }
 };
