@@ -1,2 +1,5 @@
 bin/client/traceur-runtime.js
+bin/skeleton/src/templates/default/resources/js/vendor/
 src/
+public/
+node_modules/
