@@ -105,7 +105,7 @@ Helper = {
                     metadata.filename = filename;
                     metadata.link = '/' + filename + '.html';
                     metadata.date = new Date(metadata.date);
-                    pageSrc = './public/' + pagePermalink + '/' + 'index.html', pageHTMLFile;
+                    pageSrc = './public/' + pagePermalink + '/' + 'index.html';
 
                     GLOBAL.pages.push(metadata);
 
@@ -116,7 +116,7 @@ Helper = {
                                 return;
                             }
                             // write page html file
-                            fs.writeFile(pageSrc, function(err) {
+                            fs.writeFile(pageSrc, pageHTMLFile, function(err) {
                                 if (err) {
                                     reject(err);
                                     return;
