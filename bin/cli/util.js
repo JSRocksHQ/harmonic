@@ -135,14 +135,11 @@ module.exports = {
             for (var i = 0; i < langs.length; i += 1) {
 
                 // create a new page
-                try {
-                    if (!fs.existsSync(path + langs[i])) {
-                        fs.mkdirSync(path + langs[i], 0766);
-                    }
-                    fs.writeFileSync(path + langs[i] + '/' + filename, template);
-                } catch(e) {
-                    reject(e);
+                if (!fs.existsSync(path + langs[i])) {
+                    fs.mkdirSync(path + langs[i], 0766);
                 }
+                fs.writeFileSync(path + langs[i] + '/' + filename, template);
+                // TODO FIXME resolve inside `for` loop
                 resolve(clc.info(
                     'Page "' + title + '" was successefuly created, check your /src/pages folder'
                 ));
@@ -188,7 +185,7 @@ module.exports = {
                 request.addListener('end', function() {
                         file.serve(request, response, function (err) {
                             if (err) {
-                                console.log(clc.error("Error serving " + request.url + " - " + err.message));
+                                console.log(clc.error('Error serving ' + request.url + ' - ' + err.message));
                                 response.writeHead(err.status, err.headers);
                                 response.end();
                             }
