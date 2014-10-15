@@ -6,3 +6,4 @@ exports.package = JSON.parse(fs.readFileSync(this.rootdir + '/package.json').toS
 exports.version = exports.package.version;
 exports.postspath = path.normalize('./src/posts/');
 exports.pagespath = path.normalize('./src/pages/');
+
