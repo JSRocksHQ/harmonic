@@ -23,6 +23,7 @@ module.exports = {
             .then(parser.copyResources)
             .catch(function(e) {
                 console.log(e);
+                console.log(e.stack);
             });
     }
 };
