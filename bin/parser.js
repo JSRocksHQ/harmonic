@@ -21,28 +21,21 @@ var Helper, Parser,
 
 Helper = {
     getPagesFiles: function() {
-        return new Promise(function(resolve, reject) {
+        var config = GLOBAL.config,
+            langs = config.i18n.languages,
+            langsLen = langs.length,
+            i = 0,
+            files = {};
 
-            var config = GLOBAL.config,
-                langs = config.i18n.languages,
-                langsLen = langs.length,
-                i = 0,
-                files = {};
-
-            for (i; i < langsLen; i += 1) {
-                if (!fs.existsSync(pagesPath + langs[i])) {
-                    fs.mkdirSync(pagesPath + langs[i], 0766);
-                } else {
-                    try {
-                        files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
-                    } catch (e) {
-                        reject(e);
-                    }
-                }
+        for (i; i < langsLen; i += 1) {
+            if (!fs.existsSync(pagesPath + langs[i])) {
+                fs.mkdirSync(pagesPath + langs[i], 0766);
+            } else {
+                files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
             }
+        }
 
-            resolve(files);
-        });
+        return files;
     },
 
     sort: function _sort(a, b) {
@@ -61,91 +54,84 @@ Helper = {
     },
 
     parsePages: function(files) {
-        return new Promise(function(resolve, reject) {
-            var pages = [],
-                langs = Object.keys(files),
-                curTemplate = GLOBAL.config.template,
-                nunjucksEnv = GLOBAL.nunjucksEnv,
-                config = GLOBAL.config,
-                tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
-                config.header_tokens ? config.header_tokens[1] : '-->'];
+        var langs = Object.keys(files),
+            curTemplate = GLOBAL.config.template,
+            nunjucksEnv = GLOBAL.nunjucksEnv,
+            config = GLOBAL.config,
+            tokens = [config.header_tokens ? config.header_tokens[0] : '<!--',
+            config.header_tokens ? config.header_tokens[1] : '-->'],
+            writePromises = [];
 
-            GLOBAL.pages = [];
+        GLOBAL.pages = [];
 
-            langs.forEach(function(lang) {
-                if (files[lang].length > 0) {
-                    files[lang].forEach(function(file, i) {
-                        var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                            page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
-                            tplSrc = './src/templates/' + curTemplate + '/page.html',
-                            pageTpl = fs.readFileSync(tplSrc),
-                            pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
-                            md = new MkMeta(pagesPath + lang + '/' + file),
-                            pageSrc = '',
-                            filename = path.extname(file) === '.md' ?
-                                path.basename(file, '.md') :
-                                path.basename(file, '.markdown');
+        langs.forEach(function(lang) {
+            if (files[lang].length > 0) {
+                files[lang].forEach(function(file) {
+                    var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                        page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
+                        tplSrc = './src/templates/' + curTemplate + '/page.html',
+                        pageTpl = fs.readFileSync(tplSrc),
+                        pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
+                        md = new MkMeta(pagesPath + lang + '/' + file),
+                        pageSrc = '',
+                        filename = path.extname(file) === '.md' ?
+                            path.basename(file, '.md') :
+                            path.basename(file, '.markdown');
 
-                        md.defineTokens(tokens[0], tokens[1]);
+                    md.defineTokens(tokens[0], tokens[1]);
 
-                        // Markdown extra
-                        metadata = md.metadata();
-                        pagePermalink = permalinks(config.pages_permalink, {
-                            title: filename
-                        });
+                    // Markdown extra
+                    metadata = md.metadata();
+                    pagePermalink = permalinks(config.pages_permalink, {
+                        title: filename
+                    });
 
-                        _page = {
-                            content: md.markdown(),
-                            metadata: metadata
-                        };
+                    _page = {
+                        content: md.markdown(),
+                        metadata: metadata
+                    };
 
-                        pageContent = nunjucks.compile(page, nunjucksEnv);
-                        pageHTMLFile = pageTplNJ.render({
-                            page: _page,
-                            config: GLOBAL.config
-                        });
+                    pageContent = nunjucks.compile(page, nunjucksEnv);
+                    pageHTMLFile = pageTplNJ.render({
+                        page: _page,
+                        config: GLOBAL.config
+                    });
 
-                        // Removing header metadata
-                        pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+                    // Removing header metadata
+                    pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
-                        metadata.content = pageHTMLFile;
-                        metadata.file = postsPath + file;
-                        metadata.filename = filename;
-                        metadata.link = '/' + filename + '.html';
-                        metadata.date = new Date(metadata.date);
-                        pageSrc = './public/' + pagePermalink + '/' + 'index.html', pageHTMLFile;
+                    metadata.content = pageHTMLFile;
+                    metadata.file = postsPath + file;
+                    metadata.filename = filename;
+                    metadata.link = '/' + filename + '.html';
+                    metadata.date = new Date(metadata.date);
+                    pageSrc = './public/' + pagePermalink + '/' + 'index.html', pageHTMLFile;
 
-                        GLOBAL.pages.push(metadata);
+                    GLOBAL.pages.push(metadata);
 
+                    writePromises.push(new Promise(function(resolve, reject) {
                         nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
                             if (err) {
                                 reject(err);
-                            } else {
-
-                                // write page html file
-                                fs.writeFile(pageSrc,
-                                    function(err) {
-                                        if (err) {
-                                            throw err;
-                                        }
-                                        console.log(
-                                            clc.info('Successfully generated page ' + pagePermalink)
-                                        );
-                                    }
-                                );
+                                return;
                             }
+                            // write page html file
+                            fs.writeFile(pageSrc, function(err) {
+                                if (err) {
+                                    reject(err);
+                                    return;
+                                }
+                                console.log(
+                                    clc.info('Successfully generated page ' + pagePermalink)
+                                );
+                                resolve();
+                            });
                         });
-
-                        if (i === files[lang].length - 1) {
-                            resolve(pages);
-                        }
-
-                    });
-                } else {
-                    resolve([]);
-                }
-            });
+                    }));
+                });
+            }
         });
+        return Promise.all(writePromises);
     },
 
     normalizeMetaData: function(data) {
@@ -161,35 +147,21 @@ Helper = {
 Parser = function() {
 
     this.start = function() {
-        return new Promise(function(resolve) {
-            resolve('starting the parser');
-        });
+        console.log(clc.info('starting the parser'));
+        return Promise.resolve();
     };
 
     this.clean = function() {
-        return new Promise(function(resolve, reject) {
-            var rimfaf = require('rimraf');
-            rimfaf('./public', function(err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    console.log(clc.warn('Cleaning up...'));
-                    resolve();
-                }
-            });
-        });
+        console.log(clc.warn('Cleaning up...'));
+        var rimraf = require('rimraf');
+        rimraf.sync('./public');
     };
 
     this.createPublicFolder = function() {
-        return new Promise(function(resolve) {
-            fs.exists('./public', function(exists) {
-                if (!exists) {
-                    fs.mkdirSync('public', 0766);
-                    console.log(clc.info('Successfully generated public folder'));
-                    resolve();
-                }
-            });
-        });
+        if (!fs.existsSync('./public')) {
+            fs.mkdirSync('public', 0766);
+            console.log(clc.info('Successfully generated public folder'));
+        }
     };
 
     this.compileCSS = function() {
@@ -205,7 +177,7 @@ Parser = function() {
 
             // Stylus
             stylus: function() {
-                var promise = new Promise(function(resolve, reject) {
+                return new Promise(function(resolve, reject) {
                     var curTemplate = './src/templates/' + GLOBAL.config.template,
                         stylDir = curTemplate + '/resources/_stylus',
                         cssDir = curTemplate + '/resources/css',
@@ -225,8 +197,6 @@ Parser = function() {
                             }
                         });
                 });
-
-                return promise;
             }
         };
 
@@ -234,35 +204,33 @@ Parser = function() {
     };
 
     this.compileES6 = function(postsMetadata) {
-        return new Promise(function(resolve) {
-            var result = '',
-                traceurRuntime =
-                    fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js')
-                        .toString(),
-                config = GLOBAL.config,
-                pages = GLOBAL.pages,
-                harmonicClient =
-                    fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js')
-                        .toString();
+        var result = '',
+            traceurRuntime =
+                fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js')
+                    .toString(),
+            config = GLOBAL.config,
+            pages = GLOBAL.pages,
+            harmonicClient =
+                fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js')
+                    .toString();
 
-            harmonicClient = harmonicClient
-                .replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
-                .replace(/\{\{pages\}\}/, JSON.stringify(pages))
-                .replace(/\{\{config\}\}/, JSON.stringify(config));
+        harmonicClient = harmonicClient
+            .replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
+            .replace(/\{\{pages\}\}/, JSON.stringify(pages))
+            .replace(/\{\{config\}\}/, JSON.stringify(config));
 
-            result = traceur.compile(harmonicClient, {
-                filename: 'harmonic-client.js'
-            });
-
-            if (result.error) {
-                throw result.error;
-            }
-
-            fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceurRuntime +
-                '\n//harmonic code\n' + result.js);
-
-            resolve(postsMetadata);
+        result = traceur.compile(harmonicClient, {
+            filename: 'harmonic-client.js'
         });
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceurRuntime +
+            '\n//harmonic code\n' + result.js);
+
+        return postsMetadata;
     };
 
     this.generateTagsPages = function(postsMetadata) {
@@ -271,91 +239,85 @@ Parser = function() {
             nunjucksEnv = GLOBAL.nunjucksEnv,
             tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
             tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
-            tagPath = null;
+            tagPath = null,
+            lang, i, tags, y, tag, tagContent,
+            config = GLOBAL.config;
 
-        return new Promise(function(resolve) {
-            var lang, i, tags, y, tag, tagContent,
-                config = GLOBAL.config;
+        for (lang in postsMetadata) {
+            for (i = 0; i < postsMetadata[lang].length; i += 1) {
+                tags = postsMetadata[lang][i].categories;
+                for (y = 0; y < tags.length; y += 1) {
+                    tag = tags[y]
+                    .toLowerCase()
+                    .trim()
+                    .split(' ')
+                    .join('-');
 
-            for (lang in postsMetadata) {
-                for (i = 0; i < postsMetadata[lang].length; i += 1) {
-                    tags = postsMetadata[lang][i].categories;
-                    for (y = 0; y < tags.length; y += 1) {
-                        tag = tags[y]
-                        .toLowerCase()
-                        .trim()
-                        .split(' ')
-                        .join('-');
-
-                        if (Array.isArray(postsByTag[tag])) {
-                            postsByTag[tag].push(postsMetadata[lang][i]);
-                        } else {
-                            postsByTag[tag] = [postsMetadata[lang][i]];
-                        }
-                    }
-                }
-
-                for (i in postsByTag) {
-                    tagContent = tagTemplateNJ.render({
-                        posts: _.where(postsByTag[i], {
-                            lang: lang
-                        }),
-                        config: config,
-                        category: i
-                    });
-
-                    // If is the default language, generate in the root path
-                    if (config.i18n.default === lang) {
-                        tagPath = './public/categories/' + i;
+                    if (Array.isArray(postsByTag[tag])) {
+                        postsByTag[tag].push(postsMetadata[lang][i]);
                     } else {
-                        tagPath = './public/categories/' + lang + '/' + i;
+                        postsByTag[tag] = [postsMetadata[lang][i]];
                     }
-
-                    nodefs.mkdirSync(tagPath, 0777, true);
-                    fs.writeFileSync(tagPath + '/index.html', tagContent);
-                    console.log(
-                        clc.info('Successfully generated tag[' + i + '] archive html file')
-                    );
                 }
-                resolve(postsMetadata);
             }
-        });
+
+            for (i in postsByTag) {
+                tagContent = tagTemplateNJ.render({
+                    posts: _.where(postsByTag[i], {
+                        lang: lang
+                    }),
+                    config: config,
+                    category: i
+                });
+
+                // If is the default language, generate in the root path
+                if (config.i18n.default === lang) {
+                    tagPath = './public/categories/' + i;
+                } else {
+                    tagPath = './public/categories/' + lang + '/' + i;
+                }
+
+                nodefs.mkdirSync(tagPath, 0777, true);
+                fs.writeFileSync(tagPath + '/index.html', tagContent);
+                console.log(
+                    clc.info('Successfully generated tag[' + i + '] archive html file')
+                );
+            }
+        }
     };
 
     this.generateIndex = function(postsMetadata) {
-        return new Promise(function(resolve) {
-            var lang,
-                _posts = null,
-                curTemplate = GLOBAL.config.template,
-                nunjucksEnv = GLOBAL.nunjucksEnv,
-                indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
-                indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
-                indexContent = '',
-                indexPath = null,
-                config = GLOBAL.config;
+        var lang,
+            _posts = null,
+            curTemplate = GLOBAL.config.template,
+            nunjucksEnv = GLOBAL.nunjucksEnv,
+            indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
+            indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
+            indexContent = '',
+            indexPath = null,
+            config = GLOBAL.config;
 
-            for (lang in postsMetadata) {
-                postsMetadata[lang].sort(Helper.sort);
+        for (lang in postsMetadata) {
+            postsMetadata[lang].sort(Helper.sort);
 
-                _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
+            _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
 
-                indexContent = indexTemplateNJ.render({
-                    posts: _posts,
-                    config: GLOBAL.config,
-                    pages: GLOBAL.pages
-                });
+            indexContent = indexTemplateNJ.render({
+                posts: _posts,
+                config: GLOBAL.config,
+                pages: GLOBAL.pages
+            });
 
-                if (config.i18n.default === lang) {
-                    indexPath = './public/';
-                } else {
-                    indexPath = './public/' + lang;
-                }
-                nodefs.mkdirSync(indexPath, 0777, true);
-                fs.writeFileSync(indexPath + '/index.html', indexContent);
-                console.log(clc.info(lang + '/index file successfully created'));
+            if (config.i18n.default === lang) {
+                indexPath = './public/';
+            } else {
+                indexPath = './public/' + lang;
             }
-            resolve(postsMetadata);
-        });
+            nodefs.mkdirSync(indexPath, 0777, true);
+            fs.writeFileSync(indexPath + '/index.html', indexContent);
+            console.log(clc.info(lang + '/index file successfully created'));
+        }
+        return postsMetadata;
     };
 
     this.copyResources = function() {
@@ -382,28 +344,16 @@ Parser = function() {
             });
         });
 
-        return new Promise(function(resolve) {
-            Promise.all([resourcesP, imagesP])
-                .then(function() {
-                    resolve('Resources copied');
-                });
-        });
+        return Promise.all([resourcesP, imagesP])
+            .then(function() {
+                console.log(clc.info('Resources copied'));
+            });
     };
 
     this.generatePages = function() {
-        return new Promise(function(resolve, reject) {
-            Helper
-                .getPagesFiles()
-                .then(Helper.parsePages)
-                .then(
-                    function(data) {
-                        resolve(data);
-                    },
-                    function(e) {
-                        reject(e);
-                    }
-                );
-        });
+        return Promise.resolve()
+            .then(Helper.getPagesFiles)
+            .then(Helper.parsePages);
     };
 
     this.generatePosts = function(files) {
@@ -541,101 +491,93 @@ Parser = function() {
     };
 
     this.getFiles = function() {
-        return new Promise(function(resolve) {
+        var config = GLOBAL.config,
+            langs = config.i18n.languages,
+            langsLen = langs.length,
+            i = 0,
+            files = {};
 
-            var config = GLOBAL.config,
-                langs = config.i18n.languages,
-                langsLen = langs.length,
-                i = 0,
-                files = {};
+        for (i; i < langsLen; i += 1) {
+            files[langs[i]] = fs.readdirSync(postsPath + langs[i]);
+        }
 
-            for (i; i < langsLen; i += 1) {
-                files[langs[i]] = fs.readdirSync(postsPath + langs[i]);
-            }
-
-            resolve(files);
-        });
+        return files;
     };
 
     this.getConfig = function() {
-        return new Promise(function(resolve) {
-            var config = JSON.parse(fs.readFileSync('./harmonic.json').toString()),
-                custom = null,
-                newConfig = null;
+        var config = JSON.parse(fs.readFileSync('./harmonic.json').toString()),
+            custom = null,
+            newConfig = null;
 
-            try {
-                custom =
-                    JSON.parse(
-                        fs.readFileSync('./src/templates/' + config.template + '/harmonic.json')
-                            .toString()
-                    );
-            } catch (e) {}
+        try {
+            custom =
+                JSON.parse(
+                    fs.readFileSync('./src/templates/' + config.template + '/harmonic.json')
+                        .toString()
+                );
+        } catch (e) {}
 
-            if (custom) {
-                newConfig = _.extend(config, custom);
-            } else {
-                newConfig = config;
-            }
+        if (custom) {
+            newConfig = _.extend(config, custom);
+        } else {
+            newConfig = config;
+        }
 
-            GLOBAL.config = newConfig;
-            GLOBAL.nunjucksEnv = new nunjucks.Environment(
-                new nunjucks.FileSystemLoader('./src/templates/' + config.template)
-            );
+        GLOBAL.config = newConfig;
+        GLOBAL.nunjucksEnv = new nunjucks.Environment(
+            new nunjucks.FileSystemLoader('./src/templates/' + config.template)
+        );
 
-            resolve(newConfig);
-        });
+        return newConfig;
     };
 
     this.generateRSS = function(postsMetadata) {
-        return new Promise(function(resolve) {
-            var _posts = null,
-                nunjucksEnv = GLOBAL.nunjucksEnv,
-                rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml'),
-                rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
-                rssContent = '',
-                rssPath = null,
-                rssLink = '',
-                rssAuthor = '',
-                config = GLOBAL.config;
+        var _posts = null,
+            nunjucksEnv = GLOBAL.nunjucksEnv,
+            rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml'),
+            rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
+            rssContent = '',
+            rssPath = null,
+            rssLink = '',
+            rssAuthor = '',
+            config = GLOBAL.config,
+            lang;
 
-            fs.exists(__dirname + '/resources/rss.xml', function() {
-                for (var lang in postsMetadata) {
-                    postsMetadata[lang].sort(Helper.sort);
-                    _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
+        for (lang in postsMetadata) {
+            postsMetadata[lang].sort(Helper.sort);
+            _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
 
-                    if (GLOBAL.config.author_email) {
-                        rssAuthor = GLOBAL.config.author_email + ' (' + GLOBAL.config.author + ')';
-                    } else {
-                        rssAuthor = GLOBAL.config.author;
-                    }
+            if (GLOBAL.config.author_email) {
+                rssAuthor = GLOBAL.config.author_email + ' (' + GLOBAL.config.author + ')';
+            } else {
+                rssAuthor = GLOBAL.config.author;
+            }
 
-                    if (config.i18n.default === lang) {
-                        rssPath = './public/';
-                        rssLink = GLOBAL.config.domain + '/rss.xml';
-                    } else {
-                        rssPath = './public/' + lang;
-                        rssLink = GLOBAL.config.domain + '/' + lang + '/rss.xml';
-                    }
+            if (config.i18n.default === lang) {
+                rssPath = './public/';
+                rssLink = GLOBAL.config.domain + '/rss.xml';
+            } else {
+                rssPath = './public/' + lang;
+                rssLink = GLOBAL.config.domain + '/' + lang + '/rss.xml';
+            }
 
-                    rssContent = rssTemplateNJ.render({
-                        rss: {
-                            date: new Date().toUTCString(),
-                            link: rssLink,
-                            author: rssAuthor,
-                            lang: lang
-                        },
-                        posts: _posts,
-                        config: GLOBAL.config,
-                        pages: GLOBAL.pages
-                    });
-
-                    nodefs.mkdirSync(rssPath, 0777, true);
-                    fs.writeFileSync(rssPath + '/rss.xml', rssContent);
-                    console.log(clc.info(lang + '/rss.xml file successfully created'));
-                }
-                resolve(postsMetadata);
+            rssContent = rssTemplateNJ.render({
+                rss: {
+                    date: new Date().toUTCString(),
+                    link: rssLink,
+                    author: rssAuthor,
+                    lang: lang
+                },
+                posts: _posts,
+                config: GLOBAL.config,
+                pages: GLOBAL.pages
             });
-        });
+
+            nodefs.mkdirSync(rssPath, 0777, true);
+            fs.writeFileSync(rssPath + '/rss.xml', rssContent);
+            console.log(clc.info(lang + '/rss.xml file successfully created'));
+        }
+        return postsMetadata;
     };
 };
 
