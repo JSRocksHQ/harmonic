@@ -1,3 +1,4 @@
+/* exported Harmonic */
 class Harmonic {
 
     constructor(name) {
@@ -5,14 +6,14 @@ class Harmonic {
     }
 
     getConfig() {
-        return {{config}};
+        return /*{{config}}*/;
     }
 
     getPosts() {
-        return {{posts}};
+        return /*{{posts}}*/;
     }
 
     getPages() {
-    	return {{pages}};
+    	return /*{{pages}}*/;
     }
 }

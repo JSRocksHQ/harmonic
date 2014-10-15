@@ -215,9 +215,9 @@ Parser = function() {
                     .toString();
 
         harmonicClient = harmonicClient
-            .replace(/\{\{posts\}\}/, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/\{\{pages\}\}/, JSON.stringify(pages))
-            .replace(/\{\{config\}\}/, JSON.stringify(config));
+            .replace(/\/\*\{\{posts\}\}\*\//, JSON.stringify(Helper.sortPosts(postsMetadata)))
+            .replace(/\/\*\{\{pages\}\}\*\//, JSON.stringify(pages))
+            .replace(/\/\*\{\{config\}\}\*\//, JSON.stringify(config));
 
         result = traceur.compile(harmonicClient, {
             filename: 'harmonic-client.js'
