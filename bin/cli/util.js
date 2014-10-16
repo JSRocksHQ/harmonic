@@ -105,7 +105,7 @@ module.exports = {
                     }
                     console.log(clc.message(
                         '\nYour Harmonic website skeleton was successefuly created!' +
-                        '\nNow, enter in the project dir and have fun.'
+                        '\nNow, browse the project dir and have fun.'
                     ));
                 }
             );
