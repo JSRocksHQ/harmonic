@@ -1,5 +1,6 @@
 /* jshint mocha: true */
-var fs = require('fs'),
+var helpers = require('../bin/helpers.js'),
+    fs = require('fs'),
     nodefs = require('node-fs'),
     path = require('path'),
     rimraf = require('rimraf'),
@@ -36,6 +37,7 @@ describe('CLI', function() {
         });
 
         init.on('close', function() {
+            helpers.isHarmonicProject().should.be.true;
             done();
         });
     });
@@ -46,10 +48,7 @@ describe('CLI', function() {
         run.stdout.setEncoding('utf8');
 
         run.on('close', function() {
-            if (!fs.existsSync(path.join(testDir, 'public'))) {
-                done(new Error('Failed to generate public dir.'));
-                return;
-            }
+            fs.existsSync(path.join(testDir, 'public')).should.be.true;
             done();
         });
     });
