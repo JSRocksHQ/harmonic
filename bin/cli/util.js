@@ -104,7 +104,7 @@ module.exports = {
                         throw err;
                     }
                     console.log(clc.message(
-                        '\nYour Harmonic website skeleton was successefuly created!' +
+                        '\nYour Harmonic website skeleton was successfully created!' +
                         '\nNow, browse the project dir and have fun.'
                     ));
                 }
