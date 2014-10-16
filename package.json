@@ -37,11 +37,13 @@
   },
   "devDependencies": {
     "jscs": "^1.6.1",
-    "jshint": "^2.5.2"
+    "jshint": "^2.5.2",
+    "mocha": "^1.21.5",
+    "should": "^4.0.4"
   },
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT",
   "scripts": {
-    "test": "jshint . && jscs -r inline bin/"
+    "test": "jshint . && jscs -r inline bin/ && mocha -t 5000"
   }
 }
