@@ -179,7 +179,7 @@ Parser = function() {
                         cssDir = curTemplate + '/resources/css',
                         verifyDirectory = function(filepath) {
                             var dir = filepath,
-                                existsSync = fs.existsSync || path.existsSync;
+                                existsSync = fs.existsSync;
 
                             if (!existsSync(dir)) {
                                 fs.mkdirSync(dir);
@@ -197,11 +197,10 @@ Parser = function() {
                                 compress: true,
                                 yuicompress: true
                             },
-                            optionCompress = (options.compress ? '.min' : '') + '.css',
                             optionFile,
                             parser;
 
-                        options.outputfile = options.filename.split('.less')[0] + optionCompress;
+                        options.outputfile = options.filename.split('.less')[0] + '.css';
                         options.outputDir = path.resolve(process.cwd(), options.outputDir) + '/';
                         verifyDirectory(options.outputDir);
 

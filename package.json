@@ -33,7 +33,7 @@
     "underscore": "^1.6.0",
     "v8-argv": "^0.2.0",
     "stylus": "^0.45.1",
-    "less": "1.7.5"
+    "less": "^1.7.5"
   },
   "devDependencies": {
     "jscs": "^1.6.1",
