@@ -53,4 +53,7 @@ describe('CLI', function() {
             done();
         });
     });
+
+    it('should create a new post');
+    it('should create a new page');
 });
