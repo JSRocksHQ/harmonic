@@ -22,44 +22,30 @@ describe('CLI', function() {
         rimraf.sync(testDir);
     });
 
-    it('should init and run a new Harmonic site', function(done) {
-        new Promise(function(resolve) {
-            var init = spawn('node', [harmonicCommand, 'init']);
-            init.stdin.setEncoding('utf8');
-            init.stdout.setEncoding('utf8');
+    it('should init a new Harmonic site', function(done) {
+        var init = spawn('node', [harmonicCommand, 'init']);
+        init.stdin.setEncoding('utf8');
+        init.stdout.setEncoding('utf8');
 
-            init.stdout.on('data', function(data) {
-                if (data.indexOf('successfully created') === -1) {
-                    init.stdin.write('\n');
-                    return;
-                }
-                init.kill();
-            });
-            init.on('close', function() {
-                resolve();
-            });
-        }).then(function() {
-            return new Promise(function(resolve) {
-                var run = spawn('node', [harmonicCommand, 'run']);
-                run.stdin.setEncoding('utf8');
-                run.stdout.setEncoding('utf8');
+        init.stdout.on('data', function(data) {
+            if (data.indexOf('successfully created') === -1) {
+                init.stdin.write('\n');
+                return;
+            }
+            init.stdin.end();
+        });
 
-                run.stdout.on('data', function(data) {
-                    console.log(data);
-                    if (data.indexOf('http://') !== -1) {
-                        // TODO FIXME kill() is not working
-                        run.kill();
-                        // run.kill('SIGTERM');
-                        // run.kill('SIGHUP');
-                        // run.kill('SIGINT');
-                        // run.kill('SIGKILL');
-                    }
-                });
-                run.on('close', function() {
-                    resolve();
-                });
-            });
-        }).then(function() {
+        init.on('close', function() {
+            done();
+        });
+    });
+
+    it('should build the Harmonic site', function(done) {
+        var run = spawn('node', [harmonicCommand, 'build']);
+        run.stdin.setEncoding('utf8');
+        run.stdout.setEncoding('utf8');
+
+        run.on('close', function() {
             if (!fs.existsSync(path.join(testDir, 'public'))) {
                 done(new Error('Failed to generate public dir.'));
                 return;
