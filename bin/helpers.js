@@ -37,3 +37,7 @@ exports.getConfig = function() {
         throw e;
     }
 };
+
+exports.titleToFilename = function(title) {
+    return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
+};
