@@ -92,7 +92,9 @@ module.exports = {
                 bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
                     templateObj.bio,
                 template: (yield _p('Template: (' + templateObj.template + ') ')) ||
-                    templateObj.template
+                    templateObj.template,
+                preprocessor: (yield _p('Preprocessor: (' + templateObj.preprocessor + ') ')) ||
+                    templateObj.preprocessor
             };
 
             // create the configuration file

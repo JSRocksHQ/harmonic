@@ -11,6 +11,7 @@ var Helper, Parser,
     permalinks = require('permalinks'),
     nodefs = require('node-fs'),
     stylus = require('stylus'),
+    less = require('less'),
     MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
     clc = helpers.cliColor(),
@@ -172,7 +173,60 @@ Parser = function() {
 
             // Less
             less: function() {
-                console.log('Less is not implemented yet');
+                return new Promise(function(resolve, reject) {
+                    var curTemplate = './src/templates/' + GLOBAL.config.template,
+                        lessDir = curTemplate + '/resources/_less',
+                        cssDir = curTemplate + '/resources/css',
+                        verifyDirectory = function(filepath) {
+                            var dir = filepath,
+                                existsSync = fs.existsSync;
+
+                            if (!existsSync(dir)) {
+                                fs.mkdirSync(dir);
+                            }
+                        };
+
+                    fs.readFile(lessDir + '/index.less', function(error, data) {
+
+                        var dataString = data.toString(),
+                            options = {
+                                paths: [lessDir],
+                                outputDir: cssDir,
+                                optimization: 1,
+                                filename: 'main.less',
+                                compress: true,
+                                yuicompress: true
+                            },
+                            optionFile,
+                            parser;
+
+                        options.outputfile = options.filename.split('.less')[0] + '.css';
+                        options.outputDir = path.resolve(process.cwd(), options.outputDir) + '/';
+                        verifyDirectory(options.outputDir);
+
+                        parser = new less.Parser(options);
+                        parser.parse(dataString, function(error, cssTree) {
+
+                            if (error) {
+                                less.writeError(error, options);
+                                reject(error);
+                            }
+
+                            var cssString = cssTree.toCSS({
+                                compress: options.compress,
+                                yuicompress: options.yuicompress
+                            });
+
+                            optionFile = options.outputDir + options.outputfile;
+
+                            fs.writeFileSync(optionFile, cssString, 'utf8');
+                            console.log(
+                                clc.info('Successfully generated CSS with LESS preprocessor')
+                            );
+                            resolve();
+                        });
+                    });
+                });
             },
 
             // Stylus

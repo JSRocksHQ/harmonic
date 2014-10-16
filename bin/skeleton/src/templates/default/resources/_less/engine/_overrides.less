@@ -1,0 +1,27 @@
+*,
+*::before,
+*::after{
+    -ms-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body{
+    font-size: 100%;
+    line-height: @lineHeight;
+    font-family: @txtFont;
+    overflow-x: hidden;
+}
+
+a{
+    text-decoration: none;
+    font-weight: bold;
+    color: lighten(darkGrey, 25%);
+    .transition();
+}
+
+a:hover,
+a:focus{
+    opacity: .75;
+}
+
