@@ -176,31 +176,41 @@ Parser = function() {
                 return new Promise(function(resolve, reject) {
                     var curTemplate = './src/templates/' + GLOBAL.config.template,
                         lessDir = curTemplate + '/resources/_less',
-                        cssDir = curTemplate + '/resources/css';
+                        cssDir = curTemplate + '/resources/css',
+                        verifyDirectory = function(filepath) {
+                            var dir = filepath,
+                                existsSync = fs.existsSync || path.existsSync;
+
+                            if (!existsSync(dir)) {
+                                fs.mkdirSync(dir);
+                            }
+                        };
 
                     fs.readFile(lessDir + '/index.less', function(error, data) {
 
-                        var dataString = data.toString();
-                        var options = {
-                            paths: [lessDir],              // .less file search paths
-                            outputDir: cssDir,           // output directory, note the '/'
-                            optimization: 1,            // optimization level, higher is better but more volatile - 1 is a good value
-                            filename: "main.less",      // root .less file
-                            compress: false,            // compress?
-                            yuicompress: false          // use YUI compressor?
-                        };
+                        var dataString = data.toString(),
+                            options = {
+                                paths: [lessDir],
+                                outputDir: cssDir,
+                                optimization: 1,
+                                filename: 'main.less',
+                                compress: true,
+                                yuicompress: true
+                            },
+                            optionCompress = (options.compress ? '.min' : '') + '.css',
+                            optionFile,
+                            parser;
 
-                        options.outputfile = options.filename.split(".less")[0] + (options.compress ? ".min" : "") + ".css";
-                        options.outputDir = path.resolve(process.cwd(), options.outputDir) + "/";
+                        options.outputfile = options.filename.split('.less')[0] + optionCompress;
+                        options.outputDir = path.resolve(process.cwd(), options.outputDir) + '/';
                         verifyDirectory(options.outputDir);
 
-
-                        var parser = new less.Parser(options);
+                        parser = new less.Parser(options);
                         parser.parse(dataString, function(error, cssTree) {
 
                             if (error) {
                                 less.writeError(error, options);
-                                reject(err);
+                                reject(error);
                             }
 
                             var cssString = cssTree.toCSS({
@@ -208,24 +218,15 @@ Parser = function() {
                                 yuicompress: options.yuicompress
                             });
 
-                            fs.writeFileSync(options.outputDir + options.outputfile, cssString, 'utf8');
+                            optionFile = options.outputDir + options.outputfile;
+
+                            fs.writeFileSync(optionFile, cssString, 'utf8');
                             console.log(
                                 clc.info('Successfully generated CSS with LESS preprocessor')
                             );
                             resolve();
                         });
                     });
-
-                    var verifyDirectory = function(filepath) {
-
-                        var dir = filepath;
-                        var existsSync = fs.existsSync || path.existsSync;
-
-                        if ( !existsSync(dir) ) {
-                            fs.mkdirSync(dir);
-                        }
-                    };
-
                 });
             },
 
