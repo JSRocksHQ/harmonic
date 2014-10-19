@@ -115,67 +115,38 @@ module.exports = {
         })();
     },
 
-    // TODO abstract away new_page and new_post to avoid code duplication?
-    new_page: function(title) {
-        var clc = helpers.cliColor();
-        // TODO do not wrap synchronous code in promises
-        return new Promise(function(resolve) {
-            var langs = helpers.getConfig().i18n.languages,
-                template = '<!--\n' +
-                    'layout: page\n' +
-                    'title: ' + title + '\n' +
-                    'date: ' + new Date().toJSON() + '\n' +
-                    'comments: true\n' +
-                    'published: true\n' +
-                    'keywords:\n' +
-                    'description:\n' +
-                    'categories:\n' +
-                    '-->\n' +
-                    '# ' + title,
-                path = localconfig.pagespath,
-                filename = helpers.titleToFilename(title);
+    /**
+     * @param {string} type - The new file's type. Can be either 'post' or 'page'.
+     * @param {string} title - The new file's title.
+     */
+    newFile: function(type, title) {
+        var clc = helpers.cliColor(),
+            langs = helpers.getConfig().i18n.languages,
+            template = '<!--\n' +
+                'layout: ' + type + '\n' +
+                'title: ' + title + '\n' +
+                'date: ' + new Date().toJSON() + '\n' +
+                'comments: true\n' +
+                'published: true\n' +
+                'keywords:\n' +
+                'description:\n' +
+                'categories:\n' +
+                '-->\n' +
+                '# ' + title,
+            path = localconfig[type + 'spath'],
+            filename = helpers.titleToFilename(title);
 
-            for (var i = 0; i < langs.length; i += 1) {
-
-                // create a new page
-                if (!fs.existsSync(path + langs[i])) {
-                    fs.mkdirSync(path + langs[i], 0766);
-                }
-                fs.writeFileSync(path + langs[i] + '/' + filename, template);
+        langs.forEach(function(lang) {
+            if (!fs.existsSync(path + lang)) {
+                fs.mkdirSync(path + lang, 0766);
             }
-            resolve(clc.info(
-                'Page "' + title + '" was successefuly created, check your /src/pages folder'
-            ));
+            fs.writeFileSync(path + lang + '/' + filename, template);
         });
-    },
 
-    new_post: function(title) {
-        var clc = helpers.cliColor();
-        return new Promise(function(resolve) {
-            var langs = helpers.getConfig().i18n.languages,
-                template = '<!--\n' +
-                    'layout: post\n' +
-                    'title: ' + title + '\n' +
-                    'date: ' + new Date().toJSON() + '\n' +
-                    'comments: true\n' +
-                    'published: true\n' +
-                    'keywords:\n' +
-                    'description:\n' +
-                    'categories:\n' +
-                    '-->\n' +
-                    '# ' + title,
-                path = localconfig.postspath,
-                filename = helpers.titleToFilename(title);
-
-            for (var i = 0; i < langs.length; i += 1) {
-
-                // create a new post
-                fs.writeFileSync(path + langs[i] + '/' + filename, template);
-            }
-            resolve(clc.info(
-                'Post "' + title + '" was successefuly created, check your /src/posts folder'
-            ));
-        });
+        console.log(clc.info(
+            type[0].toUpperCase() + type.slice(1) +
+            ' "' + title + '" was successefuly created, check your /src/' + type + 's folder'
+        ));
     },
 
     run: function(port) {

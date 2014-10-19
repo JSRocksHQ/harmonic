@@ -35,20 +35,14 @@ program
     .command('new_post ["title"]')
     .description('Create a new post')
     .action(function(title) {
-        var util = require('../cli/util');
-        util.new_post(title).then(function(data) {
-            console.log(data);
-        });
+        require('../cli/util').newFile('post', title);
     });
 
 program
     .command('new_page ["title"]')
     .description('Create a new page')
     .action(function(title) {
-        var util = require('../cli/util');
-        util.new_page(title).then(function(data) {
-            console.log(data);
-        });
+        require('../cli/util').newFile('page', title);
     });
 
 program
@@ -56,7 +50,7 @@ program
     .description('Run you static site locally. Port is optional')
     .action(function(_port) {
         var util = require('../cli/util'),
-            port = _port ? _port : '9356',
+            port = _port || '9356',
             core = require('../core'),
             build = core.init();
         if (build) {
