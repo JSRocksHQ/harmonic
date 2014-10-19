@@ -561,30 +561,20 @@ Parser = function() {
     };
 
     this.getConfig = function() {
-        var config = JSON.parse(fs.readFileSync('./harmonic.json').toString()),
-            custom = null,
-            newConfig = null;
+        var config = helpers.getConfig();
 
         try {
-            custom =
-                JSON.parse(
-                    fs.readFileSync('./src/templates/' + config.template + '/harmonic.json')
-                        .toString()
-                );
+            _.extend(config, JSON.parse(
+                fs.readFileSync('./src/templates/' + config.template + '/harmonic.json').toString()
+            ));
         } catch (e) {}
 
-        if (custom) {
-            newConfig = _.extend(config, custom);
-        } else {
-            newConfig = config;
-        }
-
-        GLOBAL.config = newConfig;
+        GLOBAL.config = config;
         GLOBAL.nunjucksEnv = new nunjucks.Environment(
             new nunjucks.FileSystemLoader('./src/templates/' + config.template)
         );
 
-        return newConfig;
+        return config;
     };
 
     this.generateRSS = function(postsMetadata) {

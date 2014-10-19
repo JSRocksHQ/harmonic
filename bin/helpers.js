@@ -13,29 +13,24 @@ exports.cliColor = function() {
 
 // Check if harmonic.json file exists
 exports.isHarmonicProject = function() {
-    var config = null,
-        clc = this.cliColor(),
-        errorMessage = clc.warn('It seems this is not an Harmonic project yet. \n') +
-                       clc.warn('Check your directory or run ') +
-                       clc.info.bgWhite.italic(' harmonic init ') +
-                       clc.warn(' to start a new Harmonic project.');
+    var clc = this.cliColor();
 
     try {
-        config = this.getConfig();
+        this.getConfig();
         return true;
     } catch (e) {
-        console.log(errorMessage);
+        console.log(
+            clc.warn('It seems this is not an Harmonic project yet. \n') +
+            clc.warn('Check your directory or run ') +
+            clc.info.bgWhite.italic(' harmonic init ') +
+            clc.warn(' to start a new Harmonic project.')
+        );
         return false;
     }
 };
 
 exports.getConfig = function() {
-    try {
-        var config = JSON.parse(fs.readFileSync('./harmonic.json').toString());
-        return config;
-    } catch (e) {
-        throw e;
-    }
+    return JSON.parse(fs.readFileSync('./harmonic.json').toString());
 };
 
 exports.titleToFilename = function(title) {
