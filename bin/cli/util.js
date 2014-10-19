@@ -115,6 +115,7 @@ module.exports = {
         })();
     },
 
+    // TODO abstract away new_page and new_post to avoid code duplication?
     new_page: function(title) {
         var clc = helpers.cliColor();
         return new Promise(function(resolve) {
@@ -130,9 +131,8 @@ module.exports = {
                     'categories:\n' +
                     '-->\n' +
                     '# ' + title,
-                str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase(),
                 path = localconfig.pagespath,
-                filename = str + '.md';
+                filename = helpers.titleToFilename(title);
 
             for (var i = 0; i < langs.length; i += 1) {
 
@@ -164,15 +164,15 @@ module.exports = {
                     'categories:\n' +
                     '-->\n' +
                     '# ' + title,
-                str = title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase(),
                 path = localconfig.postspath,
-                filename = str + '.md';
+                filename = helpers.titleToFilename(title);
 
             for (var i = 0; i < langs.length; i += 1) {
 
                 // create a new post
                 fs.writeFileSync(path + langs[i] + '/' + filename, template);
             }
+            // TODO FIXME resolve inside `for` loop
             resolve(clc.info(
                 'Post "' + title + '" was successefuly created, check your /src/posts folder'
             ));
