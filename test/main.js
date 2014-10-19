@@ -108,7 +108,7 @@ describe('CLI', function() {
 
 describe('helpers', function() {
 
-    it('should return whether the CWD is a Harmonic site', function() {
+    it('.isHarmonicProject() should return whether the CWD is a Harmonic site', function() {
         process.chdir(__dirname);
         disableStdout();
         var isHarmonicProject = helpers.isHarmonicProject();
@@ -118,14 +118,14 @@ describe('helpers', function() {
         helpers.isHarmonicProject().should.be.true;
     });
 
-    it('should transform a post/page title into a filename', function() {
+    it('.titleToFilename() should transform a post/page title into a filename', function() {
         helpers.titleToFilename('Hello World!').should.equal('hello-world.md');
     });
 });
 
 describe('parser', function() {
 
-    it('should merge current template\'s config into main config', function() {
+    it('.getConfig() should merge the template\'s config into the main config', function() {
         var config = helpers.getConfig(),
             templateConfigPath = 'src/templates/' + config.template + '/harmonic.json',
             templateConfig = { customData: 'test' },
