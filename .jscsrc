@@ -16,6 +16,7 @@
     "excludeFiles": [
         "bin/client/traceur-runtime.js",
         "bin/skeleton/*",
+        "node_modules/*",
 
         // JSCS vs ES6 incompatibilities
         "bin/cli/util.js",

@@ -44,6 +44,6 @@
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT",
   "scripts": {
-    "test": "jshint . && jscs -r inline bin/ && mocha -t 5000"
+    "test": "jshint . && jscs -r inline . && mocha -t 5000"
   }
 }
