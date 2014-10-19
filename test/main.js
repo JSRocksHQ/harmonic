@@ -1,27 +1,37 @@
 /* jshint mocha: true */
 var helpers = require('../bin/helpers.js'),
+    parser = new (require('../bin/parser.js'))(),
     fs = require('fs'),
     nodefs = require('node-fs'),
     path = require('path'),
     rimraf = require('rimraf'),
-    spawn = require('child_process').spawn;
+    spawn = require('child_process').spawn,
+    _ = require('underscore'),
+    harmonicBin = path.join(__dirname, '..', 'harmonic.js'),
+    testDir = path.join(__dirname, 'site'),
+    stdoutWrite = process.stdout.write;
 require('should');
 
+before(function() {
+    rimraf.sync(testDir);
+    nodefs.mkdirSync(testDir, 0777, true);
+    process.chdir(testDir);
+});
+
+after(function() {
+    // need to chdir out of testDir before removing it (at least in Windows)
+    process.chdir(__dirname);
+    rimraf.sync(testDir);
+});
+
+function disableStdout() {
+    process.stdout.write = function() {};
+}
+function enableStdout() {
+    process.stdout.write = stdoutWrite;
+}
+
 describe('CLI', function() {
-    var testDir = path.join(__dirname, 'cli'),
-        harmonicBin = '../../harmonic.js';
-
-    before(function() {
-        rimraf.sync(testDir);
-        nodefs.mkdirSync(testDir, 0777, true);
-        process.chdir(testDir);
-    });
-
-    after(function() {
-        // need to chdir out of testDir before removing it (at least in Windows)
-        process.chdir('..');
-        rimraf.sync(testDir);
-    });
 
     it('should init a new Harmonic site', function(done) {
         var harmonic = spawn('node', [harmonicBin, 'init']);
@@ -97,7 +107,33 @@ describe('CLI', function() {
 });
 
 describe('helpers', function() {
+
+    it('should return whether the CWD is a Harmonic site', function() {
+        process.chdir(__dirname);
+        disableStdout();
+        var isHarmonicProject = helpers.isHarmonicProject();
+        enableStdout();
+        isHarmonicProject.should.be.false;
+        process.chdir(testDir);
+        helpers.isHarmonicProject().should.be.true;
+    });
+
     it('should transform a post/page title into a filename', function() {
         helpers.titleToFilename('Hello World!').should.equal('hello-world.md');
+    });
+});
+
+describe('parser', function() {
+
+    it('should merge current template\'s config into main config', function() {
+        var config = helpers.getConfig(),
+            templateConfigPath = 'src/templates/' + config.template + '/harmonic.json',
+            templateConfig = { customData: 'test' },
+            mergedConfig;
+
+        fs.writeFileSync(templateConfigPath, JSON.stringify(templateConfig));
+        mergedConfig = parser.getConfig();
+        mergedConfig.should.containDeep(templateConfig);
+        mergedConfig.should.eql(_.extend({}, config, templateConfig));
     });
 });

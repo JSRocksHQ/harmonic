@@ -451,8 +451,7 @@ Parser = function() {
                 categories = metadata.categories.split(',');
                 postDate = new Date(metadata.date);
                 year = postDate.getFullYear();
-                month = (postDate.getMonth() + 1) < 10 ? '0' + (postDate.getMonth() + 1) :
-                postDate.getMonth() + 1;
+                month = ('0' + (postDate.getMonth() + 1)).slice(-2);
 
                 // If is the default language, generate in the root path
                 options = {
