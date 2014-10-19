@@ -118,6 +118,7 @@ module.exports = {
     // TODO abstract away new_page and new_post to avoid code duplication?
     new_page: function(title) {
         var clc = helpers.cliColor();
+        // TODO do not wrap synchronous code in promises
         return new Promise(function(resolve) {
             var langs = helpers.getConfig().i18n.languages,
                 template = '<!--\n' +
@@ -141,11 +142,10 @@ module.exports = {
                     fs.mkdirSync(path + langs[i], 0766);
                 }
                 fs.writeFileSync(path + langs[i] + '/' + filename, template);
-                // TODO FIXME resolve inside `for` loop
-                resolve(clc.info(
-                    'Page "' + title + '" was successefuly created, check your /src/pages folder'
-                ));
             }
+            resolve(clc.info(
+                'Page "' + title + '" was successefuly created, check your /src/pages folder'
+            ));
         });
     },
 
@@ -172,7 +172,6 @@ module.exports = {
                 // create a new post
                 fs.writeFileSync(path + langs[i] + '/' + filename, template);
             }
-            // TODO FIXME resolve inside `for` loop
             resolve(clc.info(
                 'Post "' + title + '" was successefuly created, check your /src/posts folder'
             ));
@@ -184,15 +183,17 @@ module.exports = {
             file = new staticServer.Server(path.join(process.cwd(), 'public'));
         console.log(clc.info('Harmonic site is running on http://localhost:' + port));
         require('http').createServer(function(request, response) {
-                request.addListener('end', function() {
-                        file.serve(request, response, function (err) {
-                            if (err) {
-                                console.log(clc.error('Error serving ' + request.url + ' - ' + err.message));
-                                response.writeHead(err.status, err.headers);
-                                response.end();
-                            }
-                        });
-                    }).resume();
-            }).listen(port);
+            request.addListener('end', function() {
+                file.serve(request, response, function (err) {
+                    if (err) {
+                        console.log(clc.error(
+                            'Error serving ' + request.url + ' - ' + err.message
+                        ));
+                        response.writeHead(err.status, err.headers);
+                        response.end();
+                    }
+                });
+            }).resume();
+        }).listen(port);
     }
 };
