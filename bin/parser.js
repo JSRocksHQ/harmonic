@@ -66,71 +66,69 @@ Helper = {
         GLOBAL.pages = [];
 
         langs.forEach(function(lang) {
-            if (files[lang].length > 0) {
-                files[lang].forEach(function(file) {
-                    var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                        page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
-                        tplSrc = './src/templates/' + curTemplate + '/page.html',
-                        pageTpl = fs.readFileSync(tplSrc),
-                        pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
-                        md = new MkMeta(pagesPath + lang + '/' + file),
-                        pageSrc = '',
-                        filename = path.extname(file) === '.md' ?
-                            path.basename(file, '.md') :
-                            path.basename(file, '.markdown');
+            files[lang].forEach(function(file) {
+                var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                    page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
+                    tplSrc = './src/templates/' + curTemplate + '/page.html',
+                    pageTpl = fs.readFileSync(tplSrc),
+                    pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
+                    md = new MkMeta(pagesPath + lang + '/' + file),
+                    pageSrc = '',
+                    filename = path.extname(file) === '.md' ?
+                        path.basename(file, '.md') :
+                        path.basename(file, '.markdown');
 
-                    md.defineTokens(tokens[0], tokens[1]);
+                md.defineTokens(tokens[0], tokens[1]);
 
-                    // Markdown extra
-                    metadata = md.metadata();
-                    pagePermalink = permalinks(config.pages_permalink, {
-                        title: filename
-                    });
+                // Markdown extra
+                metadata = md.metadata();
+                pagePermalink = permalinks(config.pages_permalink, {
+                    title: filename
+                });
 
-                    _page = {
-                        content: md.markdown(),
-                        metadata: metadata
-                    };
+                _page = {
+                    content: md.markdown(),
+                    metadata: metadata
+                };
 
-                    pageContent = nunjucks.compile(page, nunjucksEnv);
-                    pageHTMLFile = pageTplNJ.render({
-                        page: _page,
-                        config: GLOBAL.config
-                    });
+                pageContent = nunjucks.compile(page, nunjucksEnv);
+                pageHTMLFile = pageTplNJ.render({
+                    page: _page,
+                    config: GLOBAL.config
+                });
 
-                    // Removing header metadata
-                    pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+                // Removing header metadata
+                pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
 
-                    metadata.content = pageHTMLFile;
-                    metadata.file = postsPath + file;
-                    metadata.filename = filename;
-                    metadata.link = '/' + filename + '.html';
-                    metadata.date = new Date(metadata.date);
-                    pageSrc = './public/' + pagePermalink + '/' + 'index.html';
+                metadata.content = pageHTMLFile;
+                metadata.file = postsPath + file;
+                metadata.filename = filename;
+                metadata.link = '/' + filename + '.html';
+                metadata.date = new Date(metadata.date);
+                pageSrc = './public/' + pagePermalink + '/' + 'index.html';
 
-                    GLOBAL.pages.push(metadata);
+                GLOBAL.pages.push(metadata);
 
-                    writePromises.push(new Promise(function(resolve, reject) {
-                        nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
+                writePromises.push(new Promise(function(resolve, reject) {
+                    nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+                        // write page html file
+                        fs.writeFile(pageSrc, pageHTMLFile, function(err) {
                             if (err) {
                                 reject(err);
                                 return;
                             }
-                            // write page html file
-                            fs.writeFile(pageSrc, pageHTMLFile, function(err) {
-                                if (err) {
-                                    reject(err);
-                                    return;
-                                }
-                                console.log(
-                                    clc.info('Successfully generated page ' + pagePermalink)
-                                );
-                                resolve();
-                            });
+                            console.log(
+                                clc.info('Successfully generated page ' + pagePermalink)
+                            );
+                            resolve();
                         });
-                    }));
-                });
-            }
+                    });
+                }));
+            });
         });
         return Promise.all(writePromises);
     },
