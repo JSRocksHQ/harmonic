@@ -1,4 +1,5 @@
 var localconfig = require('../config'),
+    helpers = require('../helpers'),
     program = require('commander'),
     logo = require('../cli/logo');
 
@@ -59,6 +60,12 @@ program
             });
         }
     });
+
+program.on('*', function(args) {
+    var clc = helpers.cliColor();
+    console.error('Unknown command: ' + clc.error(args[0]));
+    process.exit(1);
+});
 
 program.parse(process.argv);
 
