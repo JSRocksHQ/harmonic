@@ -51,9 +51,8 @@ program
 program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
-    .action(function(_port) {
+    .action(function(port = 9356) {
         var util = require('../cli/util'),
-            port = _port || '9356',
             core = require('../core'),
             build = core.init();
         if (build) {

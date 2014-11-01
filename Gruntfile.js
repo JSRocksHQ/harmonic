@@ -47,15 +47,12 @@ module.exports = function(grunt) {
                 'src/**/*.js',
                 '!src/bin/client/traceur-runtime.js',
                 '!src/bin/skeleton/src/templates/default/resources/js/vendor/**/*.js',
-
-                // JSCS vs ES6 incompatibilities
-                "!src/bin/cli/util.js",
-                "!src/bin/client/harmonic-client.js",
             ],
 		},
 		mochaTest: {
 			options: {
 				timeout: 5000,
+				bail: true,
 				clearRequireCache: true, // necessary for `watch` task
 			},
 			src: 'dist/test/*.js',
