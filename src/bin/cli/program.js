@@ -1,3 +1,5 @@
+require('grunt-6to5/node_modules/6to5/polyfill');
+
 var localconfig = require('../config'),
     helpers = require('../helpers'),
     program = require('commander'),

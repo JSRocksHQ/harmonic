@@ -15,7 +15,9 @@ require('should');
 
 before(function() {
     rimraf.sync(testDir);
-    nodefs.mkdirSync(testDir, 0777, true);
+    // [BUG] https://github.com/jshint/jshint/issues/1944
+    // Replace parseInt with octal literal once JSHint supports it
+    nodefs.mkdirSync(testDir, parseInt(777, 8), true);
     process.chdir(testDir);
 });
 
@@ -98,7 +100,10 @@ describe('CLI', function() {
                     var date = new Date(),
                         year = date.getFullYear(),
                         month = ('0' + (date.getMonth() + 1)).slice(-2),
+                        // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
+                        // jscs:disable disallowSpaceBeforeBinaryOperators
                         slug = fileName.replace(/\.md$/, '');
+                        // jscs:enable disallowSpaceBeforeBinaryOperators
                     langs.forEach(function(lang) {
                         var langSegment = lang === config.i18n.default ? '' : lang + '/';
                         fs.readFileSync('public/' + langSegment + year + '/' + month + '/' +

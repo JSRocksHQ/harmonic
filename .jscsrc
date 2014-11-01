@@ -8,16 +8,5 @@
 
     "disallowKeywords": ["with"],
     "disallowSpacesInsideObjectBrackets": null,
-    "disallowImplicitTypeConversion": ["string"],
-
-    "excludeFiles": [
-        "bin/client/traceur-runtime.js",
-        "bin/skeleton",
-        "node_modules",
-        ".git",
-
-        // JSCS vs ES6 incompatibilities
-        "bin/cli/util.js",
-        "bin/client/harmonic-client.js"
-    ]
+    "disallowImplicitTypeConversion": ["string"]
 }
