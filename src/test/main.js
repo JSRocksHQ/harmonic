@@ -2,7 +2,7 @@
 var helpers = require('../bin/helpers.js'),
     parser = new (require('../bin/parser.js'))(),
     fs = require('fs'),
-    nodefs = require('node-fs'),
+    mkdirp = require('mkdirp'),
     path = require('path'),
     rimraf = require('rimraf'),
     cprocess = require('child_process'),
@@ -15,9 +15,7 @@ require('should');
 
 before(function() {
     rimraf.sync(testDir);
-    // [BUG] https://github.com/jshint/jshint/issues/1944
-    // Replace parseInt with octal literal once JSHint supports it
-    nodefs.mkdirSync(testDir, parseInt(777, 8), true);
+    mkdirp.sync(testDir);
     process.chdir(testDir);
 });
 

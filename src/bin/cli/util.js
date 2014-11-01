@@ -29,9 +29,7 @@ module.exports = {
 
         fs.exists(sitePath, function(exists) {
             if (!exists) {
-                // [BUG] https://github.com/jshint/jshint/issues/1944
-                // Replace parseInt with octal literal once JSHint supports it
-                fs.mkdirSync(sitePath, parseInt(766, 8));
+                fs.mkdirSync(sitePath);
             }
             copySkeleton().then(function(msg) {
                 console.log(clc.message(msg));
@@ -135,7 +133,7 @@ module.exports = {
 
         langs.forEach(function(lang) {
             if (!fs.existsSync(path + lang)) {
-                fs.mkdirSync(path + lang, 0766);
+                fs.mkdirSync(path + lang);
             }
             fs.writeFileSync(path + lang + '/' + filename, template);
         });
