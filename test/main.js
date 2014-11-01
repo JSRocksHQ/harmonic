@@ -33,7 +33,7 @@ function enableStdout() {
 }
 
 describe('CLI', function() {
-    it.only('should display an error for unknown commands', function(done) {
+    it('should display an error for unknown commands', function(done) {
         cprocess.exec('node "' + harmonicBin + '" foobarbaz', function(error, stdout, stderr) {
             error.code.should.equal(1);
             stderr.should.containEql('foobarbaz');
