@@ -16,6 +16,9 @@ var Helper, Parser,
     traceur = require('traceur'),
     clc = helpers.cliColor();
 
+// Temporary
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+
 Helper = {
     getPagesFiles: function() {
         var config = GLOBAL.config,

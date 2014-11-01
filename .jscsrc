@@ -10,13 +10,11 @@
     "disallowSpacesInsideObjectBrackets": null,
     "disallowImplicitTypeConversion": ["string"],
 
-    // Temporary
-    "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
-
     "excludeFiles": [
         "bin/client/traceur-runtime.js",
-        "bin/skeleton/*",
-        "node_modules/*",
+        "bin/skeleton",
+        "node_modules",
+        ".git",
 
         // JSCS vs ES6 incompatibilities
         "bin/cli/util.js",
