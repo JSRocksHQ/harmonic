@@ -4,7 +4,7 @@
   "homepage": "https://github.com/es6rocks/harmonic",
   "version": "0.0.9",
   "engines": {
-    "node": ">=0.11.*"
+    "node": ">=0.11.13"
   },
   "preferGlobal": "true",
   "bin": {
