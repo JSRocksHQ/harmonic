@@ -5,7 +5,8 @@ var helpers = require('../bin/helpers.js'),
     nodefs = require('node-fs'),
     path = require('path'),
     rimraf = require('rimraf'),
-    spawn = require('child_process').spawn,
+    cprocess = require('child_process'),
+    spawn = cprocess.spawn,
     _ = require('underscore'),
     harmonicBin = path.join(__dirname, '..', 'harmonic.js'),
     testDir = path.join(__dirname, 'site'),
@@ -32,6 +33,13 @@ function enableStdout() {
 }
 
 describe('CLI', function() {
+    it('should display an error for unknown commands', function(done) {
+        cprocess.exec('harmonic foobarbaz', function(error, stdout, stderr) {
+            error.code.should.equal(1);
+            stderr.should.containEql('foobarbaz');
+            done();
+        });
+    });
 
     it('should init a new Harmonic site', function(done) {
         var harmonic = spawn('node', [harmonicBin, 'init']);
