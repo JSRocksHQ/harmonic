@@ -22,18 +22,15 @@ var Helper, Parser,
 Helper = {
     getPagesFiles: function() {
         var config = GLOBAL.config,
-            langs = config.i18n.languages,
-            langsLen = langs.length,
-            i = 0,
             files = {};
 
-        for (i; i < langsLen; i += 1) {
-            if (!fs.existsSync(pagesPath + langs[i])) {
-                fs.mkdirSync(pagesPath + langs[i], 0766);
+        config.i18n.languages.forEach(function(lang) {
+            if (!fs.existsSync(pagesPath + lang)) {
+                fs.mkdirSync(pagesPath + lang, 0766);
             } else {
-                files[langs[i]] = fs.readdirSync(pagesPath + langs[i]);
+                files[lang] = fs.readdirSync(pagesPath + lang);
             }
-        }
+        });
 
         return files;
     },
