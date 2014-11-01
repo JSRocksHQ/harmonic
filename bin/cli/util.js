@@ -2,11 +2,6 @@ var localconfig = require('../config'),
     helpers = require('../helpers'),
     fs = require('fs'),
     path = require('path'),
-
-    // JSHint ESNext option doesn't allow redefinition of Promise
-    // But it's not supported yet in node --harmony
-    Promise = require('promise'), // jshint ignore: line
-
     staticServer = require('node-static'),
     co = require('co'),
     prompt = require('co-prompt'),

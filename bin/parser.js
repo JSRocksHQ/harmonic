@@ -14,11 +14,7 @@ var Helper, Parser,
     less = require('less'),
     MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
-    clc = helpers.cliColor(),
-
-    // JSHint ESNext option doesn't allow redefinition of Promise
-    // But it's not supported yet in node --harmony
-    Promise = require('promise'); // jshint ignore: line
+    clc = helpers.cliColor();
 
 Helper = {
     getPagesFiles: function() {

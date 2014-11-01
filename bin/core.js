@@ -1,10 +1,6 @@
 var Parser = require('./parser'),
     parser = new Parser(),
-    helpers = require('./helpers'),
-
-    // JSHint ESNext option doesn't allow redefinition of Promise
-    // But it's not supported yet in node --harmony
-    Promise = require('promise'); // jshint ignore: line
+    helpers = require('./helpers');
 
 module.exports = {
 
