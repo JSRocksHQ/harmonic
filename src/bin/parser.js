@@ -9,7 +9,7 @@ var Helper, Parser,
     nunjucks = require('nunjucks'),
     ncp = require('ncp').ncp,
     permalinks = require('permalinks'),
-    nodefs = require('node-fs'),
+    mkdirp = require('mkdirp'),
     stylus = require('stylus'),
     less = require('less'),
     MkMeta = require('marked-metadata'),
@@ -26,7 +26,7 @@ Helper = {
 
         config.i18n.languages.forEach(function(lang) {
             if (!fs.existsSync(pagesPath + lang)) {
-                fs.mkdirSync(pagesPath + lang, 0766);
+                fs.mkdirSync(pagesPath + lang);
             } else {
                 files[lang] = fs.readdirSync(pagesPath + lang);
             }
@@ -93,8 +93,11 @@ Helper = {
                     config: GLOBAL.config
                 });
 
+                // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
+                // jscs:disable disallowSpaceBeforeBinaryOperators
                 // Removing header metadata
                 pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+                // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 metadata.content = pageHTMLFile;
                 metadata.file = postsPath + file;
@@ -106,7 +109,7 @@ Helper = {
                 GLOBAL.pages.push(metadata);
 
                 writePromises.push(new Promise(function(resolve, reject) {
-                    nodefs.mkdir('./public/' + pagePermalink, 0777, true, function(err) {
+                    mkdirp('./public/' + pagePermalink, function(err) {
                         if (err) {
                             reject(err);
                             return;
@@ -130,7 +133,10 @@ Helper = {
     },
 
     normalizeMetaData: function(data) {
+        // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
+        // jscs:disable disallowSpaceBeforeBinaryOperators
         data.title = data.title.replace(/\"/g, '');
+        // jscs:enable disallowSpaceBeforeBinaryOperators
         return data;
     },
 
@@ -154,7 +160,7 @@ Parser = function() {
 
     this.createPublicFolder = function() {
         if (!fs.existsSync('./public')) {
-            fs.mkdirSync('public', 0766);
+            fs.mkdirSync('public');
             console.log(clc.info('Successfully generated public folder'));
         }
     };
@@ -262,9 +268,12 @@ Parser = function() {
                     .toString();
 
         harmonicClient = harmonicClient
+            // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
+            // jscs:disable disallowSpaceBeforeBinaryOperators
             .replace(/\/\*\{\{posts\}\}\*\//, JSON.stringify(Helper.sortPosts(postsMetadata)))
             .replace(/\/\*\{\{pages\}\}\*\//, JSON.stringify(pages))
             .replace(/\/\*\{\{config\}\}\*\//, JSON.stringify(config));
+            // jscs:enable disallowSpaceBeforeBinaryOperators
 
         result = traceur.compile(harmonicClient, {
             filename: 'harmonic-client.js'
@@ -324,7 +333,7 @@ Parser = function() {
                     tagPath = './public/categories/' + lang + '/' + i;
                 }
 
-                nodefs.mkdirSync(tagPath, 0777, true);
+                mkdirp.sync(tagPath);
                 fs.writeFileSync(tagPath + '/index.html', tagContent);
                 console.log(
                     clc.info('Successfully generated tag[' + i + '] archive html file')
@@ -360,7 +369,7 @@ Parser = function() {
             } else {
                 indexPath = './public/' + lang;
             }
-            nodefs.mkdirSync(indexPath, 0777, true);
+            mkdirp.sync(indexPath);
             fs.writeFileSync(indexPath + '/index.html', indexContent);
             console.log(clc.info(lang + '/index file successfully created'));
         }
@@ -493,7 +502,10 @@ Parser = function() {
                     post: _post,
                     config: GLOBAL.config
                 })
+                // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
+                // jscs:disable disallowSpaceBeforeBinaryOperators
                 .replace(/<!--[\s\S]*?-->/g, '');
+                // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 if (metadata.published && metadata.published === 'false') {
                     return;
@@ -505,7 +517,7 @@ Parser = function() {
                 }
 
                 writePromises.push(new Promise(function(resolve, reject) {
-                    nodefs.mkdir('./public/' + postPath, 0777, true, function(err) {
+                    mkdirp('./public/' + postPath, function(err) {
                         if (err) {
                             reject(err);
                             return;
@@ -612,7 +624,7 @@ Parser = function() {
                 pages: GLOBAL.pages
             });
 
-            nodefs.mkdirSync(rssPath, 0777, true);
+            mkdirp.sync(rssPath);
             fs.writeFileSync(rssPath + '/rss.xml', rssContent);
             console.log(clc.info(lang + '/rss.xml file successfully created'));
         }

@@ -8,8 +8,13 @@
   },
   "preferGlobal": true,
   "bin": {
-    "harmonic": "harmonic.js"
+    "harmonic": "dist/harmonic.js"
   },
+  "files": [
+    "dist",
+    "!dist/test",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
@@ -19,30 +24,39 @@
     "co": "~3.0.5",
     "co-prompt": "^1.0.0",
     "commander": "~2.2.0",
+    "less": "^1.7.5",
     "markdown-extra": "^0.1.0",
     "marked": "~0.3.2",
     "marked-metadata": "0.0.6",
+    "mkdirp": "^0.5.0",
     "ncp": "~0.5.1",
-    "node-fs": "^0.1.7",
     "node-static": "~0.7.3",
     "nunjucks": "^1.0.4",
     "permalinks": "^0.2.1",
     "rimraf": "^2.2.8",
+    "stylus": "^0.45.1",
     "traceur": "0.0.49",
     "underscore": "^1.6.0",
-    "v8-argv": "^0.2.0",
-    "stylus": "^0.45.1",
-    "less": "^1.7.5"
+    "v8-argv": "^0.2.0"
   },
   "devDependencies": {
-    "jscs": "^1.6.1",
-    "jshint": "^2.5.2",
-    "mocha": "^1.21.5",
+    "grunt": "^0.4.5",
+    "grunt-6to5": "^1.0.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-jscs": "^0.8.1",
+    "grunt-mocha-test": "^0.12.2",
+    "load-grunt-tasks": "^1.0.0",
     "should": "^4.0.4"
   },
   "author": "Jaydson Gomes <jayalemao@gmail.com> (http://jaydson.org/)",
   "license": "MIT",
   "scripts": {
-    "test": "jshint . && jscs -r inline . && mocha -t 5000"
+    "dev": "grunt",
+    "prepublish": "npm i grunt-6to5 && npm test",
+    "test": "grunt build test"
   }
 }

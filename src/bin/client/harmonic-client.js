@@ -1,4 +1,8 @@
 /* exported Harmonic */
+
+// [BUG] https://github.com/jscs-dev/node-jscs/issues/706
+// jscs: disable disallowSpacesInFunctionExpression, disallowSpacesInAnonymousFunctionExpression
+
 class Harmonic {
 
     constructor(name) {
@@ -14,6 +18,6 @@ class Harmonic {
     }
 
     getPages() {
-    	return /*{{pages}}*/;
+        return /*{{pages}}*/;
     }
 }

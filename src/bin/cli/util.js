@@ -8,6 +8,9 @@ var localconfig = require('../config'),
     _ = require('underscore'),
     ncp = require('ncp').ncp;
 
+// Temporary
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+
 module.exports = {
 
     init: function(p) {
@@ -24,16 +27,15 @@ module.exports = {
                     });
                 });
             },
-            that = this,
             clc = helpers.cliColor();
 
-        fs.exists(sitePath, function(exists) {
+        fs.exists(sitePath, (exists) => {
             if (!exists) {
-                fs.mkdirSync(sitePath, 0766);
+                fs.mkdirSync(sitePath);
             }
-            copySkeleton().then(function(msg) {
+            copySkeleton().then((msg) => {
                 console.log(clc.message(msg));
-                that.config(sitePath);
+                this.config(sitePath);
             });
         });
     },
@@ -42,7 +44,7 @@ module.exports = {
         var clc = helpers.cliColor(),
             manifest = p ? p + '/harmonic.json' : './harmonic.json';
 
-        co(function *() {
+        co(function*() {
             console.log(clc.message(
                 'This guide will help you to create your Harmonic configuration file\n' +
                 'Just hit enter if you are ok with the default values.\n\n'
@@ -64,8 +66,8 @@ module.exports = {
                     header_tokens: ['<!--', '-->'],
                     index_posts: 10,
                     i18n: {
-                        'default': 'en',
-                        'languages': ['en', 'pt-br']
+                        default: 'en',
+                        languages: ['en', 'pt-br']
                     }
                 };
 
@@ -133,7 +135,7 @@ module.exports = {
 
         langs.forEach(function(lang) {
             if (!fs.existsSync(path + lang)) {
-                fs.mkdirSync(path + lang, 0766);
+                fs.mkdirSync(path + lang);
             }
             fs.writeFileSync(path + lang + '/' + filename, template);
         });
@@ -150,7 +152,7 @@ module.exports = {
         console.log(clc.info('Harmonic site is running on http://localhost:' + port));
         require('http').createServer(function(request, response) {
             request.addListener('end', function() {
-                file.serve(request, response, function (err) {
+                file.serve(request, response, function(err) {
                     if (err) {
                         console.log(clc.error(
                             'Error serving ' + request.url + ' - ' + err.message

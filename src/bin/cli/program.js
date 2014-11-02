@@ -1,3 +1,5 @@
+require('grunt-6to5/node_modules/6to5/polyfill');
+
 var localconfig = require('../config'),
     helpers = require('../helpers'),
     program = require('commander'),
@@ -49,9 +51,8 @@ program
 program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
-    .action(function(_port) {
+    .action(function(port = 9356) {
         var util = require('../cli/util'),
-            port = _port || '9356',
             core = require('../core'),
             build = core.init();
         if (build) {
