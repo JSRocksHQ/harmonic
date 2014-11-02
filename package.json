@@ -57,6 +57,6 @@
   "scripts": {
     "dev": "grunt",
     "prepublish": "npm i grunt-6to5 && npm test",
-    "test": "grunt build test"
+    "test": "grunt build"
   }
 }
