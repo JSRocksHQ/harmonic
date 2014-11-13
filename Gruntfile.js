@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			src: {
 				expand: true,
 				cwd: 'src',
-				src: ['**/*.js', '!bin/skeleton/**/*.js'],
+				src: ['**/*.js', '!bin/skeleton/**/*.js', '!bin/client/**'],
 				dest: 'dist',
 			},
 		},
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 			src: {
 				expand: true,
 				cwd: 'src',
-				src: ['**', '!**/*.js', 'bin/skeleton/**/*.js'],
+				src: ['**', '!**/*.js', 'bin/skeleton/**/*.js', 'bin/client/**'],
 				dest: 'dist',
 			},
 		},
@@ -72,14 +72,14 @@ module.exports = function(grunt) {
 				options: {
 					event: ['added', 'changed'],
 				},
-				files: ['src/**/*.js', '!src/bin/skeleton/**/*.js'],
+				files: ['src/**/*.js', '!src/bin/skeleton/**/*.js', '!src/bin/client/**'],
 				tasks: ['lint', '6to5', 'mochaTest'],
 			},
 			copy: {
 				options: {
 					event: ['added', 'changed'],
 				},
-				files: ['src/**', '!src/**/*.js', 'src/bin/skeleton/**/*.js'],
+				files: ['src/**', '!src/**/*.js', 'src/bin/skeleton/**/*.js', 'src/bin/client/**'],
 				tasks: ['copy', 'mochaTest'],
 			},
 			clean: {
