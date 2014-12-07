@@ -1,9 +1,10 @@
-![harmonic logo](harmonic-logo.png)  
-[![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)  
+<img src="harmonic-logo.png" alt="harmonic logo" title="Harmonic" align="right">
 
 # The next static site generator
+[![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/es6rocks/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-> Please note that this project is currently under development. Contributions are very welcome!
+
+**Please note that this project is currently under development. Contributions are very welcome!**
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
@@ -13,8 +14,7 @@ Harmonic is being developed with some goals:
 Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rocks/harmonic/wiki/](https://github.com/es6rocks/harmonic/wiki/)
 
 ## Installing
-**Attention:**  
-Harmonic uses some ES6 features. You will need to install Node.js >= 0.11.13.  
+**Attention:** Harmonic uses some ES6 features. You will need to install Node.js >= 0.11.13.  
 Using a Node.js version manager, such as [nvm](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n), is a good approach to have multiple Node.js versions and not break any existing Node.js software that you already have installed.  
 
 Harmonic is available on npm:  
