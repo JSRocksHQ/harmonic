@@ -1,6 +1,5 @@
-<img src="harmonic-logo.png" alt="harmonic logo" title="Harmonic" align="right">
-
 # The next static site generator
+<img src="harmonic-logo.png" alt="harmonic logo" title="Harmonic" align="right">
 [![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/es6rocks/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
