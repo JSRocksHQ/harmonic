@@ -3,7 +3,7 @@
 
 # The next static site generator
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/es6rocks/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-> Please note that this project is currently under development. Contributions are pretty welcome!
+> Please note that this project is currently under development. Contributions are very welcome!
 
 Harmonic is being developed with some goals:  
 - Learn and play with ES6 (in node and the browser)
@@ -14,10 +14,10 @@ Check out the full documentation in Harmonic's Wiki: [https://github.com/es6rock
 
 ## Installing
 **Attention:**  
-Harmonic uses some ES6 features. You'll need to instal node 0.11.* version.  
-[NVM](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n) is a good approach to have multiple node versions and do not break any existent node software that you already have installed.  
+Harmonic uses some ES6 features. You will need to install Node.js >= 0.11.13.  
+Using a Node.js version manager, such as [nvm](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n), is a good approach to have multiple Node.js versions and not break any existing Node.js software that you already have installed.  
 
-Harmonic is avaiable on npm:  
+Harmonic is available on npm:  
 
 ```shell
 npm install harmonic -g
@@ -25,8 +25,8 @@ npm install harmonic -g
 For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
 
 ## Init
-First thing you'll need to do is initialize a new Harmonic website.  
-Simply:  
+First thing you will need to do is to initialize a new Harmonic website.  
+It is as simple as:  
 ```shell
 harmonic init [PATH]
 ```
@@ -34,17 +34,17 @@ harmonic init [PATH]
 Harmonic will prompt you asking for some data about your website:   
 ![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
 
-The Harmonic config file is a simple JSON object.  
-Any time you want, you can configure your static website with the CLI _config_ command:  
+Harmonic will then generate a config file, which is a simple JSON object.  
+Any time you want, you can configure your static website with the CLI `config` command:  
 ```shell
 cd [PATH]
 harmonic config
 ```
-Now, enter in your website dir and start creating posts, etc.  
+Now, enter in your website dir and you are ready to start [creating posts](#blogging)!  
 For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
 
 ## Blogging
-Harmonic follow the pattern of others static site generators you may know.  
+Harmonic follows the same pattern as others static site generators that you may know.  
 You must write your posts in [Markdown](http://daringfireball.net/projects/markdown/) format.  
 
 ### New post:  
@@ -54,10 +54,10 @@ harmonic new_post "Hello World"
 ```
 ![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
 
-After running **_new_post_**, the markdown file will be generated in _**/src/posts/[lang]**_ folder.  
+After running `new_post`, a markdown file will be generated in the `/src/posts/[lang]` folder, ready for editing.  
 
 #### Markdown header
-The markdown file have a header which defines the post meta-data.  
+The markdown file have a header which defines the post metadata.  
 Example:  
 ```markdown
 <!--
@@ -79,7 +79,7 @@ Everything after the header is the post content.
 Exemple:  
 ```markdown
 # Hello World  
-This is my awesome post using [harmonic](https://github.com/es6rocks/harmonic).  
+This is my awesome post using [Harmonic](https://github.com/es6rocks/harmonic).  
 
 This is a list:  
 - Item 1
@@ -91,7 +91,7 @@ The code above will be parsed to something like this:
 <h1 id="hello-world">Hello World</h1>
 <p>
   This is my awesome post using 
-  <a href="https://github.com/es6rocks/harmonic">harmonic</a>.
+  <a href="https://github.com/es6rocks/harmonic">Harmonic</a>.
 </p>
 <p>This is a list:  </p>
 <ul>
@@ -106,7 +106,7 @@ For more details, you can check the full documentation: [Blogging](https://githu
 cd your_awesome_website
 harmonic new_page "Hello World Page"
 ```
-After running **_new_page_**, the markdown file will be generated in _**/src/pages/[lang]**_ folder.  
+After running `new_page`, a markdown file will be generated in the `/src/pages/[lang]` folder, ready for editing.  
 
 ## Build
 The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
@@ -119,7 +119,7 @@ To run your static server:
 ```shell
 harmonic run
 ```
-You can specify an port, by default Harmonic will use the 9356 port:
+You can specify a port, by default Harmonic will use the 9356 port:
 ```shell
 harmonic run 9090
 ```
