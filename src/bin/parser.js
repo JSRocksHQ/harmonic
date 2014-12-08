@@ -1,5 +1,6 @@
+import { rootdir } from './config';
+
 var Helper, Parser,
-    localconfig = require('./config'),
     helpers = require('./helpers'),
     fs = require('fs'),
     postsPath = './src/posts/',
@@ -259,12 +260,12 @@ Parser = function() {
     this.compileES6 = function(postsMetadata) {
         var result = '',
             traceurRuntime =
-                fs.readFileSync(localconfig.rootdir + '/bin/client/traceur-runtime.js')
+                fs.readFileSync(rootdir + '/bin/client/traceur-runtime.js')
                     .toString(),
             config = GLOBAL.config,
             pages = GLOBAL.pages,
             harmonicClient =
-                fs.readFileSync(localconfig.rootdir + '/bin/client/harmonic-client.js')
+                fs.readFileSync(rootdir + '/bin/client/harmonic-client.js')
                     .toString();
 
         harmonicClient = harmonicClient
