@@ -1,3 +1,4 @@
+/*jshint unused:false*/
 let fs = require('fs');
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename };
@@ -31,8 +32,22 @@ function isHarmonicProject() {
     }
 }
 
-function getConfig() {
-    return JSON.parse(fs.readFileSync('./harmonic.json').toString());
+function getConfig(type = 'harmonic') {
+    let filePath = null;
+
+    switch (type) {
+        case 'npm':
+            filePath = './package.json';
+        break;
+        case 'harmonic':
+            filePath = './harmonic.json';
+        break;
+    }
+    try {
+        return JSON.parse(fs.readFileSync(filePath).toString());
+    } catch (configError) {
+        throw new Error('Unable to load config file', configError);
+    }
 }
 
 function titleToFilename(title) {

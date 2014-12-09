@@ -1,9 +1,11 @@
 /*jshint unused:false*/
 import { rootdir } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
+import Plugin from './plugin';
 
 var Helper, Parser,
     fs = require('fs'),
+    plugin = new Plugin(),
     postsPath = './src/posts/',
     path = require('path'),
     pagesPath = './src/pages/',
@@ -151,6 +153,7 @@ Parser = function() {
 
     this.start = function() {
         console.log(clc.info('starting the parser'));
+        plugin.loadAll();
         return Promise.resolve();
     };
 
