@@ -1,7 +1,8 @@
+/*jshint unused:false*/
 import { rootdir } from './config';
+import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
 
 var Helper, Parser,
-    helpers = require('./helpers'),
     fs = require('fs'),
     postsPath = './src/posts/',
     path = require('path'),
@@ -15,7 +16,7 @@ var Helper, Parser,
     less = require('less'),
     MkMeta = require('marked-metadata'),
     traceur = require('traceur'),
-    clc = helpers.cliColor();
+    clc = cliColor();
 
 // Temporary
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
@@ -567,7 +568,7 @@ Parser = function() {
     };
 
     this.getConfig = function() {
-        var config = helpers.getConfig();
+        var config = getConfig();
 
         try {
             _.extend(config, JSON.parse(
@@ -633,4 +634,4 @@ Parser = function() {
     };
 };
 
-module.exports = Parser;
+export default Parser;

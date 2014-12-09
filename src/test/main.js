@@ -1,6 +1,8 @@
 /* jshint mocha: true */
+import Parser from '../bin/parser';
+
 var helpers = require('../bin/helpers.js'),
-    parser = new (require('../bin/parser.js'))(),
+    parser = new Parser(),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     path = require('path'),

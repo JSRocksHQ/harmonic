@@ -1,7 +1,9 @@
-var fs = require('fs');
+let fs = require('fs');
+
+export { cliColor, isHarmonicProject, getConfig, titleToFilename };
 
 // CLI color
-exports.cliColor = function() {
+function cliColor() {
     var clc = require('cli-color');
     return {
         info: clc.green,
@@ -9,14 +11,14 @@ exports.cliColor = function() {
         warn: clc.yellowBright,
         message: clc.yellow
     };
-};
+}
 
 // Check if harmonic.json file exists
-exports.isHarmonicProject = function() {
-    var clc = this.cliColor();
+function isHarmonicProject() {
+    var clc = cliColor();
 
     try {
-        this.getConfig();
+        getConfig();
         return true;
     } catch (e) {
         console.log(
@@ -27,15 +29,15 @@ exports.isHarmonicProject = function() {
         );
         return false;
     }
-};
+}
 
-exports.getConfig = function() {
+function getConfig() {
     return JSON.parse(fs.readFileSync('./harmonic.json').toString());
-};
+}
 
-exports.titleToFilename = function(title) {
+function titleToFilename(title) {
     // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
     // jscs:disable disallowSpaceBeforeBinaryOperators
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
     // jscs:enable disallowSpaceBeforeBinaryOperators
-};
+}

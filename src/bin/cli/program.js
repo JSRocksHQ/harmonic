@@ -1,69 +1,67 @@
 require('grunt-6to5/node_modules/6to5/polyfill');
+var program = require('commander');
 
-var localconfig = require('../config'),
-    helpers = require('../helpers'),
-    program = require('commander'),
-    logo = require('../cli/logo');
+import { version } from '../config';
+import { cliColor } from '../helpers';
+import logo from './logo';
+import { init, config, newFile, run } from './util';
 
 program
-    .version(localconfig.version);
+    .version(version);
 
 program
     .command('init')
     .description('Init your static website')
-    .action(function(path) {
-        var util = require('../cli/util');
+    .action((path) => {
         console.log(logo);
-        util.init(typeof path === 'string' ? path : './');
+        init(typeof path === 'string' ? path : './');
     });
 
 program
     .command('config')
     .description('Config your static website')
-    .action(function() {
-        var util = require('../cli/util');
+    .action(() => {
         console.log(logo);
-        util.config();
+        config();
     });
 
 program
     .command('build')
     .description('Build your static website')
-    .action(function() {
-        var core = require('../core');
+    .action(() => {
+        let core = require('../core');
         core.init();
     });
 
 program
     .command('new_post ["title"]')
     .description('Create a new post')
-    .action(function(title) {
-        require('../cli/util').newFile('post', title);
+    .action((title) => {
+        newFile('post', title);
     });
 
 program
     .command('new_page ["title"]')
     .description('Create a new page')
-    .action(function(title) {
-        require('../cli/util').newFile('page', title);
+    .action((title) => {
+        newFile('page', title);
     });
 
 program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
-    .action(function(port = 9356) {
-        var util = require('../cli/util'),
-            core = require('../core'),
+    .action(function(port = 9356) { // We're not using arrow function here due to an jshint issue
+        let core = require('../core'),
             build = core.init();
         if (build) {
             build.then(function() {
-                util.run(port);
+                run(port);
             });
         }
     });
 
-program.on('*', function(args) {
-    var clc = helpers.cliColor();
+program.on('*', (args) => {
+    let clc = cliColor();
     console.error('Unknown command: ' + clc.error(args[0]));
     process.exit(1);
 });
