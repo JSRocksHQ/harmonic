@@ -15,9 +15,8 @@ export { init, config, newFile, run };
 // Temporary
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
-function init(p) {
-    var sitePath = p,
-        skeletonPath = path.normalize(rootdir + '/bin/skeleton'),
+function init(sitePath) {
+    var skeletonPath = path.normalize(rootdir + '/bin/skeleton'),
         copySkeleton = () => {
             return new Promise((resolve, reject) => {
                 ncp(skeletonPath, sitePath, (err) => {
@@ -42,9 +41,9 @@ function init(p) {
     });
 }
 
-function config(p) {
+function config(sitePath) {
     var clc = cliColor(),
-        manifest = p ? p + '/harmonic.json' : './harmonic.json';
+        manifest = sitePath + '/harmonic.json';
 
     co(function*() {
         console.log(clc.message(

@@ -10,19 +10,21 @@ program
     .version(version);
 
 program
-    .command('init')
+    .command('init [path]')
     .description('Init your static website')
-    .action((path) => {
+     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(path = '.') {
         console.log(logo);
-        init(typeof path === 'string' ? path : './');
+        init(path);
     });
 
 program
-    .command('config')
+    .command('config [path]')
     .description('Config your static website')
-    .action(() => {
+     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(path = '.') {
         console.log(logo);
-        config();
+        config(path);
     });
 
 program
@@ -50,7 +52,8 @@ program
 program
     .command('run [port]')
     .description('Run you static site locally. Port is optional')
-    .action(function(port = 9356) { // We're not using arrow function here due to an jshint issue
+     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(port = 9356) {
         let core = require('../core'),
             build = core.init();
         if (build) {
