@@ -65,7 +65,7 @@ Helper = {
 
         langs.forEach(function(lang) {
             files[lang].forEach(function(file) {
-                var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
+                var metadata, pagePermalink, _page, pageContent, pageHTMLFile, options,
                     page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
                     tplSrc = './src/templates/' + curTemplate + '/page.html',
                     pageTpl = fs.readFileSync(tplSrc),
@@ -80,9 +80,26 @@ Helper = {
 
                 // Markdown extra
                 metadata = md.metadata();
-                pagePermalink = permalinks(config.pages_permalink, {
-                    title: filename
-                });
+
+                // If is the default language, generate in the root path
+                // TODO improve this code due to an duplication generating posts
+                options = {
+                    replacements: [{
+                        pattern: ':title',
+                        replacement: filename
+                    },
+                    {
+                        pattern: ':language',
+                        replacement: lang
+                    }]
+                };
+                if (config.i18n.default === lang) {
+                    options.structure = config.pages_permalink.split(':language/')[1];
+                    pagePermalink = permalinks(options);
+                } else {
+                    options.structure = config.posts_permalink;
+                    pagePermalink = permalinks(options);
+                }
 
                 _page = {
                     content: md.markdown(),
