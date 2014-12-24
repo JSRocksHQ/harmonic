@@ -28,37 +28,40 @@ program
     });
 
 program
-    .command('build')
+    .command('build [path]')
     .description('Build your static website')
-    .action(() => {
+    // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(path = '.') {
         let core = require('../core');
-        core.init();
+        core.init(path);
     });
 
 program
-    .command('new_post ["title"]')
+    .command('new_post ["title"] [path]')
     .description('Create a new post')
-    .action((title) => {
-        newFile('post', title);
+    // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(title, path = '.') {
+        newFile(path, 'post', title);
     });
 
 program
-    .command('new_page ["title"]')
+    .command('new_page ["title"] [path]')
     .description('Create a new page')
-    .action((title) => {
-        newFile('page', title);
+    // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
+    .action(function(title, path = '.') {
+        newFile(path, 'page', title);
     });
 
 program
-    .command('run [port]')
+    .command('run [port] [path]')
     .description('Run you static site locally. Port is optional')
      // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(port = 9356) {
+    .action(function(port = 9356, path = '.') {
         let core = require('../core'),
-            build = core.init();
+            build = core.init(path);
         if (build) {
             build.then(function() {
-                run(port);
+                run(path, port);
             });
         }
     });

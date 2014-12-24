@@ -117,9 +117,9 @@ function config(sitePath) {
  * @param {string} type - The new file's type. Can be either 'post' or 'page'.
  * @param {string} title - The new file's title.
  */
-function newFile(type, title) {
+function newFile(sitePath, type, title) {
     var clc = cliColor(),
-        langs = getConfig().i18n.languages,
+        langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
             'layout: ' + type + '\n' +
             'title: ' + title + '\n' +
@@ -131,14 +131,15 @@ function newFile(type, title) {
             'categories:\n' +
             '-->\n' +
             '# ' + title,
-        path = type === 'post' ? postspath : pagespath,
+        filedir = path.join(sitePath, type === 'post' ? postspath : pagespath),
         filename = titleToFilename(title);
 
     langs.forEach((lang) => {
-        if (!fs.existsSync(path + lang)) {
-            fs.mkdirSync(path + lang);
+        let fileLangDir = path.join(filedir, lang);
+        if (!fs.existsSync(fileLangDir)) {
+            fs.mkdirSync(fileLangDir);
         }
-        fs.writeFileSync(path + lang + '/' + filename, template);
+        fs.writeFileSync(path.join(fileLangDir, filename), template);
     });
 
     console.log(clc.info(
@@ -147,9 +148,9 @@ function newFile(type, title) {
     ));
 }
 
-function run(port) {
+function run(sitePath, port) {
     let clc = cliColor();
-    let file = new staticServer.Server(path.join(process.cwd(), 'public'));
+    let file = new staticServer.Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
 

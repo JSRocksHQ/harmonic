@@ -1,12 +1,10 @@
 /*jshint unused:false*/
-import { rootdir } from './config';
+import { rootdir, postspath as postsPath, pagespath as pagesPath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
 
 var Helper, Parser,
     fs = require('fs'),
-    postsPath = './src/posts/',
     path = require('path'),
-    pagesPath = './src/pages/',
     _ = require('underscore'),
     nunjucks = require('nunjucks'),
     ncp = require('ncp').ncp,
@@ -15,22 +13,23 @@ var Helper, Parser,
     stylus = require('stylus'),
     less = require('less'),
     MkMeta = require('marked-metadata'),
-    traceur = require('traceur'),
+    to5 = require('gulp-6to5/node_modules/6to5'),
     clc = cliColor();
 
 // Temporary
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
 Helper = {
-    getPagesFiles: function() {
+    getPagesFiles: function(sitePath) {
         var config = GLOBAL.config,
             files = {};
 
         config.i18n.languages.forEach(function(lang) {
-            if (!fs.existsSync(pagesPath + lang)) {
-                fs.mkdirSync(pagesPath + lang);
+            let langPath = path.join(sitePath, pagesPath, lang);
+            if (!fs.existsSync(langPath)) {
+                fs.mkdirSync(langPath);
             } else {
-                files[lang] = fs.readdirSync(pagesPath + lang);
+                files[lang] = fs.readdirSync(langPath);
             }
         });
 
@@ -52,7 +51,7 @@ Helper = {
         return newPosts;
     },
 
-    parsePages: function(files) {
+    parsePages: function(sitePath, files) {
         var langs = Object.keys(files),
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
@@ -66,11 +65,13 @@ Helper = {
         langs.forEach(function(lang) {
             files[lang].forEach(function(file) {
                 var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                    page = fs.readFileSync(pagesPath + lang + '/' + file).toString(),
-                    tplSrc = './src/templates/' + curTemplate + '/page.html',
-                    pageTpl = fs.readFileSync(tplSrc),
+                    pagePath = path.join(sitePath, pagesPath, lang, file),
+                    page = fs.readFileSync(pagePath).toString(),
+                    pageTpl = fs.readFileSync(
+                        path.join(sitePath, 'src/templates', curTemplate, 'page.html')
+                    ),
                     pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
-                    md = new MkMeta(pagesPath + lang + '/' + file),
+                    md = new MkMeta(pagePath),
                     pageSrc = '',
                     filename = path.extname(file) === '.md' ?
                         path.basename(file, '.md') :
@@ -102,16 +103,16 @@ Helper = {
                 // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 metadata.content = pageHTMLFile;
-                metadata.file = postsPath + file;
+                metadata.file = postsPath + file; // TODO check whether this needs sitePath
                 metadata.filename = filename;
                 metadata.link = '/' + filename + '.html';
                 metadata.date = new Date(metadata.date);
-                pageSrc = './public/' + pagePermalink + '/' + 'index.html';
+                pageSrc = path.join(sitePath, 'public', pagePermalink, 'index.html');
 
                 GLOBAL.pages.push(metadata);
 
                 writePromises.push(new Promise(function(resolve, reject) {
-                    mkdirp('./public/' + pagePermalink, function(err) {
+                    mkdirp(path.join(sitePath, 'public', pagePermalink), function(err) {
                         if (err) {
                             reject(err);
                             return;
@@ -154,20 +155,21 @@ Parser = function() {
         return Promise.resolve();
     };
 
-    this.clean = function() {
+    this.clean = function(sitePath) {
         console.log(clc.warn('Cleaning up...'));
         var rimraf = require('rimraf');
-        rimraf.sync('./public');
+        rimraf.sync(path.join(sitePath, 'public'));
     };
 
-    this.createPublicFolder = function() {
-        if (!fs.existsSync('./public')) {
-            fs.mkdirSync('public');
+    this.createPublicFolder = function(sitePath) {
+        let publicDirPath = path.join(sitePath, 'public');
+        if (!fs.existsSync(publicDirPath)) {
+            fs.mkdirSync(publicDirPath);
             console.log(clc.info('Successfully generated public folder'));
         }
     };
 
-    this.compileCSS = function() {
+    this.compileCSS = function(sitePath) {
         var compiler,
             currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
 
@@ -176,7 +178,7 @@ Parser = function() {
             // Less
             less: function() {
                 return new Promise(function(resolve, reject) {
-                    var curTemplate = './src/templates/' + GLOBAL.config.template,
+                    var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template),
                         lessDir = curTemplate + '/resources/_less',
                         cssDir = curTemplate + '/resources/css',
                         verifyDirectory = function(filepath) {
@@ -202,7 +204,7 @@ Parser = function() {
                             parser;
 
                         options.outputfile = options.filename.split('.less')[0] + '.css';
-                        options.outputDir = path.resolve(process.cwd(), options.outputDir) + '/';
+                        options.outputDir = path.resolve(sitePath, options.outputDir) + '/';
                         verifyDirectory(options.outputDir);
 
                         parser = new less.Parser(options);
@@ -233,7 +235,7 @@ Parser = function() {
             // Stylus
             stylus: function() {
                 return new Promise(function(resolve, reject) {
-                    var curTemplate = './src/templates/' + GLOBAL.config.template,
+                    var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template),
                         stylDir = curTemplate + '/resources/_stylus',
                         cssDir = curTemplate + '/resources/css',
                         code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
@@ -258,11 +260,8 @@ Parser = function() {
         compiler[currentCSSCompiler]();
     };
 
-    this.compileES6 = function(postsMetadata) {
-        var result = '',
-            traceurRuntime =
-                fs.readFileSync(rootdir + '/bin/client/traceur-runtime.js')
-                    .toString(),
+    this.compileES6 = function(sitePath, postsMetadata) {
+        var result,
             config = GLOBAL.config,
             pages = GLOBAL.pages,
             harmonicClient =
@@ -277,25 +276,19 @@ Parser = function() {
             .replace(/\/\*\{\{config\}\}\*\//, JSON.stringify(config));
             // jscs:enable disallowSpaceBeforeBinaryOperators
 
-        result = traceur.compile(harmonicClient, {
-            filename: 'harmonic-client.js'
-        });
-
-        if (result.error) {
-            throw result.error;
-        }
-
-        fs.writeFileSync('./public/harmonic.js', '//traceur runtime\n' + traceurRuntime +
-            '\n//harmonic code\n' + result.js);
+        result = to5.transform(harmonicClient);
+        fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), result.code);
 
         return postsMetadata;
     };
 
-    this.generateTagsPages = function(postsMetadata) {
+    this.generateTagsPages = function(sitePath, postsMetadata) {
         var postsByTag = {},
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            tagTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
+            tagTemplate = fs.readFileSync(
+                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
+            ),
             tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
             tagPath = null,
             lang, i, tags, y, tag, tagContent,
@@ -330,13 +323,13 @@ Parser = function() {
 
                 // If is the default language, generate in the root path
                 if (config.i18n.default === lang) {
-                    tagPath = './public/categories/' + i;
+                    tagPath = path.join(sitePath, 'public/categories', i);
                 } else {
-                    tagPath = './public/categories/' + lang + '/' + i;
+                    tagPath = path.join(sitePath, 'public/categories', lang, i);
                 }
 
                 mkdirp.sync(tagPath);
-                fs.writeFileSync(tagPath + '/index.html', tagContent);
+                fs.writeFileSync(path.join(tagPath, 'index.html'), tagContent);
                 console.log(
                     clc.info('Successfully generated tag[' + i + '] archive html file')
                 );
@@ -344,12 +337,14 @@ Parser = function() {
         }
     };
 
-    this.generateIndex = function(postsMetadata) {
+    this.generateIndex = function(sitePath, postsMetadata) {
         var lang,
             _posts = null,
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            indexTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/index.html'),
+            indexTemplate = fs.readFileSync(
+                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
+            ),
             indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
             indexContent = '',
             indexPath = null,
@@ -367,22 +362,22 @@ Parser = function() {
             });
 
             if (config.i18n.default === lang) {
-                indexPath = './public/';
+                indexPath = path.join(sitePath, 'public');
             } else {
-                indexPath = './public/' + lang;
+                indexPath = path.join(sitePath, 'public', lang);
             }
             mkdirp.sync(indexPath);
-            fs.writeFileSync(indexPath + '/index.html', indexContent);
+            fs.writeFileSync(path.join(indexPath, 'index.html'), indexContent);
             console.log(clc.info(lang + '/index file successfully created'));
         }
         return postsMetadata;
     };
 
-    this.copyResources = function() {
+    this.copyResources = function(sitePath) {
         var imagesP, resourcesP;
 
         imagesP = new Promise(function(resolve, reject) {
-            ncp('./src/img', './public/img', function(err) {
+            ncp(path.join(sitePath, 'src/img'), path.join(sitePath, 'public/img'), function(err) {
                 if (err) {
                     reject(err);
                     return;
@@ -392,8 +387,8 @@ Parser = function() {
         });
 
         resourcesP = new Promise(function(resolve, reject) {
-            var curTemplate = './src/templates/' + GLOBAL.config.template;
-            ncp(curTemplate + '/resources', './public', function(err) {
+            var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template);
+            ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
                 if (err) {
                     reject(err);
                     return;
@@ -408,19 +403,21 @@ Parser = function() {
             });
     };
 
-    this.generatePages = function() {
+    this.generatePages = function(sitePath) {
         return Promise.resolve()
-            .then(Helper.getPagesFiles)
-            .then(Helper.parsePages);
+            .then(Helper.getPagesFiles.bind(Helper, sitePath))
+            .then(Helper.parsePages.bind(Helper, sitePath));
     };
 
-    this.generatePosts = function(files) {
+    this.generatePosts = function(sitePath, files) {
         var langs = Object.keys(files),
             config = GLOBAL.config,
             posts = {},
             currentDate = new Date(),
             curTemplate = config.template,
-            postsTemplate = fs.readFileSync('./src/templates/' + curTemplate + '/post.html'),
+            postsTemplate = fs.readFileSync(
+                path.join(sitePath, 'src/templates', curTemplate, 'post.html')
+            ),
             nunjucksEnv = GLOBAL.nunjucksEnv,
             postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
             tokens = [
@@ -433,7 +430,7 @@ Parser = function() {
             files[lang].forEach(function(file) {
                 var metadata, post, postCropped, filename, checkDate, postPath, categories,
                     _post, postHTMLFile, postDate, month, year, options,
-                    md = new MkMeta(postsPath + lang + '/' + file);
+                    md = new MkMeta(path.join(sitePath, postsPath, lang, file));
 
                 md.defineTokens(tokens[0], tokens[1]);
                 metadata = Helper.normalizeMetaData(md.metadata());
@@ -519,14 +516,14 @@ Parser = function() {
                 }
 
                 writePromises.push(new Promise(function(resolve, reject) {
-                    mkdirp('./public/' + postPath, function(err) {
+                    mkdirp(path.join(sitePath, 'public', postPath), function(err) {
                         if (err) {
                             reject(err);
                             return;
                         }
                         // write post html file
-                        fs.writeFile('./public/' + postPath + '/index.html', postHTMLFile,
-                            function(err) {
+                        fs.writeFile(path.join(sitePath, 'public', postPath, 'index.html'),
+                            postHTMLFile, function(err) {
                                 if (err) {
                                     reject(err);
                                     return;
@@ -553,38 +550,36 @@ Parser = function() {
             });
     };
 
-    this.getFiles = function() {
+    this.getFiles = function(sitePath) {
         var config = GLOBAL.config,
-            langs = config.i18n.languages,
-            langsLen = langs.length,
-            i = 0,
             files = {};
 
-        for (i; i < langsLen; i += 1) {
-            files[langs[i]] = fs.readdirSync(postsPath + langs[i]);
-        }
+        config.i18n.languages.forEach(function(lang) {
+            files[lang] = fs.readdirSync(path.join(sitePath, postsPath, lang));
+        });
 
         return files;
     };
 
-    this.getConfig = function() {
-        var config = getConfig();
+    this.getConfig = function(sitePath) {
+        var config = getConfig(sitePath);
 
+        // TODO replace try with fs.exists check so that invalid JSON does not fail silently
         try {
-            _.extend(config, JSON.parse(
-                fs.readFileSync('./src/templates/' + config.template + '/harmonic.json').toString()
-            ));
+            _.extend(config, JSON.parse(fs.readFileSync(
+                path.join(sitePath, 'src/templates', config.template, 'harmonic.json')
+            ).toString()));
         } catch (e) {}
 
         GLOBAL.config = config;
         GLOBAL.nunjucksEnv = new nunjucks.Environment(
-            new nunjucks.FileSystemLoader('./src/templates/' + config.template)
+            new nunjucks.FileSystemLoader(path.join(sitePath, 'src/templates', config.template))
         );
 
         return config;
     };
 
-    this.generateRSS = function(postsMetadata) {
+    this.generateRSS = function(sitePath, postsMetadata) {
         var _posts = null,
             nunjucksEnv = GLOBAL.nunjucksEnv,
             rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml'),
@@ -607,10 +602,10 @@ Parser = function() {
             }
 
             if (config.i18n.default === lang) {
-                rssPath = './public/';
+                rssPath = path.join(sitePath, 'public');
                 rssLink = GLOBAL.config.domain + '/rss.xml';
             } else {
-                rssPath = './public/' + lang;
+                rssPath = path.join(sitePath, 'public', lang);
                 rssLink = GLOBAL.config.domain + '/' + lang + '/rss.xml';
             }
 
