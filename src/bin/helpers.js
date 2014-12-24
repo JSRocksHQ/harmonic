@@ -15,7 +15,7 @@ function cliColor() {
 }
 
 // Check if harmonic.json file exists
-function isHarmonicProject(sitePath = '.') {
+function isHarmonicProject(sitePath) {
     var clc = cliColor();
 
     try {
@@ -32,7 +32,7 @@ function isHarmonicProject(sitePath = '.') {
     }
 }
 
-function getConfig(sitePath = '.') {
+function getConfig(sitePath) {
     return JSON.parse(fs.readFileSync(path.join(sitePath, 'harmonic.json')).toString());
 }
 
