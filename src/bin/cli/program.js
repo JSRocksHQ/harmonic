@@ -1,4 +1,4 @@
-require('grunt-6to5/node_modules/6to5/polyfill');
+require('gulp-6to5/node_modules/6to5/polyfill');
 var program = require('commander');
 
 import { version } from '../config';
