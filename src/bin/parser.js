@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-import { rootdir, postspath as postsPath, pagespath as pagesPath } from './config';
+import { rootdir, postspath, pagespath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
 
 var Helper, Parser,
@@ -25,7 +25,7 @@ Helper = {
             files = {};
 
         config.i18n.languages.forEach(function(lang) {
-            let langPath = path.join(sitePath, pagesPath, lang);
+            let langPath = path.join(sitePath, pagespath, lang);
             if (!fs.existsSync(langPath)) {
                 fs.mkdirSync(langPath);
             } else {
@@ -65,7 +65,7 @@ Helper = {
         langs.forEach(function(lang) {
             files[lang].forEach(function(file) {
                 var metadata, pagePermalink, _page, pageContent, pageHTMLFile,
-                    pagePath = path.join(sitePath, pagesPath, lang, file),
+                    pagePath = path.join(sitePath, pagespath, lang, file),
                     page = fs.readFileSync(pagePath).toString(),
                     pageTpl = fs.readFileSync(
                         path.join(sitePath, 'src/templates', curTemplate, 'page.html')
@@ -103,7 +103,7 @@ Helper = {
                 // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 metadata.content = pageHTMLFile;
-                metadata.file = postsPath + file; // TODO check whether this needs sitePath
+                metadata.file = postspath + file; // TODO check whether this needs sitePath
                 metadata.filename = filename;
                 metadata.link = '/' + filename + '.html';
                 metadata.date = new Date(metadata.date);
@@ -430,7 +430,7 @@ Parser = function() {
             files[lang].forEach(function(file) {
                 var metadata, post, postCropped, filename, checkDate, postPath, categories,
                     _post, postHTMLFile, postDate, month, year, options,
-                    md = new MkMeta(path.join(sitePath, postsPath, lang, file));
+                    md = new MkMeta(path.join(sitePath, postspath, lang, file));
 
                 md.defineTokens(tokens[0], tokens[1]);
                 metadata = Helper.normalizeMetaData(md.metadata());
@@ -484,7 +484,7 @@ Parser = function() {
 
                 metadata.categories = categories;
                 metadata.content = postCropped;
-                metadata.file = postsPath + file;
+                metadata.file = postspath + file;
                 metadata.filename = filename;
                 metadata.link = postPath;
                 metadata.lang = lang;
@@ -555,7 +555,7 @@ Parser = function() {
             files = {};
 
         config.i18n.languages.forEach(function(lang) {
-            files[lang] = fs.readdirSync(path.join(sitePath, postsPath, lang));
+            files[lang] = fs.readdirSync(path.join(sitePath, postspath, lang));
         });
 
         return files;
