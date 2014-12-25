@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "chalk": "^0.5.1",
+    "glob-manipulate": "^1.0.0",
     "gulp": "^3.8.10",
     "gulp-batch": "^1.0.4",
     "gulp-filter": "^2.0.0",
@@ -50,6 +51,7 @@
     "gulp-mocha": "^2.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-rimraf": "^0.1.1",
+    "gulp-src-ordered-globs": "^1.0.0",
     "gulp-util": "^3.0.1",
     "gulp-watch": "^3.0.0",
     "jshint-stylish": "^1.0.0",

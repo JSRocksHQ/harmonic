@@ -12,9 +12,10 @@ var path = require('path'),
 	reverseStream = require('reversepoint'),
 	uniqueStream = require('unique-stream'),
 	lazypipe = require('lazypipe'),
+	globManip = require('glob-manipulate'),
 	chalk = require('chalk'),
 	build = require('./build'),
-	copySrc = ['**'].concat(negateGlobs(build.src.js)),
+	copySrc = ['**'].concat(globManip.negate(build.src.js)),
 	writePipe = lazypipe()
 		.pipe(gulp.dest, build.distBase),
 	jsPipe = lazypipe()
@@ -27,18 +28,6 @@ var path = require('path'),
 	runTests = lazypipe()
 		.pipe(gulp.src, build.distBase + 'test/*.js', { read: false })
 		.pipe(plugins.mocha, build.config.mocha);
-
-function negateGlobs(globs) {
-	return globs.map(function(glob) {
-		return ~glob.lastIndexOf('!', 0) ? glob.slice(1) : '!' + glob;
-	});
-}
-
-function prefixGlobs(globs, prefix) {
-	return globs.map(function(glob) {
-		return ~glob.lastIndexOf('!', 0) ? '!' + prefix + glob.slice(1) : prefix + glob;
-	});
-}
 
 function runAfterEnd(cb) {
 	// This is basically a passThrough stream for the callback's stream.
@@ -55,8 +44,8 @@ function runAfterEnd(cb) {
 gulp.task('build', function() {
 	rimraf.sync(build.distBase);
 	return mergeStream(
-			gulp.src(prefixGlobs(build.src.js, build.srcBase), { base: build.srcBase }).pipe(jsPipe()),
-			gulp.src(prefixGlobs(copySrc, build.srcBase), { base: build.srcBase }).pipe(writePipe())
+			plugins.srcOrderedGlobs(globManip.prefix(build.src.js, build.srcBase), { base: build.srcBase }).pipe(jsPipe()),
+			plugins.srcOrderedGlobs(globManip.prefix(copySrc, build.srcBase), { base: build.srcBase }).pipe(writePipe())
 		)
 		.pipe(runAfterEnd(runTests));
 });
