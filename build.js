@@ -10,6 +10,6 @@ module.exports = {
 	config: {
 		jscs: { configPath: '.jscsrc', esnext: true },
 		'6to5': { blacklist: ['generators'] },
-		mocha: { bail: true, timeout: 20000 }
+		mocha: { bail: true, timeout: 5000 }
 	}
 };

@@ -572,8 +572,8 @@ Parser = function() {
         } catch (e) {}
 
         GLOBAL.config = config;
-        GLOBAL.nunjucksEnv = new nunjucks.Environment(
-            new nunjucks.FileSystemLoader(path.join(sitePath, 'src/templates', config.template))
+        GLOBAL.nunjucksEnv = nunjucks.configure(
+            path.join(sitePath, 'src/templates', config.template), { watch: false }
         );
 
         return config;
