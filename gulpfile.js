@@ -6,6 +6,7 @@ if (require('os').platform() === 'win32') process.argv.push('--no-color');
 var path = require('path'),
 	gulp = require('gulp'),
 	plugins = require('gulp-load-plugins')(),
+	vinylPaths = require('vinyl-paths'),
 	rimraf = require('rimraf'),
 	through = require('through'),
 	mergeStream = require('merge-stream'),
@@ -76,7 +77,7 @@ gulp.task('default', ['build'], function(neverEnd) {
 					// we can't change/remove the filePath's `base`, so cd out of it in the dirname
 					filePath.dirname = path.join(path.relative(build.srcBase, '.'), build.distBase, filePath.dirname);
 				})
-				.pipe(plugins.rimraf);
+				.pipe(vinylPaths, rimraf);
 
 	function filterEvent(events, file) {
 		return ~events.indexOf(file.event);
