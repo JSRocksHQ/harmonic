@@ -18,12 +18,9 @@ require('should');
 before(function() {
     rimraf.sync(testDir);
     mkdirp.sync(testDir);
-    process.chdir(testDir);
 });
 
 after(function() {
-    // need to chdir out of testDir before removing it (at least in Windows)
-    process.chdir(__dirname);
     rimraf.sync(testDir);
 });
 
@@ -44,7 +41,7 @@ describe('CLI', function() {
     });
 
     it('should init a new Harmonic site', function(done) {
-        var harmonic = spawn('node', [harmonicBin, 'init']);
+        var harmonic = spawn('node', [harmonicBin, 'init', testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 
@@ -57,13 +54,13 @@ describe('CLI', function() {
         });
 
         harmonic.on('close', function() {
-            helpers.isHarmonicProject().should.be.true;
+            helpers.isHarmonicProject(testDir).should.be.true;
             done();
         });
     });
 
     it('should build the Harmonic site', function(done) {
-        var harmonic = spawn('node', [harmonicBin, 'build']);
+        var harmonic = spawn('node', [harmonicBin, 'build', testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 
@@ -75,39 +72,40 @@ describe('CLI', function() {
 
     it('should create and build a new post', function(done) {
         var localconfig = require('../bin/config.js'),
-            config = helpers.getConfig(),
+            config = helpers.getConfig(testDir),
             langs = config.i18n.languages,
             title = 'new_post test',
             fileName = helpers.titleToFilename(title),
-            harmonic = spawn('node', [harmonicBin, 'new_post', title]);
+            harmonic = spawn('node', [harmonicBin, 'new_post', title, testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 
         new Promise(function(resolve) {
             harmonic.on('close', function() {
                 langs.forEach(function(lang) {
-                    fs.readFileSync(path.join(localconfig.postspath, lang, fileName)).toString()
-                        .should.containEql(title);
+                    fs.readFileSync(
+                        path.join(testDir, localconfig.postspath, lang, fileName)
+                    ).toString().should.containEql(title);
                 });
                 resolve();
             });
         }).then(function() {
-            var harmonicBuild = spawn('node', [harmonicBin, 'build']);
+            var harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
             harmonicBuild.stdin.setEncoding('utf8');
             harmonicBuild.stdout.setEncoding('utf8');
             return new Promise(function(resolve) {
                 harmonicBuild.on('close', function() {
                     var date = new Date(),
-                        year = date.getFullYear(),
+                        year = String(date.getFullYear()),
                         month = ('0' + (date.getMonth() + 1)).slice(-2),
                         // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
                         // jscs:disable disallowSpaceBeforeBinaryOperators
                         slug = fileName.replace(/\.md$/, '');
                         // jscs:enable disallowSpaceBeforeBinaryOperators
                     langs.forEach(function(lang) {
-                        var langSegment = lang === config.i18n.default ? '' : lang + '/';
-                        fs.readFileSync('public/' + langSegment + year + '/' + month + '/' +
-                            slug + '/index.html').toString().should.containEql(title);
+                        var langSegment = lang === config.i18n.default ? '.' : lang;
+                        fs.readFileSync(path.join(testDir, 'public', langSegment, year, month,
+                            slug, 'index.html')).toString().should.containEql(title);
                     });
                     resolve();
                 });
@@ -122,13 +120,11 @@ describe('CLI', function() {
 describe('helpers', function() {
 
     it('.isHarmonicProject() should return whether the CWD is a Harmonic site', function() {
-        process.chdir(__dirname);
         disableStdout();
-        var isHarmonicProject = helpers.isHarmonicProject();
+        var isHarmonicProject = helpers.isHarmonicProject(__dirname);
         enableStdout();
         isHarmonicProject.should.be.false;
-        process.chdir(testDir);
-        helpers.isHarmonicProject().should.be.true;
+        helpers.isHarmonicProject(testDir).should.be.true;
     });
 
     it('.titleToFilename() should transform a post/page title into a filename', function() {
@@ -139,13 +135,15 @@ describe('helpers', function() {
 describe('parser', function() {
 
     it('.getConfig() should merge the template\'s config into the main config', function() {
-        var config = helpers.getConfig(),
-            templateConfigPath = 'src/templates/' + config.template + '/harmonic.json',
+        var config = helpers.getConfig(testDir),
+            templateConfigPath = path.join(
+                testDir, 'src/templates', config.template, 'harmonic.json'
+            ),
             templateConfig = { customData: 'test' },
             mergedConfig;
 
         fs.writeFileSync(templateConfigPath, JSON.stringify(templateConfig));
-        mergedConfig = parser.getConfig();
+        mergedConfig = parser.getConfig(testDir);
         mergedConfig.should.containDeep(templateConfig);
         mergedConfig.should.eql(_.extend({}, config, templateConfig));
     });

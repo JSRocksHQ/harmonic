@@ -5,21 +5,21 @@ let parser = new Parser();
 
 export { init };
 
-function init() {
-    return isHarmonicProject() &&
+function init(sitePath) {
+    return isHarmonicProject(sitePath) &&
         parser.start()
-        .then(parser.clean)
-        .then(parser.getConfig)
-        .then(parser.createPublicFolder)
-        .then(parser.compileCSS)
-        .then(parser.generatePages)
-        .then(parser.getFiles)
-        .then(parser.generatePosts)
-        .then(parser.generateRSS)
-        .then(parser.compileES6)
-        .then(parser.generateIndex)
-        .then(parser.generateTagsPages)
-        .then(parser.copyResources)
+        .then(parser.clean.bind(parser, sitePath))
+        .then(parser.getConfig.bind(parser, sitePath))
+        .then(parser.createPublicFolder.bind(parser, sitePath))
+        .then(parser.compileCSS.bind(parser, sitePath))
+        .then(parser.generatePages.bind(parser, sitePath))
+        .then(parser.getFiles.bind(parser, sitePath))
+        .then(parser.generatePosts.bind(parser, sitePath))
+        .then(parser.generateRSS.bind(parser, sitePath))
+        .then(parser.compileES6.bind(parser, sitePath))
+        .then(parser.generateIndex.bind(parser, sitePath))
+        .then(parser.generateTagsPages.bind(parser, sitePath))
+        .then(parser.copyResources.bind(parser, sitePath))
         .catch((e) => {
             console.log(e);
             console.log(e.stack);

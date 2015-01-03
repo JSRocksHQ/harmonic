@@ -1,4 +1,5 @@
 let fs = require('fs');
+let path = require('path');
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename };
 
@@ -14,11 +15,11 @@ function cliColor() {
 }
 
 // Check if harmonic.json file exists
-function isHarmonicProject() {
+function isHarmonicProject(sitePath) {
     var clc = cliColor();
 
     try {
-        getConfig();
+        getConfig(sitePath);
         return true;
     } catch (e) {
         console.log(
@@ -31,8 +32,8 @@ function isHarmonicProject() {
     }
 }
 
-function getConfig() {
-    return JSON.parse(fs.readFileSync('./harmonic.json').toString());
+function getConfig(sitePath) {
+    return JSON.parse(fs.readFileSync(path.join(sitePath, 'harmonic.json')).toString());
 }
 
 function titleToFilename(title) {
