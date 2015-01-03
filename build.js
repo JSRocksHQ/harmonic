@@ -3,7 +3,6 @@
 module.exports = {
 	srcBase: 'src/',
 	src: {
-		// TODO handleCopy should copy the negated files here but it is apparently not working
 		js: ['**/*.js', '!bin/skeleton/**/*.js']
 	},
 	distBase: 'dist/',
