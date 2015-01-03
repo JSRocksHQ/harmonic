@@ -8,7 +8,7 @@
   },
   "preferGlobal": true,
   "bin": {
-    "harmonic": "dist/harmonic.js"
+    "harmonic": "bin.js"
   },
   "files": [
     "dist",
