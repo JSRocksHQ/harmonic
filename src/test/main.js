@@ -10,7 +10,7 @@ var helpers = require('../bin/helpers.js'),
     cprocess = require('child_process'),
     spawn = cprocess.spawn,
     _ = require('underscore'),
-    harmonicBin = path.join(__dirname, '..', 'harmonic.js'),
+    harmonicBin = path.join(__dirname, '../../bin.js'),
     testDir = path.join(__dirname, 'site'),
     stdoutWrite = process.stdout.write;
 require('should');
