@@ -24,7 +24,7 @@ function init(sitePath) {
                         reject(err);
                         return;
                     }
-                    resolve('Harmonic skeleton started at: ./' + sitePath);
+                    resolve('Harmonic skeleton started at: ' + path.resolve('./', sitePath));
                 });
             });
         },
