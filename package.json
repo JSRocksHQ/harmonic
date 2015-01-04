@@ -56,6 +56,7 @@
     "jshint-stylish": "^1.0.0",
     "lazypipe": "^0.2.2",
     "merge-stream": "^0.1.6",
+    "open": "0.0.5",
     "reversepoint": "^0.2.1",
     "should": "^4.4.1",
     "through": "^2.3.6",
