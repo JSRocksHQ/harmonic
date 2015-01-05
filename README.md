@@ -129,3 +129,6 @@ harmonic run 9090
 ```shell
 harmonic --help
 ```
+
+## Contributing
+See the [Contributing guide](https://github.com/es6rocks/harmonic/blob/master/CONTRIBUTING.md).
