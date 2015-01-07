@@ -15,12 +15,10 @@ export { init, config, newFile, run, openFile };
 
 // Open a file using browser, text-editor
 function openFile(type, sitePath, file) {
-    if (!process.argv.includes('--no-open')) {
-        if (type === 'file') {
-            openx(path.resolve(sitePath, file));
-        } else {
-            openx(file);
-        }
+    if (type === 'file') {
+        openx(path.resolve(sitePath, file));
+    } else {
+        openx(file);
     }
 }
 
@@ -129,7 +127,7 @@ function config(sitePath) {
  * @param {string} type - The new file's type. Can be either 'post' or 'page'.
  * @param {string} title - The new file's title.
  */
-function newFile(sitePath, type, title) {
+function newFile(sitePath, type, title, autoOpen) {
     var clc = cliColor(),
         langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
@@ -153,7 +151,9 @@ function newFile(sitePath, type, title) {
             fs.mkdirSync(fileLangDir);
         }
         fs.writeFileSync(fileW, template);
-        openFile('text', sitePath, fileW);
+        if (autoOpen) {
+            openFile('text', sitePath, fileW);
+        }
     });
 
     console.log(clc.info(
@@ -162,12 +162,14 @@ function newFile(sitePath, type, title) {
     ));
 }
 
-function run(sitePath, port) {
+function run(sitePath, port, autoOpen) {
     let clc = cliColor();
     let file = new staticServer.Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
-    openFile('uri', sitePath, 'http://localhost:' + port);
+    if (autoOpen) {
+        openFile('uri', sitePath, 'http://localhost:' + port);
+    }
     // Create the server
     require('http').createServer((request, response) => {
         request.addListener('end', function() {

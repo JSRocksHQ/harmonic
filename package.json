@@ -24,7 +24,7 @@
     "co": "~3.0.5",
     "co-prompt": "^1.0.0",
     "commander": "~2.2.0",
-    "gulp-6to5": "^1.0.2",
+    "gulp-6to5": "^2.0.0",
     "less": "^1.7.5",
     "markdown-extra": "^0.1.0",
     "marked": "~0.3.2",
