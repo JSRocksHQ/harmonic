@@ -15,7 +15,7 @@ export { init, config, newFile, run, openFile };
 
 // Open a file using browser, text-editor
 function openFile(type, sitePath, file) {
-    if (getConfig(sitePath).allowopen) {
+    if (!process.argv.includes('--no-open')) {
         if (type === 'file') {
             openx(path.resolve(sitePath, file));
         } else {
@@ -73,7 +73,6 @@ function config(sitePath) {
                 description: 'This is the description',
                 bio: 'Thats me',
                 template: 'default',
-                allowopen: false,
                 preprocessor: 'stylus',
                 posts_permalink: ':language/:year/:month/:title',
                 pages_permalink: 'pages/:title',
