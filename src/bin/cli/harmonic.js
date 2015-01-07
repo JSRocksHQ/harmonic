@@ -41,8 +41,9 @@ program
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new post')
     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(title, path = '.', options = {}) {
-        newFile(path, 'post', title, options.open);
+    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(title, path = '.', { open: autoOpen }) { // jshint ignore:line
+        newFile(path, 'post', title, autoOpen);
     });
 
 program
@@ -50,8 +51,9 @@ program
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new page')
     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(title, path = '.', options = {}) {
-        newFile(path, 'page', title, options.open);
+    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(title, path = '.', { open: autoOpen }) { // jshint ignore:line
+        newFile(path, 'page', title, autoOpen);
     });
 
 program
@@ -59,12 +61,13 @@ program
     .option('--no-open', 'Don\'t open a new browser window')
     .description('Run you static site locally. Port is optional')
      // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(port = 9356, path = '.', options = {}) {
+     // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(port = 9356, path = '.', { open: autoOpen }) { // jshint ignore:line
         let core = require('../core'),
             build = core.init(path);
         if (build) {
             build.then(function() {
-                run(path, port, options.open);
+                run(path, port, autoOpen);
             });
         }
     });
