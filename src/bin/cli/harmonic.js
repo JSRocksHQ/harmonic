@@ -1,4 +1,7 @@
-require('gulp-6to5/node_modules/6to5/polyfill');
+// Polyfills required by 6to5 -- https://github.com/es6rocks/harmonic/pull/104#issuecomment-70750159
+require('core-js/shim');
+require('regenerator/runtime');
+
 var program = require('commander');
 
 import { version } from '../config';
@@ -37,31 +40,37 @@ program
     });
 
 program
-    .command('new_post ["title"] [path]')
+    .command('new_post <title> [path]')
+    .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new post')
     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(title, path = '.') {
-        newFile(path, 'post', title);
+    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(title, path = '.', { open: autoOpen }) { // jshint ignore:line
+        newFile(path, 'post', title, autoOpen);
     });
 
 program
-    .command('new_page ["title"] [path]')
+    .command('new_page <title> [path]')
+    .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new page')
     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(title, path = '.') {
-        newFile(path, 'page', title);
+    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(title, path = '.', { open: autoOpen }) { // jshint ignore:line
+        newFile(path, 'page', title, autoOpen);
     });
 
 program
     .command('run [port] [path]')
+    .option('--no-open', 'Don\'t open a new browser window')
     .description('Run you static site locally. Port is optional')
      // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
-    .action(function(port = 9356, path = '.') {
+     // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
+    .action(function(port = 9356, path = '.', { open: autoOpen }) { // jshint ignore:line
         let core = require('../core'),
             build = core.init(path);
         if (build) {
             build.then(function() {
-                run(path, port);
+                run(path, port, autoOpen);
             });
         }
     });

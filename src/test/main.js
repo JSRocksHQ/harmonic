@@ -76,7 +76,7 @@ describe('CLI', function() {
             langs = config.i18n.languages,
             title = 'new_post test',
             fileName = helpers.titleToFilename(title),
-            harmonic = spawn('node', [harmonicBin, 'new_post', title, testDir]);
+            harmonic = spawn('node', [harmonicBin, 'new_post', '--no-open', title, testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 

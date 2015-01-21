@@ -16,7 +16,7 @@ function init(sitePath) {
         .then(parser.getFiles.bind(parser, sitePath))
         .then(parser.generatePosts.bind(parser, sitePath))
         .then(parser.generateRSS.bind(parser, sitePath))
-        .then(parser.compileES6.bind(parser, sitePath))
+        .then(parser.compileJS.bind(parser, sitePath))
         .then(parser.generateIndex.bind(parser, sitePath))
         .then(parser.generateTagsPages.bind(parser, sitePath))
         .then(parser.copyResources.bind(parser, sitePath))

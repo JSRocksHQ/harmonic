@@ -9,8 +9,18 @@ let co = require('co');
 let prompt = require('co-prompt');
 let _ = require('underscore');
 let ncp = require('ncp').ncp;
+let openx = require('open');
 
-export { init, config, newFile, run };
+export { init, config, newFile, run, openFile };
+
+// Open a file using browser, text-editor
+function openFile(type, sitePath, file) {
+    if (type === 'file') {
+        openx(path.resolve(sitePath, file));
+    } else {
+        openx(file);
+    }
+}
 
 // Temporary
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
@@ -117,7 +127,7 @@ function config(sitePath) {
  * @param {string} type - The new file's type. Can be either 'post' or 'page'.
  * @param {string} title - The new file's title.
  */
-function newFile(sitePath, type, title) {
+function newFile(sitePath, type, title, autoOpen) {
     var clc = cliColor(),
         langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
@@ -136,10 +146,14 @@ function newFile(sitePath, type, title) {
 
     langs.forEach((lang) => {
         let fileLangDir = path.join(filedir, lang);
+        let fileW = path.join(fileLangDir, filename);
         if (!fs.existsSync(fileLangDir)) {
             fs.mkdirSync(fileLangDir);
         }
-        fs.writeFileSync(path.join(fileLangDir, filename), template);
+        fs.writeFileSync(fileW, template);
+        if (autoOpen) {
+            openFile('text', sitePath, fileW);
+        }
     });
 
     console.log(clc.info(
@@ -148,12 +162,14 @@ function newFile(sitePath, type, title) {
     ));
 }
 
-function run(sitePath, port) {
+function run(sitePath, port, autoOpen) {
     let clc = cliColor();
     let file = new staticServer.Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
-
+    if (autoOpen) {
+        openFile('uri', sitePath, 'http://localhost:' + port);
+    }
     // Create the server
     require('http').createServer((request, response) => {
         request.addListener('end', function() {

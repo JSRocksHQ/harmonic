@@ -13,7 +13,6 @@ var Helper, Parser,
     stylus = require('stylus'),
     less = require('less'),
     MkMeta = require('marked-metadata'),
-    to5 = require('gulp-6to5/node_modules/6to5'),
     clc = cliColor();
 
 // Temporary
@@ -260,24 +259,22 @@ Parser = function() {
         compiler[currentCSSCompiler]();
     };
 
-    this.compileES6 = function(sitePath, postsMetadata) {
+    this.compileJS = function(sitePath, postsMetadata) {
         var result,
             config = GLOBAL.config,
             pages = GLOBAL.pages,
             harmonicClient =
-                fs.readFileSync(rootdir + '/bin/client/harmonic-client.js')
-                    .toString();
+                fs.readFileSync(rootdir + '/bin/client/harmonic-client.js').toString();
 
         harmonicClient = harmonicClient
             // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
             // jscs:disable disallowSpaceBeforeBinaryOperators
-            .replace(/\/\*\{\{posts\}\}\*\//, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/\/\*\{\{pages\}\}\*\//, JSON.stringify(pages))
-            .replace(/\/\*\{\{config\}\}\*\//, JSON.stringify(config));
+            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
+            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pages))
+            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(config));
             // jscs:enable disallowSpaceBeforeBinaryOperators
 
-        result = to5.transform(harmonicClient);
-        fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), result.code);
+        fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), harmonicClient);
 
         return postsMetadata;
     };
