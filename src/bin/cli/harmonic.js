@@ -1,4 +1,7 @@
-require('gulp-6to5/node_modules/6to5/polyfill');
+// Polyfills required by 6to5 -- https://github.com/es6rocks/harmonic/pull/104#issuecomment-70750159
+require('core-js/shim');
+require('regenerator/runtime');
+
 var program = require('commander');
 
 import { version } from '../config';
