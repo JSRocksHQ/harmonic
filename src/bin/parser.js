@@ -15,9 +15,6 @@ var Helper, Parser,
     MkMeta = require('marked-metadata'),
     clc = cliColor();
 
-// Temporary
-// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-
 Helper = {
     getPagesFiles: function(sitePath) {
         var config = GLOBAL.config,
@@ -104,7 +101,7 @@ Helper = {
                 metadata.content = pageHTMLFile;
                 metadata.file = postspath + file; // TODO check whether this needs sitePath
                 metadata.filename = filename;
-                metadata.link = '/' + filename + '.html';
+                metadata.link = `/${filename}.html`;
                 metadata.date = new Date(metadata.date);
                 pageSrc = path.join(sitePath, 'public', pagePermalink, 'index.html');
 
@@ -123,7 +120,7 @@ Helper = {
                                 return;
                             }
                             console.log(
-                                clc.info('Successfully generated page ' + pagePermalink)
+                                clc.info(`Successfully generated page  ${pagePermalink}`)
                             );
                             resolve();
                         });
@@ -178,8 +175,8 @@ Parser = function() {
             less: function() {
                 return new Promise(function(resolve, reject) {
                     var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template),
-                        lessDir = curTemplate + '/resources/_less',
-                        cssDir = curTemplate + '/resources/css',
+                        lessDir = `${curTemplate}/resources/_less`,
+                        cssDir = `${curTemplate}/resources/css`,
                         verifyDirectory = function(filepath) {
                             var dir = filepath;
 
@@ -188,7 +185,7 @@ Parser = function() {
                             }
                         };
 
-                    fs.readFile(lessDir + '/index.less', function(error, data) {
+                    fs.readFile(`${lessDir}/index.less`, function(error, data) {
 
                         var dataString = data.toString(),
                             options = {
@@ -202,7 +199,7 @@ Parser = function() {
                             optionFile,
                             parser;
 
-                        options.outputfile = options.filename.split('.less')[0] + '.css';
+                        options.outputfile = `${options.filename.split('.less')[0]}.css`;
                         options.outputDir = path.resolve(sitePath, options.outputDir) + '/';
                         verifyDirectory(options.outputDir);
 
@@ -235,17 +232,17 @@ Parser = function() {
             stylus: function() {
                 return new Promise(function(resolve, reject) {
                     var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template),
-                        stylDir = curTemplate + '/resources/_stylus',
-                        cssDir = curTemplate + '/resources/css',
-                        code = fs.readFileSync(stylDir + '/index.styl', 'utf8');
+                        stylDir = `${curTemplate}/resources/_stylus`,
+                        cssDir = `${curTemplate}/resources/css`,
+                        code = fs.readFileSync(`${stylDir}/index.styl`, 'utf8');
 
                     stylus(code)
-                        .set('paths', [stylDir, stylDir + '/engine', stylDir + '/partials'])
+                        .set('paths', [stylDir, `${stylDir}/engine`, `${stylDir}/partials`])
                         .render(function(err, css) {
                             if (err) {
                                 reject(err);
                             } else {
-                                fs.writeFileSync(cssDir + '/main.css', css);
+                                fs.writeFileSync(`${cssDir}/main.css`, css);
                                 console.log(
                                     clc.info('Successfully generated CSS with Stylus preprocessor')
                                 );
@@ -264,7 +261,7 @@ Parser = function() {
             config = GLOBAL.config,
             pages = GLOBAL.pages,
             harmonicClient =
-                fs.readFileSync(rootdir + '/bin/client/harmonic-client.js').toString();
+                fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`).toString();
 
         harmonicClient = harmonicClient
             // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
@@ -328,7 +325,7 @@ Parser = function() {
                 mkdirp.sync(tagPath);
                 fs.writeFileSync(path.join(tagPath, 'index.html'), tagContent);
                 console.log(
-                    clc.info('Successfully generated tag[' + i + '] archive html file')
+                    clc.info(`Successfully generated tag[${i}] archive html file`)
                 );
             }
         }
@@ -365,7 +362,7 @@ Parser = function() {
             }
             mkdirp.sync(indexPath);
             fs.writeFileSync(path.join(indexPath, 'index.html'), indexContent);
-            console.log(clc.info(lang + '/index file successfully created'));
+            console.log(clc.info(`${lang}/index file successfully created`));
         }
         return postsMetadata;
     };
@@ -508,7 +505,7 @@ Parser = function() {
                 }
 
                 if (metadata.date && metadata.date > currentDate) {
-                    console.log(clc.info('Skipping future post ' + metadata.filename));
+                    console.log(clc.info(`Skipping future post ${metadata.filename}`));
                     return;
                 }
 
@@ -579,7 +576,7 @@ Parser = function() {
     this.generateRSS = function(sitePath, postsMetadata) {
         var _posts = null,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            rssTemplate = fs.readFileSync(__dirname + '/resources/rss.xml'),
+            rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
             rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
             rssContent = '',
             rssPath = null,
@@ -593,17 +590,17 @@ Parser = function() {
             _posts = postsMetadata[lang].slice(0, GLOBAL.config.index_posts || 10);
 
             if (GLOBAL.config.author_email) {
-                rssAuthor = GLOBAL.config.author_email + ' (' + GLOBAL.config.author + ')';
+                rssAuthor = `${GLOBAL.config.author_email} ( ${GLOBAL.config.author} )`;
             } else {
                 rssAuthor = GLOBAL.config.author;
             }
 
             if (config.i18n.default === lang) {
                 rssPath = path.join(sitePath, 'public');
-                rssLink = GLOBAL.config.domain + '/rss.xml';
+                rssLink = `${GLOBAL.config.domain}/rss.xml`;
             } else {
                 rssPath = path.join(sitePath, 'public', lang);
-                rssLink = GLOBAL.config.domain + '/' + lang + '/rss.xml';
+                rssLink = `${GLOBAL.config.domain}/${lang}/rss.xml`;
             }
 
             rssContent = rssTemplateNJ.render({
@@ -619,8 +616,8 @@ Parser = function() {
             });
 
             mkdirp.sync(rssPath);
-            fs.writeFileSync(rssPath + '/rss.xml', rssContent);
-            console.log(clc.info(lang + '/rss.xml file successfully created'));
+            fs.writeFileSync(`${rssPath}/rss.xml`, rssContent);
+            console.log(clc.info(`${lang}/rss.xml file successfully created`));
         }
         return postsMetadata;
     };
