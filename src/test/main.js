@@ -1,4 +1,6 @@
 /* jshint mocha: true */
+require('../../entry_points/lib/polyfill');
+
 import Parser from '../bin/parser';
 
 var helpers = require('../bin/helpers.js'),
@@ -10,7 +12,7 @@ var helpers = require('../bin/helpers.js'),
     cprocess = require('child_process'),
     spawn = cprocess.spawn,
     _ = require('underscore'),
-    harmonicBin = path.join(__dirname, '../../bin.js'),
+    harmonicBin = path.join(__dirname, '../../entry_points/harmonic'),
     testDir = path.join(__dirname, 'site'),
     stdoutWrite = process.stdout.write;
 require('should');

@@ -61,7 +61,7 @@ gulp.task('default', ['build'], function(neverEnd) {
 			.pipe(uniqueStream, 'path'),
 
 			existsFilter = lazypipe()
-				.pipe(plugins.filter, filterEvent.bind(null, ['changed', 'added'])),
+				.pipe(plugins.filter, filterEvent.bind(null, ['change', 'add'])),
 
 				handleJs = lazypipe()
 					.pipe(plugins.filter, build.src.js)
@@ -72,7 +72,7 @@ gulp.task('default', ['build'], function(neverEnd) {
 					.pipe(writePipe),
 
 			handleDeletion = lazypipe()
-				.pipe(plugins.filter, filterEvent.bind(null, ['deleted']))
+				.pipe(plugins.filter, filterEvent.bind(null, ['unlink']))
 				.pipe(plugins.rename, function(filePath) {
 					// we can't change/remove the filePath's `base`, so cd out of it in the dirname
 					filePath.dirname = path.join(path.relative(build.srcBase, '.'), build.distBase, filePath.dirname);

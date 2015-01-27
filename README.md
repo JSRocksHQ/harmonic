@@ -15,8 +15,6 @@ Harmonic is being developed with some goals:
 Check out the full documentation in [Harmonic's Wiki](https://github.com/es6rocks/harmonic/wiki/).
 
 ## Installing
-**Attention:** Harmonic uses some ES6 features. You will need to install Node.js >= 0.11.13.  
-Using a Node.js version manager, such as [nvm](https://github.com/creationix/nvm) or [n](https://github.com/visionmedia/n), is a good approach to have multiple Node.js versions and not break any existing Node.js software that you already have installed.  
 
 Harmonic is available on npm:  
 

@@ -8,7 +8,7 @@ module.exports = {
 	distBase: 'dist/',
 	config: {
 		jscs: { configPath: '.jscsrc', esnext: true },
-		'6to5': { blacklist: ['generators'] },
+		'6to5': { modules: 'commonStrict'/*, experimental: true*/ },
 		mocha: { bail: true, timeout: 5000 }
 	}
 };
