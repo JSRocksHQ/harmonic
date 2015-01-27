@@ -86,6 +86,8 @@ gulp.task('default', ['build'], function(neverEnd) {
 				files.pipe(handleDeletion())
 			)
 			.pipe(runAfterEnd(runTests));
+	}, function(err) {
+		console.error(err.message);
 	})).on('ready', function() {
 		plugins.util.log('Watching ' + chalk.magenta(build.srcBase) + ' directory for changes...');
 	});
