@@ -21,11 +21,11 @@
     "url": "git://github.com/es6rocks/harmonic.git"
   },
   "dependencies": {
+    "6to5-runtime": "^3.3.2",
     "cli-color": "^0.3.2",
     "co": "~3.0.5",
     "co-prompt": "^1.0.0",
     "commander": "~2.2.0",
-    "core-js": "^0.4.9",
     "less": "^1.7.5",
     "markdown-extra": "^0.1.0",
     "marked": "~0.3.2",
@@ -35,7 +35,6 @@
     "node-static": "~0.7.3",
     "nunjucks": "^1.0.4",
     "permalinks": "^0.2.1",
-    "regenerator": "^0.8.9",
     "rimraf": "^2.2.8",
     "stylus": "^0.45.1",
     "underscore": "^1.6.0"
@@ -69,7 +68,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "gulp",
-    "prepublish": "npm i gulp-6to5 && npm test",
+    "prepublish": "npm i gulp-6to5@3 6to5-runtime@3 && npm test",
     "test": "gulp build"
   }
 }

@@ -1,5 +1,4 @@
 /* jshint mocha: true */
-require('../../entry_points/lib/polyfill');
 
 import Parser from '../bin/parser';
 
