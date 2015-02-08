@@ -1,24 +1,24 @@
- /*jshint unused:false*/
+/*jshint unused:false*/
+import fs from 'fs';
+import path from 'path';
+import { createServer } from 'http';
+import { Server } from 'node-static';
+import co from 'co';
+import prompt from 'co-prompt';
+import _ from 'underscore';
+import { ncp } from 'ncp';
+import open from 'open';
 import { rootdir, postspath, pagespath } from '../config';
 import { cliColor, getConfig, titleToFilename } from '../helpers';
-
-let fs = require('fs');
-let path = require('path');
-let staticServer = require('node-static');
-let co = require('co');
-let prompt = require('co-prompt');
-let _ = require('underscore');
-let ncp = require('ncp').ncp;
-let openx = require('open');
 
 export { init, config, newFile, run, openFile };
 
 // Open a file using browser, text-editor
 function openFile(type, sitePath, file) {
     if (type === 'file') {
-        openx(path.resolve(sitePath, file));
+        open(path.resolve(sitePath, file));
     } else {
-        openx(file);
+        open(file);
     }
 }
 
@@ -164,14 +164,14 @@ function newFile(sitePath, type, title, autoOpen) {
 
 function run(sitePath, port, autoOpen) {
     let clc = cliColor();
-    let file = new staticServer.Server(path.join(sitePath, 'public'));
+    let file = new Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
     if (autoOpen) {
         openFile('uri', sitePath, 'http://localhost:' + port);
     }
     // Create the server
-    require('http').createServer((request, response) => {
+    createServer((request, response) => {
         request.addListener('end', function() {
             file.serve(request, response, (err) => {
                 if (err) {

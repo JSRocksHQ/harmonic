@@ -3,9 +3,9 @@ import Parser from './parser';
 
 let parser = new Parser();
 
-export { init };
+export { build };
 
-function init(sitePath) {
+function build(sitePath) {
     return isHarmonicProject(sitePath) &&
         parser.start()
         .then(parser.clean.bind(parser, sitePath))

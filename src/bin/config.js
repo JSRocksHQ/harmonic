@@ -1,12 +1,8 @@
- /*jshint unused:false*/
-let path = require('path');
-let fs = require('fs');
+/*jshint unused:false*/
+import { normalize } from 'path';
 
 // rootdir === `dist` dir
-let exportRootDir = path.normalize(__dirname + '/../');
-let pack = JSON.parse(fs.readFileSync(exportRootDir + '/../package.json').toString());
-
-export let rootdir = exportRootDir;
-export let version = pack.version;
-export let postspath = path.normalize('./src/posts/');
-export let pagespath = path.normalize('./src/pages/');
+export let rootdir = normalize(__dirname + '/../');
+export { version } from '../../package.json';
+export let postspath = normalize('./src/posts/');
+export let pagespath = normalize('./src/pages/');

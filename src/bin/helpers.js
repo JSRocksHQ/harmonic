@@ -1,11 +1,11 @@
-let fs = require('fs');
-let path = require('path');
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import clc from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename };
 
 // CLI color
 function cliColor() {
-    var clc = require('cli-color');
     return {
         info: clc.green,
         error: clc.red,
@@ -33,7 +33,7 @@ function isHarmonicProject(sitePath) {
 }
 
 function getConfig(sitePath) {
-    return JSON.parse(fs.readFileSync(path.join(sitePath, 'harmonic.json')).toString());
+    return JSON.parse(readFileSync(join(sitePath, 'harmonic.json')).toString());
 }
 
 function titleToFilename(title) {

@@ -1,18 +1,19 @@
 /*jshint unused:false*/
+import path from 'path';
+import fs from 'fs';
+import nunjucks from 'nunjucks';
+import _ from 'underscore';
+import permalinks from 'permalinks';
+import MkMeta from 'marked-metadata';
+import mkdirp from 'mkdirp';
+import { ncp } from 'ncp';
+import { sync as rimrafSync } from 'rimraf';
+import stylus from 'stylus';
+import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
 
 var Helper, Parser,
-    fs = require('fs'),
-    path = require('path'),
-    _ = require('underscore'),
-    nunjucks = require('nunjucks'),
-    ncp = require('ncp').ncp,
-    permalinks = require('permalinks'),
-    mkdirp = require('mkdirp'),
-    stylus = require('stylus'),
-    less = require('less'),
-    MkMeta = require('marked-metadata'),
     clc = cliColor();
 
 Helper = {
@@ -153,8 +154,7 @@ Parser = function() {
 
     this.clean = function(sitePath) {
         console.log(clc.warn('Cleaning up...'));
-        var rimraf = require('rimraf');
-        rimraf.sync(path.join(sitePath, 'public'));
+        rimrafSync(path.join(sitePath, 'public'));
     };
 
     this.createPublicFolder = function(sitePath) {

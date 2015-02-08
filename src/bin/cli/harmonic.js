@@ -1,9 +1,9 @@
-var program = require('commander');
-
+import program from 'commander';
 import { version } from '../config';
 import { cliColor } from '../helpers';
 import logo from './logo';
 import { init, config, newFile, run } from './util';
+import { build } from '../core';
 
 program
     .version(version);
@@ -31,8 +31,7 @@ program
     .description('Build your static website')
     // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
     .action(function(path = '.') {
-        let core = require('../core');
-        core.init(path);
+        build(path);
     });
 
 program
@@ -62,10 +61,9 @@ program
      // [BUG] https://github.com/jshint/jshint/issues/1849 - can't use arrow function
      // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
     .action(function(port = 9356, path = '.', { open: autoOpen }) { // jshint ignore:line
-        let core = require('../core'),
-            build = core.init(path);
-        if (build) {
-            build.then(function() {
+        let buildResult = build(path);
+        if (buildResult) {
+            buildResult.then(function() {
                 run(path, port, autoOpen);
             });
         }
