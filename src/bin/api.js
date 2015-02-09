@@ -1,3 +1,5 @@
+import { init, config, newFile, run } from './cli/util';
+
 class Harmonic {
 
 	constructor(path) {
@@ -5,8 +7,15 @@ class Harmonic {
 		console.log(`Project path: ${this.sitePath}`);
 	}
 
-	init() {
-		return Promise.resolve('init...');
+	init(settings) {
+		return new Promise((resolve, reject) =>{
+			init(this.sitePath, settings)
+			.then(function(msg) {
+				return Promise.resolve(msg);
+			}, function(e) {
+				console.log(e);
+			});
+		});
 	}
 
 	newPost() {

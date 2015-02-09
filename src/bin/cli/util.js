@@ -25,85 +25,93 @@ function openFile(type, sitePath, file) {
 // Temporary
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
-function init(sitePath) {
-    var skeletonPath = path.normalize(rootdir + '/bin/skeleton'),
-        copySkeleton = () => {
-            return new Promise((resolve, reject) => {
-                ncp(skeletonPath, sitePath, (err) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-                    resolve('Harmonic skeleton started at: ' + path.resolve('./', sitePath));
+function init(sitePath, settings) {
+    return new Promise(function(resolve, reject) {
+        var skeletonPath = path.normalize(rootdir + '/bin/skeleton'),
+            copySkeleton = () => {
+                return new Promise((resolve, reject) => {
+                    ncp(skeletonPath, sitePath, (err) => {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+                        resolve('Harmonic skeleton started at: ' + path.resolve('./', sitePath));
+                    });
                 });
-            });
-        },
-        clc = cliColor();
+            },
+            clc = cliColor();
 
-    fs.exists(sitePath, (exists) => {
-        if (!exists) {
-            fs.mkdirSync(sitePath);
-        }
-        copySkeleton().then((msg) => {
-            console.log(clc.message(msg));
-            config(sitePath);
+        fs.exists(sitePath, (exists) => {
+            if (!exists) {
+                fs.mkdirSync(sitePath);
+            }
+            copySkeleton().then((msg) => {
+                console.log(clc.message(msg));
+                config(sitePath, settings);
+                resolve('Init ok');
+            });
         });
     });
 }
 
-function config(sitePath) {
+function config(sitePath, settings) {
     var clc = cliColor(),
         manifest = sitePath + '/harmonic.json';
 
     co(function*() {
-        console.log(clc.message(
-            'This guide will help you to create your Harmonic configuration file\n' +
-            'Just hit enter if you are ok with the default values.\n\n'
-        ));
 
-        var config,
-            templateObj = {
-                name: 'Awesome website',
-                title: 'My awesome static website',
-                domain: 'http://awesome.com',
-                subtitle: 'Powered by Harmonic',
-                author: 'Jaydson',
-                description: 'This is the description',
-                bio: 'Thats me',
-                template: 'default',
-                preprocessor: 'stylus',
-                posts_permalink: ':language/:year/:month/:title',
-                pages_permalink: 'pages/:title',
-                header_tokens: ['<!--', '-->'],
-                index_posts: 10,
-                i18n: {
-                    default: 'en',
-                    languages: ['en', 'pt-br']
-                }
+        if (!settings) {
+            console.log(clc.message(
+                'This guide will help you to create your Harmonic configuration file\n' +
+                'Just hit enter if you are ok with the default values.\n\n'
+            ));
+
+            var config,
+                templateObj = {
+                    name: 'Awesome website',
+                    title: 'My awesome static website',
+                    domain: 'http://awesome.com',
+                    subtitle: 'Powered by Harmonic',
+                    author: 'Jaydson',
+                    description: 'This is the description',
+                    bio: 'Thats me',
+                    template: 'default',
+                    preprocessor: 'stylus',
+                    posts_permalink: ':language/:year/:month/:title',
+                    pages_permalink: 'pages/:title',
+                    header_tokens: ['<!--', '-->'],
+                    index_posts: 10,
+                    i18n: {
+                        default: 'en',
+                        languages: ['en', 'pt-br']
+                    }
+                };
+
+            function _p(message) {
+                return prompt(clc.message(message));
+            }
+
+            config = {
+                name: (yield _p('Site name: (' + templateObj.name + ') ')) ||
+                    templateObj.name,
+                title: (yield _p('Title: (' + templateObj.title + ') ')) ||
+                    templateObj.title,
+                subtitle: (yield _p('Subtitle: (' + templateObj.subtitle + ') ')) ||
+                    templateObj.subtitle,
+                description: (yield _p('Description: (' + templateObj.description + ') ')) ||
+                    templateObj.description,
+                author: (yield _p('Author: (' + templateObj.author + ') ')) ||
+                    templateObj.author,
+                bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
+                    templateObj.bio,
+                template: (yield _p('Template: (' + templateObj.template + ') ')) ||
+                    templateObj.template,
+                preprocessor: (yield _p('Preprocessor: (' + templateObj.preprocessor + ') ')) ||
+                    templateObj.preprocessor
             };
-
-        function _p(message) {
-            return prompt(clc.message(message));
+        } else {
+            config = settings;
         }
-
-        config = {
-            name: (yield _p('Site name: (' + templateObj.name + ') ')) ||
-                templateObj.name,
-            title: (yield _p('Title: (' + templateObj.title + ') ')) ||
-                templateObj.title,
-            subtitle: (yield _p('Subtitle: (' + templateObj.subtitle + ') ')) ||
-                templateObj.subtitle,
-            description: (yield _p('Description: (' + templateObj.description + ') ')) ||
-                templateObj.description,
-            author: (yield _p('Author: (' + templateObj.author + ') ')) ||
-                templateObj.author,
-            bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
-                templateObj.bio,
-            template: (yield _p('Template: (' + templateObj.template + ') ')) ||
-                templateObj.template,
-            preprocessor: (yield _p('Preprocessor: (' + templateObj.preprocessor + ') ')) ||
-                templateObj.preprocessor
-        };
 
         // create the configuration file
         fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4),
