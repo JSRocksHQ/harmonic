@@ -6,8 +6,8 @@ let parser = new Parser();
 export { build };
 
 function build(sitePath) {
-    return isHarmonicProject(sitePath) &&
-        parser.start()
+    if (!isHarmonicProject(sitePath)) return Promise.reject();
+    return parser.start()
         .then(parser.clean.bind(parser, sitePath))
         .then(parser.getConfig.bind(parser, sitePath))
         .then(parser.createPublicFolder.bind(parser, sitePath))

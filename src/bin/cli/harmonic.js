@@ -55,12 +55,9 @@ program
     .description('Run you static site locally. Port is optional')
      // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
     .action((port = 9356, path = '.', { open: autoOpen }) => { // jshint ignore:line
-        let buildResult = build(path);
-        if (buildResult) {
-            buildResult.then(function() {
-                run(path, port, autoOpen);
-            });
-        }
+        build(path).then(function() {
+            run(path, port, autoOpen);
+        });
     });
 
 program.on('*', (args) => {
