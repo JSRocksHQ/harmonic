@@ -7,10 +7,6 @@
 // we can just whitelist `__HARMONIC` as a global identifier
 // instead of having to whitelist every single substitution.
 
-// [BUG] https://github.com/jscs-dev/node-jscs/issues/706
-// jscs: disable disallowSpacesInFunctionExpression, disallowSpacesInAnonymousFunctionExpression
-
-
 // slush-es20xx doesn't support front-end transpiling yet,
 // so this file is transpiled manually for the time being
 

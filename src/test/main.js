@@ -97,10 +97,7 @@ describe('CLI', function() {
                     var date = new Date(),
                         year = String(date.getFullYear()),
                         month = ('0' + (date.getMonth() + 1)).slice(-2),
-                        // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-                        // jscs:disable disallowSpaceBeforeBinaryOperators
                         slug = fileName.replace(/\.md$/, '');
-                        // jscs:enable disallowSpaceBeforeBinaryOperators
                     langs.forEach(function(lang) {
                         var langSegment = lang === config.i18n.default ? '.' : lang;
                         readFileSync(join(testDir, 'public', langSegment, year, month,

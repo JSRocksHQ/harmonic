@@ -93,11 +93,8 @@ Helper = {
                     config: GLOBAL.config
                 });
 
-                // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-                // jscs:disable disallowSpaceBeforeBinaryOperators
                 // Removing header metadata
                 pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-                // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 metadata.content = pageHTMLFile;
                 metadata.file = postspath + file; // TODO check whether this needs sitePath
@@ -133,10 +130,7 @@ Helper = {
     },
 
     normalizeMetaData: function(data) {
-        // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-        // jscs:disable disallowSpaceBeforeBinaryOperators
         data.title = data.title.replace(/\"/g, '');
-        // jscs:enable disallowSpaceBeforeBinaryOperators
         return data;
     },
 
@@ -264,12 +258,9 @@ Parser = function() {
                 fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`).toString();
 
         harmonicClient = harmonicClient
-            // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-            // jscs:disable disallowSpaceBeforeBinaryOperators
             .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
             .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pages))
             .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(config));
-            // jscs:enable disallowSpaceBeforeBinaryOperators
 
         fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), harmonicClient);
 
@@ -495,10 +486,7 @@ Parser = function() {
                     post: _post,
                     config: GLOBAL.config
                 })
-                // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-                // jscs:disable disallowSpaceBeforeBinaryOperators
                 .replace(/<!--[\s\S]*?-->/g, '');
-                // jscs:enable disallowSpaceBeforeBinaryOperators
 
                 if (metadata.published && metadata.published === 'false') {
                     return;

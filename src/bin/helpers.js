@@ -37,8 +37,5 @@ function getConfig(sitePath) {
 }
 
 function titleToFilename(title) {
-    // [BUG] https://github.com/jscs-dev/node-jscs/issues/735
-    // jscs:disable disallowSpaceBeforeBinaryOperators
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
-    // jscs:enable disallowSpaceBeforeBinaryOperators
 }
