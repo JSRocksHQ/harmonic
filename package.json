@@ -7,6 +7,7 @@
     "node": ">=0.10"
   },
   "preferGlobal": true,
+  "main": "src/bin/api.js",
   "bin": {
     "harmonic": "entry_points/harmonic.js"
   },
