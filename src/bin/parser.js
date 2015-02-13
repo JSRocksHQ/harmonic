@@ -26,7 +26,7 @@ Helper = {
             if (!fs.existsSync(langPath)) {
                 fs.mkdirSync(langPath);
             } else {
-                files[lang] = fs.readdirSync(langPath);
+                files[lang] = fs.readdirSync(langPath).filter((p) => /\.(md|markdown)$/.test(p));
             }
         });
 
@@ -537,7 +537,8 @@ Parser = function() {
             files = {};
 
         config.i18n.languages.forEach(function(lang) {
-            files[lang] = fs.readdirSync(path.join(sitePath, postspath, lang));
+            files[lang] = fs.readdirSync(path.join(sitePath, postspath, lang))
+                .filter((p) => /\.(md|markdown)$/.test(p));
         });
 
         return files;
