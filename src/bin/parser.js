@@ -14,7 +14,8 @@ import { rootdir, postspath, pagespath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
 
 var Helper, Parser,
-    clc = cliColor();
+    clc = cliColor(),
+    rMarkdownExt = /\.(?:md|markdown)$/;
 
 Helper = {
     getPagesFiles: function(sitePath) {
@@ -26,7 +27,7 @@ Helper = {
             if (!fs.existsSync(langPath)) {
                 fs.mkdirSync(langPath);
             } else {
-                files[lang] = fs.readdirSync(langPath).filter((p) => /\.(md|markdown)$/.test(p));
+                files[lang] = fs.readdirSync(langPath).filter((p) => rMarkdownExt.test(p));
             }
         });
 
@@ -538,7 +539,7 @@ Parser = function() {
 
         config.i18n.languages.forEach(function(lang) {
             files[lang] = fs.readdirSync(path.join(sitePath, postspath, lang))
-                .filter((p) => /\.(md|markdown)$/.test(p));
+                .filter((p) => rMarkdownExt.test(p));
         });
 
         return files;
