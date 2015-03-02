@@ -9,7 +9,7 @@ module.exports = {
 	config: {
 		//JSCS should be re-enabled soon
 		//jscs: { configPath: '.jscsrc', esnext: true },
-		'6to5': { optional: ['selfContained']/*, experimental: true*/ },
+		babel: { optional: ['runtime'] },
 		mocha: { bail: true, timeout: 5000 }
 	}
 };

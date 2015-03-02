@@ -25,7 +25,7 @@ var path = require('path'),
 		//.pipe(plugins.jshint.reporter, 'jshint-stylish')
 		//.pipe(plugins.jshint.reporter, 'fail')
 		//.pipe(plugins.jscs, build.config.jscs)
-		.pipe(plugins['6to5'], build.config['6to5'])
+		.pipe(plugins.babel, build.config.babel)
 		.pipe(writePipe),
 	runTests = lazypipe()
 		.pipe(gulp.src, build.distBase + 'test/*.js', { read: false })
