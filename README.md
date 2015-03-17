@@ -1,6 +1,8 @@
 # The next static site generator
 <img src="harmonic-logo.png" alt="harmonic logo" title="Harmonic" align="right">
 [![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)
+[![Dependency Status](http://img.shields.io/david/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic)
+[![devDependency Status](http://img.shields.io/david/dev/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic#info=devDependencies)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/es6rocks/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Please note that this project is currently under development.**  
