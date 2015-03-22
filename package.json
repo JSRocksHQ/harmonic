@@ -20,6 +20,19 @@
     "type": "git",
     "url": "git://github.com/es6rocks/harmonic.git"
   },
+  "keywords": [
+    "ssg",
+    "generator",
+    "blog",
+    "scaffold",
+    "markdown",
+    "website",
+    "static",
+    "static generator",
+    "static site generator",
+    "ES6",
+    "ES7",
+  ],
   "dependencies": {
     "babel-runtime": "^4.7.13",
     "cli-color": "^0.3.2",
