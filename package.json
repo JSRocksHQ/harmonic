@@ -32,6 +32,8 @@
     "static site generator",
     "ES6",
     "ES7",
+    "ES2015",
+    "ES2016"
   ],
   "dependencies": {
     "babel-runtime": "^4.7.13",
