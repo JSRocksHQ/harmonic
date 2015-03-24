@@ -1,4 +1,6 @@
-# <a name="harmonic"><img src="https://cdn.rawgit.com/es6rocks/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450"></a>
+<a name="harmonic">
+# <img src="https://cdn.rawgit.com/es6rocks/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450">
+</a>
 [![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)
 [![Dependency Status](http://img.shields.io/david/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic)
 [![devDependency Status](http://img.shields.io/david/dev/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic#info=devDependencies)
