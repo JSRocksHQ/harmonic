@@ -1,5 +1,4 @@
-# The next static site generator
-<img src="harmonic-logo.png" alt="harmonic logo" title="Harmonic" align="right">
+# <img src="harmonic-logo.svg" alt="Harmonic - The next static site generator" width="440">
 [![Build Status](https://travis-ci.org/es6rocks/harmonic.svg?branch=master)](https://travis-ci.org/es6rocks/harmonic)
 [![Dependency Status](http://img.shields.io/david/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic)
 [![devDependency Status](http://img.shields.io/david/dev/es6rocks/harmonic.svg)](https://david-dm.org/es6rocks/harmonic#info=devDependencies)
