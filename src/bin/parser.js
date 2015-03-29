@@ -12,12 +12,12 @@ import stylus from 'stylus';
 import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
+import Theme from './theme';
 
-var Helper, Parser,
-    clc = cliColor(),
-    rMarkdownExt = /\.(?:md|markdown)$/;
+let clc = cliColor();
+let rMarkdownExt = /\.(?:md|markdown)$/;
 
-Helper = {
+let Helper = {
     getPagesFiles: function(sitePath) {
         var config = GLOBAL.config,
             files = {};
@@ -140,27 +140,30 @@ Helper = {
     }
 };
 
-Parser = function() {
+export default class Parser {
 
-    this.start = function() {
+    constructor() {
+    }
+
+    start(sitePath) {
         console.log(clc.info('starting the parser'));
         return Promise.resolve();
-    };
+    }
 
-    this.clean = function(sitePath) {
+    clean(sitePath) {
         console.log(clc.warn('Cleaning up...'));
         rimrafSync(path.join(sitePath, 'public'));
-    };
+    }
 
-    this.createPublicFolder = function(sitePath) {
+    createPublicFolder(sitePath) {
         let publicDirPath = path.join(sitePath, 'public');
         if (!fs.existsSync(publicDirPath)) {
             fs.mkdirSync(publicDirPath);
             console.log(clc.info('Successfully generated public folder'));
         }
-    };
+    }
 
-    this.compileCSS = function(sitePath) {
+    compileCSS(sitePath) {
         var compiler,
             currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
 
@@ -249,9 +252,9 @@ Parser = function() {
         };
 
         compiler[currentCSSCompiler]();
-    };
+    }
 
-    this.compileJS = function(sitePath, postsMetadata) {
+    compileJS(sitePath, postsMetadata) {
         var result,
             config = GLOBAL.config,
             pages = GLOBAL.pages,
@@ -266,9 +269,9 @@ Parser = function() {
         fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), harmonicClient);
 
         return postsMetadata;
-    };
+    }
 
-    this.generateTagsPages = function(sitePath, postsMetadata) {
+    generateTagsPages(sitePath, postsMetadata) {
         var postsByTag = {},
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
@@ -321,9 +324,9 @@ Parser = function() {
                 );
             }
         }
-    };
+    }
 
-    this.generateIndex = function(sitePath, postsMetadata) {
+    generateIndex(sitePath, postsMetadata) {
         var lang,
             _posts = null,
             curTemplate = GLOBAL.config.template,
@@ -357,9 +360,9 @@ Parser = function() {
             console.log(clc.info(`${lang}/index file successfully created`));
         }
         return postsMetadata;
-    };
+    }
 
-    this.copyResources = function(sitePath) {
+    copyResources(sitePath) {
         var imagesP, resourcesP;
 
         imagesP = new Promise(function(resolve, reject) {
@@ -387,15 +390,15 @@ Parser = function() {
             .then(function() {
                 console.log(clc.info('Resources copied'));
             });
-    };
+    }
 
-    this.generatePages = function(sitePath) {
+    generatePages(sitePath) {
         return Promise.resolve()
             .then(Helper.getPagesFiles.bind(Helper, sitePath))
             .then(Helper.parsePages.bind(Helper, sitePath));
-    };
+    }
 
-    this.generatePosts = function(sitePath, files) {
+    generatePosts(sitePath, files) {
         var langs = Object.keys(files),
             config = GLOBAL.config,
             posts = {},
@@ -531,9 +534,9 @@ Parser = function() {
             .then(function() {
                 return posts;
             });
-    };
+    }
 
-    this.getFiles = function(sitePath) {
+    getFiles(sitePath) {
         var config = GLOBAL.config,
             files = {};
 
@@ -543,9 +546,9 @@ Parser = function() {
         });
 
         return files;
-    };
+    }
 
-    this.getConfig = function(sitePath) {
+    getConfig(sitePath) {
         var config = getConfig(sitePath);
 
         // TODO replace try with fs.exists check so that invalid JSON does not fail silently
@@ -561,9 +564,9 @@ Parser = function() {
         );
 
         return config;
-    };
+    }
 
-    this.generateRSS = function(sitePath, postsMetadata) {
+    generateRSS(sitePath, postsMetadata) {
         var _posts = null,
             nunjucksEnv = GLOBAL.nunjucksEnv,
             rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
@@ -610,7 +613,6 @@ Parser = function() {
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
         }
         return postsMetadata;
-    };
+    }
 };
 
-export default Parser;
