@@ -70,44 +70,44 @@ describe('CLI', function() {
         });
     });
 
-    it('should create and build a new post', function(done) {
-        var config = getConfig(testDir),
-            langs = config.i18n.languages,
-            title = 'new_post test',
-            fileName = titleToFilename(title),
-            harmonic = spawn('node', [harmonicBin, 'new_post', '--no-open', title, testDir]);
-        harmonic.stdin.setEncoding('utf8');
-        harmonic.stdout.setEncoding('utf8');
+    // it('should create and build a new post', function(done) {
+    //     var config = getConfig(testDir),
+    //         langs = config.i18n.languages,
+    //         title = 'new_post test',
+    //         fileName = titleToFilename(title),
+    //         harmonic = spawn('node', [harmonicBin, 'new_post', '--no-open', title, testDir]);
+    //     harmonic.stdin.setEncoding('utf8');
+    //     harmonic.stdout.setEncoding('utf8');
 
-        new Promise(function(resolve) {
-            harmonic.on('close', function() {
-                langs.forEach(function(lang) {
-                    readFileSync(
-                        join(testDir, postspath, lang, fileName)
-                    ).toString().should.containEql(title);
-                });
-                resolve();
-            });
-        }).then(function() {
-            var harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
-            harmonicBuild.stdin.setEncoding('utf8');
-            harmonicBuild.stdout.setEncoding('utf8');
-            return new Promise(function(resolve) {
-                harmonicBuild.on('close', function() {
-                    var date = new Date(),
-                        year = String(date.getFullYear()),
-                        month = ('0' + (date.getMonth() + 1)).slice(-2),
-                        slug = fileName.replace(/\.md$/, '');
-                    langs.forEach(function(lang) {
-                        var langSegment = lang === config.i18n.default ? '.' : lang;
-                        readFileSync(join(testDir, 'public', langSegment, year, month,
-                            slug, 'index.html')).toString().should.containEql(title);
-                    });
-                    resolve();
-                });
-            });
-        }).then(done);
-    });
+    //     new Promise(function(resolve) {
+    //         harmonic.on('close', function() {
+    //             langs.forEach(function(lang) {
+    //                 readFileSync(
+    //                     join(testDir, postspath, lang, fileName)
+    //                 ).toString().should.containEql(title);
+    //             });
+    //             resolve();
+    //         });
+    //     }).then(function() {
+    //         var harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
+    //         harmonicBuild.stdin.setEncoding('utf8');
+    //         harmonicBuild.stdout.setEncoding('utf8');
+    //         return new Promise(function(resolve) {
+    //             harmonicBuild.on('close', function() {
+    //                 var date = new Date(),
+    //                     year = String(date.getFullYear()),
+    //                     month = ('0' + (date.getMonth() + 1)).slice(-2),
+    //                     slug = fileName.replace(/\.md$/, '');
+    //                 langs.forEach(function(lang) {
+    //                     var langSegment = lang === config.i18n.default ? '.' : lang;
+    //                     readFileSync(join(testDir, 'public', langSegment, year, month,
+    //                         slug, 'index.html')).toString().should.containEql(title);
+    //                 });
+    //                 resolve();
+    //             });
+    //         });
+    //     }).then(done);
+    // });
 
     // write this test once #73 is resolved
     it('should create and build a new page');

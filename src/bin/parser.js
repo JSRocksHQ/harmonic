@@ -66,7 +66,7 @@ let Helper = {
                     pagePath = path.join(sitePath, pagespath, lang, file),
                     page = fs.readFileSync(pagePath).toString(),
                     pageTpl = fs.readFileSync(
-                        path.join(sitePath, 'src/templates', curTemplate, 'page.html')
+                        path.join(sitePath, 'node_modules', curTemplate, 'page.html')
                     ),
                     pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
                     md = new MkMeta(pagePath),
@@ -74,6 +74,7 @@ let Helper = {
                     filename = path.extname(file) === '.md' ?
                         path.basename(file, '.md') :
                         path.basename(file, '.markdown');
+                    console.log(pageTplNJ);
 
                 md.defineTokens(tokens[0], tokens[1]);
 
@@ -276,7 +277,7 @@ export default class Parser {
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
             tagTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
             ),
             tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
             tagPath = null,
@@ -332,7 +333,7 @@ export default class Parser {
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
             indexTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
             ),
             indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
             indexContent = '',
@@ -376,7 +377,7 @@ export default class Parser {
         });
 
         resourcesP = new Promise(function(resolve, reject) {
-            var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template);
+            var curTemplate = path.join(sitePath, 'node_modules', GLOBAL.config.template);
             ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
                 if (err) {
                     reject(err);
@@ -405,7 +406,7 @@ export default class Parser {
             currentDate = new Date(),
             curTemplate = config.template,
             postsTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'post.html')
+                path.join(sitePath, 'node_modules', curTemplate, 'post.html')
             ),
             nunjucksEnv = GLOBAL.nunjucksEnv,
             postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
@@ -560,7 +561,7 @@ export default class Parser {
 
         GLOBAL.config = config;
         GLOBAL.nunjucksEnv = nunjucks.configure(
-            path.join(sitePath, 'src/templates', config.template), { watch: false }
+            path.join(sitePath, 'node_modules', config.template), { watch: false }
         );
 
         return config;

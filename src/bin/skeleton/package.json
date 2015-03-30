@@ -1,0 +1,10 @@
+{
+  "name": "powered-by-harmonic",
+  "version": "1.0.0",
+  "description": "Just another website built with Harmonic",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "harmonic-theme-default": "latest"
+  }
+}
