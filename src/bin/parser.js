@@ -74,7 +74,6 @@ let Helper = {
                     filename = path.extname(file) === '.md' ?
                         path.basename(file, '.md') :
                         path.basename(file, '.markdown');
-                    console.log(pageTplNJ);
 
                 md.defineTokens(tokens[0], tokens[1]);
 
@@ -365,7 +364,7 @@ export default class Parser {
 
     copyResources(sitePath) {
         var resourcesP;
-        
+
         resourcesP = new Promise(function(resolve, reject) {
             var curTemplate = path.join(sitePath, 'node_modules', GLOBAL.config.template);
             ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
