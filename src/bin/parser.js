@@ -364,18 +364,8 @@ export default class Parser {
     }
 
     copyResources(sitePath) {
-        var imagesP, resourcesP;
-
-        imagesP = new Promise(function(resolve, reject) {
-            ncp(path.join(sitePath, 'src/img'), path.join(sitePath, 'public/img'), function(err) {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve();
-            });
-        });
-
+        var resourcesP;
+        
         resourcesP = new Promise(function(resolve, reject) {
             var curTemplate = path.join(sitePath, 'node_modules', GLOBAL.config.template);
             ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
@@ -387,7 +377,7 @@ export default class Parser {
             });
         });
 
-        return Promise.all([resourcesP, imagesP])
+        return Promise.all([resourcesP])
             .then(function() {
                 console.log(clc.info('Resources copied'));
             });
@@ -555,7 +545,7 @@ export default class Parser {
         // TODO replace try with fs.exists check so that invalid JSON does not fail silently
         try {
             _.extend(config, JSON.parse(fs.readFileSync(
-                path.join(sitePath, 'src/templates', config.template, 'harmonic.json')
+                path.join(sitePath, 'node_modules', config.template, 'harmonic.json')
             ).toString()));
         } catch (e) {}
 
