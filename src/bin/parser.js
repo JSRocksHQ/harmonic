@@ -275,13 +275,21 @@ export default class Parser {
         var postsByTag = {},
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            tagTemplate = fs.readFileSync(
-                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
-            ),
-            tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
+            tagTemplate = null,
+            tagTemplateNJ = null,   
             tagPath = null,
             lang, i, tags, y, tag, tagContent,
             config = GLOBAL.config;
+
+        try {
+            tagTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
+            )
+            tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            return;
+        }
 
         for (lang in postsMetadata) {
             for (i = 0; i < postsMetadata[lang].length; i += 1) {
@@ -331,13 +339,21 @@ export default class Parser {
             _posts = null,
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            indexTemplate = fs.readFileSync(
-                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
-            ),
-            indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
+            indexTemplate = null,
+            indexTemplateNJ = null,    
             indexContent = '',
             indexPath = null,
             config = GLOBAL.config;
+
+        try {
+            indexTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
+            )
+            indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            return;
+        }
 
         for (lang in postsMetadata) {
             postsMetadata[lang].sort(Helper.sort);
@@ -394,16 +410,24 @@ export default class Parser {
             posts = {},
             currentDate = new Date(),
             curTemplate = config.template,
-            postsTemplate = fs.readFileSync(
-                path.join(sitePath, 'node_modules', curTemplate, 'post.html')
-            ),
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
+            postsTemplate = null,
+            postsTemplateNJ = null,
             tokens = [
                 config.header_tokens ? config.header_tokens[0] : '<!--',
                 config.header_tokens ? config.header_tokens[1] : '-->'
             ],
             writePromises = [];
+
+        try {
+            postsTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'post.html')
+            )
+            postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            return;
+        }
 
         langs.forEach(function(lang) {
             files[lang].forEach(function(file) {
