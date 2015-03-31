@@ -1,4 +1,3 @@
-/*jshint unused:false*/
 import fs from 'fs';
 import path from 'path';
 import { createServer } from 'http';
@@ -21,9 +20,6 @@ function openFile(type, sitePath, file) {
         open(file);
     }
 }
-
-// Temporary
-// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 
 function init(sitePath) {
     var skeletonPath = path.normalize(rootdir + '/bin/skeleton'),

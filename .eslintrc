@@ -1,0 +1,20 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "node": true
+    },
+    "rules": {
+       "no-reserved-keys": 2,
+       "block-scoped-var": 2,
+       "curly": 2,
+       "default-case": 2,
+       "no-else-return": 2,
+       "no-param-reassign": 2,
+       "indent": [2, 4],
+       "brace-style": 2,
+       "comma-style": 2,
+       "no-multiple-empty-lines": [2, { "max": 2 }],
+       "quotes": [2, "single"],
+       "spaced-line-comment": 2
+    }
+}
