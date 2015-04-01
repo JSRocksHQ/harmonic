@@ -287,7 +287,7 @@ export default class Parser {
             )
             tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
         } catch (templateError) {
-            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
             return;
         }
 
@@ -351,7 +351,7 @@ export default class Parser {
             )
             indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
         } catch (templateError) {
-            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
             return;
         }
 
@@ -385,7 +385,7 @@ export default class Parser {
             var curTemplate = path.join(sitePath, 'node_modules', GLOBAL.config.template);
             ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
                 if (err) {
-                    reject(err);
+                    console.log(clc.error(`Harmonic failed to copy the template resources. Check your template in harmonic.json`));
                     return;
                 }
                 resolve();
@@ -425,7 +425,7 @@ export default class Parser {
             )
             postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
         } catch (templateError) {
-            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json\n ${templateError}`));
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
             return;
         }
 
