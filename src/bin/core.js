@@ -1,13 +1,12 @@
 import { isHarmonicProject } from './helpers';
 import Parser from './parser';
 
-let parser = new Parser();
-
 export { build };
 
 function build(sitePath) {
+    let parser = new Parser(sitePath);
     if (!isHarmonicProject(sitePath)) return Promise.reject();
-    return parser.start()
+    return parser.start(sitePath)
         .then(parser.clean.bind(parser, sitePath))
         .then(parser.getConfig.bind(parser, sitePath))
         .then(parser.createPublicFolder.bind(parser, sitePath))

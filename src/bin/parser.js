@@ -12,12 +12,12 @@ import stylus from 'stylus';
 import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
 import { cliColor, isHarmonicProject, getConfig, titleToFilename } from './helpers';
+import Theme from './theme';
 
-var Helper, Parser,
-    clc = cliColor(),
-    rMarkdownExt = /\.(?:md|markdown)$/;
+let clc = cliColor();
+let rMarkdownExt = /\.(?:md|markdown)$/;
 
-Helper = {
+let Helper = {
     getPagesFiles: function(sitePath) {
         var config = GLOBAL.config,
             files = {};
@@ -66,7 +66,7 @@ Helper = {
                     pagePath = path.join(sitePath, pagespath, lang, file),
                     page = fs.readFileSync(pagePath).toString(),
                     pageTpl = fs.readFileSync(
-                        path.join(sitePath, 'src/templates', curTemplate, 'page.html')
+                        path.join(sitePath, 'node_modules', curTemplate, 'page.html')
                     ),
                     pageTplNJ = nunjucks.compile(pageTpl.toString(), nunjucksEnv),
                     md = new MkMeta(pagePath),
@@ -140,27 +140,30 @@ Helper = {
     }
 };
 
-Parser = function() {
+export default class Parser {
 
-    this.start = function() {
+    constructor() {
+    }
+
+    start(sitePath) {
         console.log(clc.info('starting the parser'));
         return Promise.resolve();
-    };
+    }
 
-    this.clean = function(sitePath) {
+    clean(sitePath) {
         console.log(clc.warn('Cleaning up...'));
         rimrafSync(path.join(sitePath, 'public'));
-    };
+    }
 
-    this.createPublicFolder = function(sitePath) {
+    createPublicFolder(sitePath) {
         let publicDirPath = path.join(sitePath, 'public');
         if (!fs.existsSync(publicDirPath)) {
             fs.mkdirSync(publicDirPath);
             console.log(clc.info('Successfully generated public folder'));
         }
-    };
+    }
 
-    this.compileCSS = function(sitePath) {
+    compileCSS(sitePath) {
         var compiler,
             currentCSSCompiler = GLOBAL.config.preprocessor || 'stylus';
 
@@ -249,9 +252,9 @@ Parser = function() {
         };
 
         compiler[currentCSSCompiler]();
-    };
+    }
 
-    this.compileJS = function(sitePath, postsMetadata) {
+    compileJS(sitePath, postsMetadata) {
         var result,
             config = GLOBAL.config,
             pages = GLOBAL.pages,
@@ -266,19 +269,27 @@ Parser = function() {
         fs.writeFileSync(path.join(sitePath, 'public/harmonic.js'), harmonicClient);
 
         return postsMetadata;
-    };
+    }
 
-    this.generateTagsPages = function(sitePath, postsMetadata) {
+    generateTagsPages(sitePath, postsMetadata) {
         var postsByTag = {},
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            tagTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
-            ),
-            tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv),
+            tagTemplate = null,
+            tagTemplateNJ = null,   
             tagPath = null,
             lang, i, tags, y, tag, tagContent,
             config = GLOBAL.config;
+
+        try {
+            tagTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
+            )
+            tagTemplateNJ = nunjucks.compile(tagTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
+            return;
+        }
 
         for (lang in postsMetadata) {
             for (i = 0; i < postsMetadata[lang].length; i += 1) {
@@ -321,20 +332,28 @@ Parser = function() {
                 );
             }
         }
-    };
+    }
 
-    this.generateIndex = function(sitePath, postsMetadata) {
+    generateIndex(sitePath, postsMetadata) {
         var lang,
             _posts = null,
             curTemplate = GLOBAL.config.template,
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            indexTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'index.html')
-            ),
-            indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv),
+            indexTemplate = null,
+            indexTemplateNJ = null,    
             indexContent = '',
             indexPath = null,
             config = GLOBAL.config;
+
+        try {
+            indexTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'index.html')
+            )
+            indexTemplateNJ = nunjucks.compile(indexTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
+            return;
+        }
 
         for (lang in postsMetadata) {
             postsMetadata[lang].sort(Helper.sort);
@@ -357,60 +376,58 @@ Parser = function() {
             console.log(clc.info(`${lang}/index file successfully created`));
         }
         return postsMetadata;
-    };
+    }
 
-    this.copyResources = function(sitePath) {
-        var imagesP, resourcesP;
-
-        imagesP = new Promise(function(resolve, reject) {
-            ncp(path.join(sitePath, 'src/img'), path.join(sitePath, 'public/img'), function(err) {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve();
-            });
-        });
+    copyResources(sitePath) {
+        var resourcesP;
 
         resourcesP = new Promise(function(resolve, reject) {
-            var curTemplate = path.join(sitePath, 'src/templates', GLOBAL.config.template);
+            var curTemplate = path.join(sitePath, 'node_modules', GLOBAL.config.template);
             ncp(path.join(curTemplate, 'resources'), path.join(sitePath, 'public'), function(err) {
                 if (err) {
-                    reject(err);
+                    console.log(clc.error(`Harmonic failed to copy the template resources. Check your template in harmonic.json`));
                     return;
                 }
                 resolve();
             });
         });
 
-        return Promise.all([resourcesP, imagesP])
+        return Promise.all([resourcesP])
             .then(function() {
                 console.log(clc.info('Resources copied'));
             });
-    };
+    }
 
-    this.generatePages = function(sitePath) {
+    generatePages(sitePath) {
         return Promise.resolve()
             .then(Helper.getPagesFiles.bind(Helper, sitePath))
             .then(Helper.parsePages.bind(Helper, sitePath));
-    };
+    }
 
-    this.generatePosts = function(sitePath, files) {
+    generatePosts(sitePath, files) {
         var langs = Object.keys(files),
             config = GLOBAL.config,
             posts = {},
             currentDate = new Date(),
             curTemplate = config.template,
-            postsTemplate = fs.readFileSync(
-                path.join(sitePath, 'src/templates', curTemplate, 'post.html')
-            ),
             nunjucksEnv = GLOBAL.nunjucksEnv,
-            postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv),
+            postsTemplate = null,
+            postsTemplateNJ = null,
             tokens = [
                 config.header_tokens ? config.header_tokens[0] : '<!--',
                 config.header_tokens ? config.header_tokens[1] : '-->'
             ],
             writePromises = [];
+
+        try {
+            postsTemplate = fs.readFileSync(
+                path.join(sitePath, 'node_modules', curTemplate, 'post.html')
+            )
+            postsTemplateNJ = nunjucks.compile(postsTemplate.toString(), nunjucksEnv);
+        } catch (templateError) {
+            console.log(clc.error(`Harmonic failed to load the template file. Check your template in harmonic.json`));
+            return;
+        }
 
         langs.forEach(function(lang) {
             files[lang].forEach(function(file) {
@@ -531,9 +548,9 @@ Parser = function() {
             .then(function() {
                 return posts;
             });
-    };
+    }
 
-    this.getFiles = function(sitePath) {
+    getFiles(sitePath) {
         var config = GLOBAL.config,
             files = {};
 
@@ -543,27 +560,27 @@ Parser = function() {
         });
 
         return files;
-    };
+    }
 
-    this.getConfig = function(sitePath) {
+    getConfig(sitePath) {
         var config = getConfig(sitePath);
 
         // TODO replace try with fs.exists check so that invalid JSON does not fail silently
         try {
             _.extend(config, JSON.parse(fs.readFileSync(
-                path.join(sitePath, 'src/templates', config.template, 'harmonic.json')
+                path.join(sitePath, 'node_modules', config.template, 'harmonic.json')
             ).toString()));
         } catch (e) {}
 
         GLOBAL.config = config;
         GLOBAL.nunjucksEnv = nunjucks.configure(
-            path.join(sitePath, 'src/templates', config.template), { watch: false }
+            path.join(sitePath, 'node_modules', config.template), { watch: false }
         );
 
         return config;
-    };
+    }
 
-    this.generateRSS = function(sitePath, postsMetadata) {
+    generateRSS(sitePath, postsMetadata) {
         var _posts = null,
             nunjucksEnv = GLOBAL.nunjucksEnv,
             rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
@@ -610,7 +627,6 @@ Parser = function() {
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
         }
         return postsMetadata;
-    };
+    }
 };
 
-export default Parser;
