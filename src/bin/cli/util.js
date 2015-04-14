@@ -66,7 +66,7 @@ function config(sitePath) {
                 author: 'Jaydson',
                 description: 'This is the description',
                 bio: 'Thats me',
-                template: 'default',
+                theme: 'harmonic-theme-default',
                 preprocessor: 'stylus',
                 posts_permalink: ':language/:year/:month/:title',
                 pages_permalink: 'pages/:title',
