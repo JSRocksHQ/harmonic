@@ -35,8 +35,7 @@ program
     .command('new_post <title> [path]')
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new post')
-    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
-    .action((title, path = '.', { open: autoOpen }) => { // jshint ignore:line
+    .action((title, path = '.', { open: autoOpen }) => {
         newFile(path, 'post', title, autoOpen);
     });
 
@@ -44,8 +43,7 @@ program
     .command('new_page <title> [path]')
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new page')
-    // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
-    .action((title, path = '.', { open: autoOpen }) => { // jshint ignore:line
+    .action((title, path = '.', { open: autoOpen }) => {
         newFile(path, 'page', title, autoOpen);
     });
 
@@ -53,8 +51,7 @@ program
     .command('run [port] [path]')
     .option('--no-open', 'Don\'t open a new browser window')
     .description('Run you static site locally. Port is optional')
-     // [BUG] https://github.com/jshint/jshint/issues/1779#issuecomment-68985429
-    .action((port = 9356, path = '.', { open: autoOpen }) => { // jshint ignore:line
+    .action((port = 9356, path = '.', { open: autoOpen }) => {
         build(path).then(function() {
             run(path, port, autoOpen);
         });

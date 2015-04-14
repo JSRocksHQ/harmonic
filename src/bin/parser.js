@@ -1,4 +1,3 @@
-/*jshint unused:false*/
 import path from 'path';
 import fs from 'fs';
 import nunjucks from 'nunjucks';

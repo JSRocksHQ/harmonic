@@ -1,4 +1,3 @@
-/*jshint unused:false*/
 import { normalize } from 'path';
 
 // rootdir === `dist` dir

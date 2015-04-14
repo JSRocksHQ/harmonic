@@ -1,4 +1,5 @@
-/* jshint mocha: true */
+/*eslint-env mocha */
+/*eslint-disable no-unused-expressions */ // Should.js
 
 import { spawn, exec } from 'child_process';
 import { join } from 'path';

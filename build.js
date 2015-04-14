@@ -7,9 +7,7 @@ module.exports = {
 	},
 	distBase: 'dist/',
 	config: {
-		//JSCS should be re-enabled soon
-		//jscs: { configPath: '.jscsrc', esnext: true },
-		babel: { optional: ['runtime'] },
-		mocha: { bail: true, timeout: 5000 }
+		babel: { optional: ['runtime'], stage: 0 },
+		mocha: '--colors --bail --timeout 5000'
 	}
 };
