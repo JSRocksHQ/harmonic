@@ -7,14 +7,13 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { sync as rimrafSync } from 'rimraf';
 import { sync as mkdirpSync } from 'mkdirp';
 import 'should';
-import Parser from '../bin/parser';
+import Harmonic from '../bin/parser';
 import { isHarmonicProject, getConfig, titleToFilename } from '../bin/helpers';
 import { postspath } from '../bin/config';
 
-var parser = new Parser(),
-    harmonicBin = join(__dirname, '../../entry_points/harmonic'),
-    testDir = join(__dirname, 'site'),
-    stdoutWrite = process.stdout.write;
+const testDir = join(__dirname, 'site');
+const harmonicBin = join(__dirname, '../../entry_points/harmonic');
+const stdoutWrite = process.stdout.write;
 
 before(function() {
     rimrafSync(testDir);
@@ -131,18 +130,19 @@ describe('helpers', function() {
 });
 
 // We need to refactor this test after the themes changes
-// describe('parser', function() {
+// describe('API', function() {
 
 //     it('.getConfig() should merge the template\'s config into the main config', function() {
-//         var config = getConfig(testDir),
+//         const harmonic = new Harmonic(testDir);
+//         const config = getConfig(testDir),
 //             templateConfigPath = join(
-//                 testDir, 'src/templates', config.template, 'harmonic.json'
+//                 testDir, 'src/templates', config.template, 'config.json'
 //             ),
 //             templateConfig = { customData: 'test' },
 //             mergedConfig;
 
 //         writeFileSync(templateConfigPath, JSON.stringify(templateConfig));
-//         mergedConfig = parser.getConfig(testDir);
+//         mergedConfig = harmonic.getConfig(testDir);
 //         mergedConfig.should.containDeep(templateConfig);
 //         mergedConfig.should.eql(Object.assign({}, config, templateConfig));
 //     });

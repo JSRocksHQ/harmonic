@@ -1,28 +1,36 @@
 import { isHarmonicProject } from './helpers';
-import Parser from './parser';
+import Harmonic from './parser';
 
 export { build };
 
-function build(sitePath) {
-    let parser = new Parser(sitePath);
-    if (!isHarmonicProject(sitePath)) return Promise.reject();
-    return parser.start(sitePath)
-        .then(parser.clean.bind(parser, sitePath))
-        .then(parser.getConfig.bind(parser, sitePath))
-        .then(parser.createPublicFolder.bind(parser, sitePath))
-        .then(parser.compileCSS.bind(parser, sitePath))
-        .then(parser.generatePages.bind(parser, sitePath))
-        .then(parser.getFiles.bind(parser, sitePath))
-        .then(parser.generatePosts.bind(parser, sitePath))
-        .then(parser.generateRSS.bind(parser, sitePath))
-        .then(parser.compileJS.bind(parser, sitePath))
-        .then(parser.generateIndex.bind(parser, sitePath))
-        .then(parser.generateTagsPages.bind(parser, sitePath))
-        .then(parser.copyResources.bind(parser, sitePath))
-        .catch((e) => {
-            console.log(e);
-            console.log(e.stack);
-            // re-throw to keep promise in rejected state
-            throw e;
-        });
+async function build(sitePath) {
+    try {
+        // TODO move logging to outside of isHarmonicProject and API functions
+        if (!isHarmonicProject(sitePath)) {
+            throw new Error();
+        }
+
+        const harmonic = new Harmonic(sitePath, { quiet: false });
+
+        harmonic.start(); // useless, remove?
+        harmonic.clean();
+        harmonic.createPublicFolder();
+
+        await harmonic.compileCSS();
+        await harmonic.generatePages(harmonic.getPageFiles());
+
+        const postsMetadata = await harmonic.generatePosts(harmonic.getPostFiles());
+
+        harmonic.generateRSS(postsMetadata);
+        harmonic.compileJS(postsMetadata);
+        harmonic.generateIndex(postsMetadata);
+        harmonic.generateTagsPages(postsMetadata);
+
+        await harmonic.copyResources();
+    } catch (e) {
+        console.log(e);
+        console.log(e.stack);
+        // re-throw to keep promise in rejected state
+        throw e;
+    }
 }

@@ -4,8 +4,9 @@
         "node": true
     },
     "rules": {
+       "strict": [2, "never"], // ES Modules are implicitly strict
        "no-reserved-keys": 2,
-       "block-scoped-var": 2,
+       "no-var": 2,
        "curly": 2,
        "default-case": 2,
        "no-else-return": 2,
@@ -15,6 +16,7 @@
        "comma-style": 2,
        "no-multiple-empty-lines": [2, { "max": 2 }],
        "quotes": [2, "single"],
-       "spaced-line-comment": 2
+       "spaced-line-comment": 2,
+       "no-underscore-dangle": 0
     }
 }

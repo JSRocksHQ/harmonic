@@ -1,22 +1,22 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import clc from 'cli-color';
+import _cliColor from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename };
 
 // CLI color
 function cliColor() {
     return {
-        info: clc.green,
-        error: clc.red,
-        warn: clc.yellowBright,
-        message: clc.yellow
+        info: _cliColor.green,
+        error: _cliColor.red,
+        warn: _cliColor.yellowBright,
+        message: _cliColor.yellow
     };
 }
 
 // Check if harmonic.json file exists
 function isHarmonicProject(sitePath) {
-    var clc = cliColor();
+    const clc = cliColor();
 
     try {
         getConfig(sitePath);
