@@ -7,7 +7,7 @@ module.exports = {
 	},
 	distBase: 'dist/',
 	config: {
-		babel: { optional: ['runtime'] },
+		babel: { optional: ['runtime'], stage: 0 },
 		mocha: '--colors --bail --timeout 5000'
 	}
 };

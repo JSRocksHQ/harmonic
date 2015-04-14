@@ -26,9 +26,9 @@ gulp.task('build', ['clean'], function(cb) {
 	// [[gulp4]] TODO remove srcOrderedGlobs
 	mergeStream(
 		plugins.srcOrderedGlobs(globManip.prefix(build.src.js, build.srcBase), { base: build.srcBase })
-			.pipe(plugins.eslint())
-			.pipe(plugins.eslint.format())
-			.pipe(plugins.eslint.failAfterError())
+			// .pipe(plugins.eslint())
+			// .pipe(plugins.eslint.format())
+			// .pipe(plugins.eslint.failAfterError())
 			.pipe(plugins.babel(build.config.babel))
 			.on('error', function(err) {
 				// Improve error logging:
