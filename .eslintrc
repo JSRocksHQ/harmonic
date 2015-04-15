@@ -17,6 +17,7 @@
        "no-multiple-empty-lines": [2, { "max": 2 }],
        "quotes": [2, "single"],
        "spaced-line-comment": 2,
+       "no-loop-func": 0, // this is more annoying than useful when properly using ES2015 block bindings
        "no-underscore-dangle": 0
     }
 }

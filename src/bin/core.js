@@ -17,13 +17,13 @@ async function build(sitePath) {
         harmonic.createPublicFolder();
 
         await harmonic.compileCSS();
-        await harmonic.generatePages(harmonic.getPageFiles());
 
+        const pagesMetadata = await harmonic.generatePages(harmonic.getPageFiles());
         const postsMetadata = await harmonic.generatePosts(harmonic.getPostFiles());
 
-        harmonic.generateRSS(postsMetadata);
-        harmonic.compileJS(postsMetadata);
-        harmonic.generateIndex(postsMetadata);
+        harmonic.generateRSS(postsMetadata, pagesMetadata);
+        harmonic.compileJS(postsMetadata, pagesMetadata);
+        harmonic.generateIndex(postsMetadata, pagesMetadata);
         harmonic.generateTagsPages(postsMetadata);
 
         await harmonic.copyResources();

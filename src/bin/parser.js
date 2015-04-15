@@ -45,7 +45,7 @@ const Helper = {
 
 export default class Harmonic {
 
-    constructor(sitePath, { quiet = true }) {
+    constructor(sitePath, { quiet = true } = {}) {
         this.sitePath = path.resolve(sitePath);
         this.quiet = !!quiet;
 
@@ -56,9 +56,8 @@ export default class Harmonic {
             Object.assign(config, JSON.parse(this.theme.getFileContents('config.json')));
         }
 
-        // TODO remove globals
-        GLOBAL.config = this.config = config;
-        GLOBAL.nunjucksEnv = this.nunjucksEnv = nunjucks.configure(this.theme.themePath, { watch: false });
+        this.config = config;
+        this.nunjucksEnv = nunjucks.configure(this.theme.themePath, { watch: false });
     }
 
     start() {
@@ -118,6 +117,7 @@ export default class Harmonic {
                             if (error) {
                                 less.writeError(error, options);
                                 reject(error);
+                                return;
                             }
 
                             const cssString = cssTree.toCSS({
@@ -149,13 +149,14 @@ export default class Harmonic {
                         .render((err, css) => {
                             if (err) {
                                 reject(err);
-                            } else {
-                                fs.writeFileSync(`${cssDir}/main.css`, css);
-                                console.log(
-                                    clc.info('Successfully generated CSS with Stylus preprocessor')
-                                );
-                                resolve();
+                                return;
                             }
+
+                            fs.writeFileSync(`${cssDir}/main.css`, css);
+                            console.log(
+                                clc.info('Successfully generated CSS with Stylus preprocessor')
+                            );
+                            resolve();
                         });
                 });
             }
@@ -168,16 +169,12 @@ export default class Harmonic {
         await compiler[currentCSSCompiler]();
     }
 
-    compileJS(postsMetadata) {
-        var config = this.config,
-            pages = GLOBAL.pages,
-            harmonicClient =
-                fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`).toString();
-
-        harmonicClient = harmonicClient
+    compileJS(postsMetadata, pagesMetadata) {
+        const harmonicClient = fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`)
+            .toString()
             .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pages))
-            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(config));
+            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
+            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
         fs.writeFileSync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
@@ -234,7 +231,7 @@ export default class Harmonic {
         }
     }
 
-    generateIndex(postsMetadata) {
+    generateIndex(postsMetadata, pagesMetadata) {
         var lang,
             _posts = null,
             nunjucksEnv = this.nunjucksEnv,
@@ -252,7 +249,7 @@ export default class Harmonic {
             indexContent = indexTemplateNJ.render({
                 posts: _posts,
                 config: config,
-                pages: GLOBAL.pages
+                pages: pagesMetadata
             });
 
             if (config.i18n.default === lang) {
@@ -269,7 +266,7 @@ export default class Harmonic {
     async copyResources() {
         await new Promise((resolve, reject) => {
             const curTemplate = this.theme.themePath;
-            ncp(path.join(curTemplate, 'resources'), path.join(this.sitePath, 'public'), function(err) {
+            ncp(path.join(curTemplate, 'resources'), path.join(this.sitePath, 'public'), (err) => {
                 if (err) {
                     throw new Error(`Harmonic failed to copy the theme's resources.`);
                 }
@@ -279,11 +276,6 @@ export default class Harmonic {
 
         console.log(clc.info('Resources copied'));
     }
-
-    // async generatePages() {
-    //     const pages = Helper.getPagesFiles(this.sitePath);
-    //     await Helper.parsePages(this.sitePath);
-    // }
 
     async generatePosts(files) {
         var langs = Object.keys(files),
@@ -426,9 +418,7 @@ export default class Harmonic {
             config.header_tokens ? config.header_tokens[1] : '-->'
         ];
         const writePromises = [];
-
-        // TODO remove globals
-        GLOBAL.pages = [];
+        const pages = [];
 
         langs.forEach((lang) => {
             files[lang].forEach((file) => {
@@ -470,7 +460,7 @@ export default class Harmonic {
                 metadata.date = new Date(metadata.date);
                 pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
 
-                GLOBAL.pages.push(metadata);
+                pages.push(metadata);
 
                 writePromises.push(new Promise((resolve, reject) => {
                     mkdirp(path.join(this.sitePath, 'public', pagePermalink), (err) => {
@@ -494,6 +484,7 @@ export default class Harmonic {
             });
         });
         await* writePromises;
+        return pages;
     }
 
     getPostFiles() {
@@ -522,7 +513,7 @@ export default class Harmonic {
         return files;
     }
 
-    generateRSS(postsMetadata) {
+    generateRSS(postsMetadata, pagesMetadata) {
         var _posts = null,
             nunjucksEnv = this.nunjucksEnv,
             rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
@@ -561,7 +552,7 @@ export default class Harmonic {
                 },
                 posts: _posts,
                 config: config,
-                pages: GLOBAL.pages
+                pages: pagesMetadata
             });
 
             mkdirp.sync(rssPath);
