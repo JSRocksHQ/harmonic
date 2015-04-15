@@ -51,8 +51,7 @@
     "open": "0.0.5",
     "permalinks": "^0.3.1",
     "rimraf": "^2.3.2",
-    "stylus": "^0.50.0",
-    "underscore": "^1.8.3"
+    "stylus": "^0.50.0"
   },
   "devDependencies": {
     "babel-eslint": "^3.0.1",

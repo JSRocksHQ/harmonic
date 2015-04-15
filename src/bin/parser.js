@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import nunjucks from 'nunjucks';
-import _ from 'underscore';
 import permalinks from 'permalinks';
 import MkMeta from 'marked-metadata';
 import mkdirp from 'mkdirp';
@@ -208,9 +207,7 @@ export default class Harmonic {
 
             for (i in postsByTag) {
                 tagContent = tagTemplateNJ.render({
-                    posts: _.where(postsByTag[i], {
-                        lang: lang
-                    }),
+                    posts: postsByTag[i].filter((post) => post.lang === lang),
                     config: config,
                     category: i
                 });

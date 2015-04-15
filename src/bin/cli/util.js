@@ -4,7 +4,6 @@ import { createServer } from 'http';
 import { Server } from 'node-static';
 import co from 'co';
 import prompt from 'co-prompt';
-import _ from 'underscore';
 import { ncp } from 'ncp';
 import open from 'open';
 import { rootdir, postspath, pagespath } from '../config';
@@ -102,7 +101,7 @@ function config(sitePath) {
         };
 
         // create the configuration file
-        fs.writeFile(manifest, JSON.stringify(_.extend(templateObj, config), null, 4),
+        fs.writeFile(manifest, JSON.stringify(Object.assign(templateObj, config), null, 4),
             function(err) {
                 if (err) {
                     throw err;
