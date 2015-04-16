@@ -4,6 +4,7 @@ import { cliColor } from '../helpers';
 import logo from './logo';
 import { init, config, newFile, run } from './util';
 import { build } from '../core';
+const clc = cliColor();
 
 program
     .version(version);
@@ -19,9 +20,10 @@ program
 program
     .command('config [path]')
     .description('Config your static website')
-    .action((path = '.') => {
+    .action(async (path = '.') => {
         console.log(logo);
-        config(path);
+        await config(path);
+        console.log(clc.info('\nharmonic.json successfully updated.'));
     });
 
 program
@@ -58,7 +60,6 @@ program
     });
 
 program.on('*', (args) => {
-    let clc = cliColor();
     console.error('Unknown command: ' + clc.error(args[0]));
     process.exit(1);
 });

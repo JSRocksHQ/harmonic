@@ -1,13 +1,19 @@
 import fs from 'fs';
 import path from 'path';
+import { promisify, promisifyAll } from 'bluebird';
 import { createServer } from 'http';
 import { Server } from 'node-static';
 import co from 'co';
 import prompt from 'co-prompt';
 import { ncp } from 'ncp';
 import open from 'open';
+import { load as npmLoad } from 'npm';
+import dd from 'dedent';
 import { rootdir, postspath, pagespath } from '../config';
 import { cliColor, getConfig, titleToFilename } from '../helpers';
+promisifyAll(fs);
+const npmLoadAsync = promisify(npmLoad);
+const ncpAsync = promisify(ncp);
 
 export { init, config, newFile, run, openFile };
 
@@ -20,44 +26,50 @@ function openFile(type, sitePath, file) {
     }
 }
 
-function init(sitePath) {
-    var skeletonPath = path.normalize(rootdir + '/bin/skeleton'),
-        copySkeleton = () => {
-            return new Promise((resolve, reject) => {
-                ncp(skeletonPath, sitePath, (err) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-                    resolve('Harmonic skeleton started at: ' + path.resolve('./', sitePath));
-                });
-            });
-        },
-        clc = cliColor();
+async function init(sitePath) {
+    const skeletonPath = path.join(rootdir, 'bin/skeleton');
+    const clc = cliColor();
 
-    fs.exists(sitePath, (exists) => {
-        if (!exists) {
-            fs.mkdirSync(sitePath);
-        }
-        copySkeleton().then((msg) => {
-            console.log(clc.message(msg));
-            config(sitePath);
-        });
-    });
+    // `fs.exists` doesn't follow the Node.js callback convention, it needs to be promisified manually.
+    const exists = await new Promise((fulfill) => fs.exists(sitePath, fulfill));
+    if (!exists) {
+        await fs.mkdirAsync(sitePath);
+    }
+
+    await ncpAsync(skeletonPath, sitePath);
+    console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
+
+    await config(sitePath);
+
+    console.log(clc.info('\nInstalling dependencies...'));
+    const npm = await npmLoadAsync();
+    try {
+        await promisify(npm.commands.install)(sitePath, []);
+    } catch (e) {
+        console.error(dd
+            `Command ${clc.error('npm install')} failed.
+             Make sure you are connected to the internet and execute the command above in your Harmonic skeleton directory.`
+        );
+    }
+
+    console.log('\n' + clc.info(dd
+        `Your Harmonic website skeleton was successfully created!
+         Now, browse the project directory and have fun.`
+    ));
 }
 
 function config(sitePath) {
-    var clc = cliColor(),
-        manifest = sitePath + '/harmonic.json';
+    const clc = cliColor();
+    const manifest = path.join(sitePath, 'harmonic.json');
 
-    co(function*() {
-        console.log(clc.message(
-            'This guide will help you to create your Harmonic configuration file\n' +
-            'Just hit enter if you are ok with the default values.\n\n'
-        ));
+    return new Promise((fulfill, reject) => {
+        co(function*() {
+            console.log(clc.message(
+                'This guide will help you to create your Harmonic configuration file\n' +
+                'Just hit enter if you are ok with the default values.\n\n'
+            ));
 
-        var config,
-            templateObj = {
+            const templateObj = {
                 name: 'Awesome website',
                 title: 'My awesome static website',
                 domain: 'http://awesome.com',
@@ -77,45 +89,41 @@ function config(sitePath) {
                 }
             };
 
-        function _p(message) {
-            return prompt(clc.message(message));
-        }
-
-        config = {
-            name: (yield _p('Site name: (' + templateObj.name + ') ')) ||
-                templateObj.name,
-            title: (yield _p('Title: (' + templateObj.title + ') ')) ||
-                templateObj.title,
-            subtitle: (yield _p('Subtitle: (' + templateObj.subtitle + ') ')) ||
-                templateObj.subtitle,
-            description: (yield _p('Description: (' + templateObj.description + ') ')) ||
-                templateObj.description,
-            author: (yield _p('Author: (' + templateObj.author + ') ')) ||
-                templateObj.author,
-            bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
-                templateObj.bio,
-            template: (yield _p('Template: (' + templateObj.template + ') ')) ||
-                templateObj.template,
-            preprocessor: (yield _p('Preprocessor: (' + templateObj.preprocessor + ') ')) ||
-                templateObj.preprocessor
-        };
-
-        // create the configuration file
-        fs.writeFile(manifest, JSON.stringify(Object.assign(templateObj, config), null, 4),
-            function(err) {
-                if (err) {
-                    throw err;
-                }
-                console.log(clc.message(
-                    '\nYour Harmonic website skeleton was successfully created!' +
-                    '\nNow, browse the project dir and have fun.'
-                ));
+            function _p(message) {
+                return prompt(clc.message(message));
             }
-        );
 
-        process.stdin.pause();
+            const config = {
+                name: (yield _p('Site name: (' + templateObj.name + ') ')) ||
+                    templateObj.name,
+                title: (yield _p('Title: (' + templateObj.title + ') ')) ||
+                    templateObj.title,
+                subtitle: (yield _p('Subtitle: (' + templateObj.subtitle + ') ')) ||
+                    templateObj.subtitle,
+                description: (yield _p('Description: (' + templateObj.description + ') ')) ||
+                    templateObj.description,
+                author: (yield _p('Author: (' + templateObj.author + ') ')) ||
+                    templateObj.author,
+                bio: (yield _p('Author bio: (' + templateObj.bio + ') ')) ||
+                    templateObj.bio,
+                theme: (yield _p('Theme: (' + templateObj.theme + ') ')) ||
+                    templateObj.theme,
+                preprocessor: (yield _p('Preprocessor: (' + templateObj.preprocessor + ') ')) ||
+                    templateObj.preprocessor
+            };
 
-    })();
+            process.stdin.pause();
+
+            // create the configuration file
+            fs.writeFile(manifest, JSON.stringify(Object.assign({}, templateObj, config), null, 4), (err) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                fulfill();
+            });
+        })();
+    });
 }
 
 /**

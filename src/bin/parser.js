@@ -208,7 +208,7 @@ export default class Harmonic {
             for (i in postsByTag) {
                 tagContent = tagTemplateNJ.render({
                     posts: postsByTag[i].filter((post) => post.lang === lang),
-                    config: config,
+                    config,
                     category: i
                 });
 
