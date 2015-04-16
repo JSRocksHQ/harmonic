@@ -1,6 +1,6 @@
 import program from 'commander';
 import { version } from '../config';
-import { cliColor } from '../helpers';
+import { cliColor, findHarmonicRoot } from '../helpers';
 import logo from './logo';
 import { init, config, newFile, run } from './util';
 import { build } from '../core';
@@ -12,7 +12,7 @@ program
 program
     .command('init [path]')
     .description('Init your static website')
-    .action((path = '.') => {
+    .action((path = findHarmonicRoot('.')) => {
         console.log(logo);
         init(path);
     });
@@ -20,7 +20,7 @@ program
 program
     .command('config [path]')
     .description('Config your static website')
-    .action(async (path = '.') => {
+    .action(async (path = findHarmonicRoot('.')) => {
         console.log(logo);
         await config(path);
         console.log(clc.info('\nharmonic.json successfully updated.'));
@@ -29,7 +29,7 @@ program
 program
     .command('build [path]')
     .description('Build your static website')
-    .action((path = '.') => {
+    .action((path = findHarmonicRoot('.')) => {
         build(path);
     });
 
@@ -37,7 +37,7 @@ program
     .command('new_post <title> [path]')
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new post')
-    .action((title, path = '.', { open: autoOpen }) => {
+    .action((title, path = findHarmonicRoot('.'), { open: autoOpen }) => {
         newFile(path, 'post', title, autoOpen);
     });
 
@@ -45,7 +45,7 @@ program
     .command('new_page <title> [path]')
     .option('--no-open', 'Don\'t open the markdown file(s) in editor')
     .description('Create a new page')
-    .action((title, path = '.', { open: autoOpen }) => {
+    .action((title, path = findHarmonicRoot('.'), { open: autoOpen }) => {
         newFile(path, 'page', title, autoOpen);
     });
 
@@ -53,7 +53,7 @@ program
     .command('run [port] [path]')
     .option('--no-open', 'Don\'t open a new browser window')
     .description('Run you static site locally. Port is optional')
-    .action((port = 9356, path = '.', { open: autoOpen }) => {
+    .action((port = 9356, path = findHarmonicRoot('.'), { open: autoOpen }) => {
         build(path).then(function() {
             run(path, port, autoOpen);
         });
