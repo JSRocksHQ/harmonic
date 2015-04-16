@@ -1,8 +1,9 @@
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import _cliColor from 'cli-color';
 
-export { cliColor, isHarmonicProject, getConfig, titleToFilename };
+export { cliColor, isHarmonicProject, getConfig, titleToFilename,
+    findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError };
 
 // CLI color
 function cliColor() {
@@ -14,20 +15,43 @@ function cliColor() {
     };
 }
 
-// Check if harmonic.json file exists
-function isHarmonicProject(sitePath) {
+// Friendly message for non-initialized folder
+function displayNonInitializedFolderErrorMessage() {
     const clc = cliColor();
 
+    console.log(
+        clc.warn('It seems this is not an Harmonic project yet. \n') +
+        clc.warn('Check your directory or run ') +
+        clc.info.bgWhite.italic(' harmonic init ') +
+        clc.warn(' to start a new Harmonic project.')
+    );
+}
+
+// Find harmonic.json. Returns path or false.
+function findHarmonicRoot(sitePath) {
+    let currentPath = resolve(sitePath);
+    let oldPath = '';
+
+    // Climb directories up until finding a `harmonic.json` file, if it is not found then return false.
+    while (!isHarmonicProject(currentPath)) {
+        oldPath = currentPath;
+        currentPath = resolve(currentPath, '..');
+
+        if (oldPath === currentPath) {
+            // reached root folder, return false;
+            return false;
+        }
+    }
+
+    return currentPath;
+}
+
+// Check if harmonic.json file exists
+function isHarmonicProject(sitePath) {
     try {
         getConfig(sitePath);
         return true;
     } catch (e) {
-        console.log(
-            clc.warn('It seems this is not an Harmonic project yet. \n') +
-            clc.warn('Check your directory or run ') +
-            clc.info.bgWhite.italic(' harmonic init ') +
-            clc.warn(' to start a new Harmonic project.')
-        );
         return false;
     }
 }
@@ -39,3 +63,12 @@ function getConfig(sitePath) {
 function titleToFilename(title) {
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
 }
+
+// New Error for Harmonic missing configuration file
+function MissingFileError(file) {
+    this.name = 'MissingFileError';
+    this.file = file || 'harmonic.json';
+    this.message = `Missing file: ${this.file}`;
+}
+MissingFileError.prototype = Object.create(Error.prototype);
+MissingFileError.prototype.constructor = MissingFileError;

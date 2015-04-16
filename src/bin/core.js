@@ -1,13 +1,15 @@
-import { isHarmonicProject } from './helpers';
+import { isHarmonicProject, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from './helpers';
 import Harmonic from './parser';
 
 export { build };
 
-async function build(sitePath) {
+async function build(passedPath) {
     try {
-        // TODO move logging to outside of isHarmonicProject and API functions
-        if (!isHarmonicProject(sitePath)) {
-            throw new Error();
+        const sitePath = findHarmonicRoot(passedPath);
+
+        if (!sitePath) {
+            displayNonInitializedFolderErrorMessage();
+            throw new MissingFileError();
         }
 
         const harmonic = new Harmonic(sitePath, { quiet: false });
