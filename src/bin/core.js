@@ -1,14 +1,12 @@
-import { isHarmonicProject } from './helpers';
+import { isHarmonicProject, findHarmonicRoot } from './helpers';
 import Harmonic from './parser';
 
 export { build };
 
 async function build(sitePath) {
     try {
-        // TODO move logging to outside of isHarmonicProject and API functions
-        if (!isHarmonicProject(sitePath)) {
-            throw new Error();
-        }
+        
+        sitePath = findHarmonicRoot(sitePath);
 
         const harmonic = new Harmonic(sitePath, { quiet: false });
 
