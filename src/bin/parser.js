@@ -260,7 +260,7 @@ export default class Harmonic {
         }
     }
 
-    async copyResources() {
+    async copyThemeResources() {
         await new Promise((resolve, reject) => {
             const curTemplate = this.theme.themePath;
             ncp(path.join(curTemplate, 'resources'), path.join(this.sitePath, 'public'), (err) => {
@@ -271,7 +271,28 @@ export default class Harmonic {
             });
         });
 
-        console.log(clc.info('Resources copied'));
+        console.log(clc.info('Theme resources copied'));
+    }
+
+    async copyUserResources() {
+        await new Promise((resolve, reject) => {
+            ncp(path.join(this.sitePath, 'resources'), path.join(this.sitePath, 'public'), (err) => {
+                if (err) {
+                    // no need to throw error. The user might just not have a resources folder.
+                    // I am not checking for its presence with fs.exists and fs.existsSync because
+                    // node docs says it will be deprecated. Their advise is to try to use the file/folder
+                    // and handle the possible error.
+                    //
+                    // We'll still log the error to output though...
+                    console.log(clc.warn(`Harmonic didn't to copy the users's resources.`));
+                } else {
+                    console.log(clc.info(`User resources copied`));
+                }
+                resolve();
+            });
+        });
+
+       
     }
 
     async generatePosts(files) {
