@@ -284,7 +284,7 @@ export default class Harmonic {
                     // and handle the possible error.
                     //
                     // We'll still log the error to output though...
-                    console.log(clc.warn(`Harmonic didn't to copy the users's resources.`));
+                    console.log(clc.warn(`Harmonic did not copy any user resources.`));
                 } else {
                     console.log(clc.info(`User resources copied`));
                 }
@@ -292,7 +292,7 @@ export default class Harmonic {
             });
         });
 
-       
+
     }
 
     async generatePosts(files) {
