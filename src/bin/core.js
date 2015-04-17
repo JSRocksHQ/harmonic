@@ -26,7 +26,8 @@ async function build(sitePath) {
         harmonic.generateIndex(postsMetadata, pagesMetadata);
         harmonic.generateTagsPages(postsMetadata);
 
-        await harmonic.copyResources();
+        await harmonic.copyThemeResources();
+        await harmonic.copyUserResources();
     } catch (e) {
         console.log(e);
         console.log(e.stack);
