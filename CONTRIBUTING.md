@@ -17,8 +17,6 @@ Pull requests are very welcome. Note that if you are going to propose drastic ch
 
 Fork the Harmonic repository, clone it locally and create a branch for your proposed bug fix or new feature. Avoid working directly on the master branch.
 
-Harmonic currently only runs in Node.js >= 0.11, so make sure you have that installed. (the Node version requirement may be lowered in the future)
-
 `cd` to your Harmonic repository and run `npm link` to install dependencies, build and symlink your Harmonic repository to the globally installed npm packages. This means `npm link` will do all the work for you and make the `harmonic` command available in your terminal/command prompt.
 
 To start working, `cd` to your Harmonic repository and run `npm run dev` to make a new build and (if the build succeeded) enter watch mode, which will generate incremental builds and run tests whenever you edit files.
