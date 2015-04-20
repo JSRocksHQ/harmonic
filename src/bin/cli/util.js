@@ -10,7 +10,7 @@ import open from 'open';
 import { load as npmLoad } from 'npm';
 import dd from 'dedent';
 import { rootdir, postspath, pagespath } from '../config';
-import { cliColor, getConfig, titleToFilename } from '../helpers';
+import { cliColor, getConfig, titleToFilename, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError} from '../helpers';
 promisifyAll(fs);
 const npmLoadAsync = promisify(npmLoad);
 const ncpAsync = promisify(ncp);
@@ -60,10 +60,12 @@ async function init(sitePath) {
 
 function config(sitePath) {
     const clc = cliColor();
-    const manifest = path.join(sitePath, 'harmonic.json');
+    const manifest = path.join(sitePath, 'harmonic.json'); 
+    
 
     return new Promise((fulfill, reject) => {
         co(function*() {
+            
             console.log(clc.message(
                 'This guide will help you to create your Harmonic configuration file\n' +
                 'Just hit enter if you are ok with the default values.\n\n'
@@ -130,7 +132,17 @@ function config(sitePath) {
  * @param {string} type - The new file's type. Can be either 'post' or 'page'.
  * @param {string} title - The new file's title.
  */
-function newFile(sitePath, type, title, autoOpen) {
+function newFile(passedPath, type, title, autoOpen) {
+
+    const sitePath = findHarmonicRoot(passedPath);
+
+    if (!sitePath) {
+        displayNonInitializedFolderErrorMessage();
+        throw new MissingFileError();
+    }
+    
+    
+    
     var clc = cliColor(),
         langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
@@ -146,6 +158,7 @@ function newFile(sitePath, type, title, autoOpen) {
             '# ' + title,
         filedir = path.join(sitePath, type === 'post' ? postspath : pagespath),
         filename = titleToFilename(title);
+    
 
     langs.forEach((lang) => {
         let fileLangDir = path.join(filedir, lang);
@@ -165,8 +178,17 @@ function newFile(sitePath, type, title, autoOpen) {
     ));
 }
 
-function run(sitePath, port, autoOpen) {
+function run(passedPath, port, autoOpen) {
     let clc = cliColor();
+
+    const sitePath = findHarmonicRoot(passedPath);
+
+    if (!sitePath) {
+        displayNonInitializedFolderErrorMessage();
+        throw new MissingFileError();
+    }
+    
+    
     let file = new Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
