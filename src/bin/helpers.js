@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import _cliColor from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename,
-    findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError };
+    findHarmonicRoot, displayNonInitializedFolderErrorMessage };
 
 // CLI color
 function cliColor() {
@@ -64,11 +64,13 @@ function titleToFilename(title) {
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
 }
 
-// New Error for Harmonic missing configuration file
-function MissingFileError(file) {
-    this.name = 'MissingFileError';
-    this.file = file || 'harmonic.json';
-    this.message = `Missing file: ${this.file}`;
+// Note: class declarations are not hoisted, so this can't be listed in the exports statement at the top of this file.
+export class MissingFileError extends Error {
+    constructor(file = 'harmonic.json') {
+        super();
+        this.name = 'MissingFileError';
+        this.file = file;
+        this.message = `Missing file: ${this.file}`;
+        delete this.stack;
+    }
 }
-MissingFileError.prototype = Object.create(Error.prototype);
-MissingFileError.prototype.constructor = MissingFileError;

@@ -30,10 +30,10 @@ async function build(passedPath) {
 
         await harmonic.copyThemeResources();
         await harmonic.copyUserResources();
-    } catch (e) {
-        console.log(e);
-        console.log(e.stack);
+    } catch (err) {
+        console.log(err);
+        if (err.stack) console.log(err.stack);
         // re-throw to keep promise in rejected state
-        throw e;
+        throw err;
     }
 }
