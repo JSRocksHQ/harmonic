@@ -1,13 +1,18 @@
-import { isHarmonicProject, findHarmonicRoot } from './helpers';
+import { isHarmonicProject, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from './helpers';
 import Harmonic from './parser';
 
 export { build };
 
-async function build(sitePath) {
+async function build(passedPath) {
     try {
         
-        sitePath = findHarmonicRoot(sitePath);
-
+        const sitePath = findHarmonicRoot(passedPath);
+        
+        if (!sitePath) {
+            displayNonInitializedFolderErrorMessage();
+            throw new MissingFileError();
+        }
+       
         const harmonic = new Harmonic(sitePath, { quiet: false });
 
         harmonic.start(); // useless, remove?

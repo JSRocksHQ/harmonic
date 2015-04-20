@@ -4,7 +4,8 @@ import _cliColor from 'cli-color';
 import { resolve } from 'path';
 
 
-export { cliColor, isHarmonicProject, getConfig, titleToFilename, findHarmonicRoot };
+export { cliColor, isHarmonicProject, getConfig, titleToFilename, 
+    findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError };
 
 // CLI color
 function cliColor() {
@@ -28,31 +29,26 @@ function displayNonInitializedFolderErrorMessage() {
     );
 }
 
-// Find harmonic.json
+// Find harmonic.json. Returns path or false.
 function findHarmonicRoot(sitePath) {
     
-    const clc = cliColor();
     var currentPath = resolve(sitePath);
     var oldPath = "";
 
 
     while (!isHarmonicProject(currentPath)) {
-        // TODO: Climb folders up until find harmonic.json file, if can't find then error.
+        // TODO: Climb folders up until find harmonic.json file, if can't find then return false.
 
         oldPath = currentPath;
         currentPath = resolve(currentPath,"..");
 
         if (oldPath === currentPath) {
-            // reached root folder, throw error;
-            displayNonInitializedFolderErrorMessage();
-            throw new Error();
+            // reached root folder, return false;
+            return false;
         }
 
     }
-
-    console.log(
-        clc.info("harmonic.json found at: " + currentPath)
-    );
+    
     return currentPath;
 }
 
@@ -69,9 +65,21 @@ function isHarmonicProject(sitePath) {
 }
 
 function getConfig(sitePath) {
+    
     return JSON.parse(readFileSync(join(sitePath, 'harmonic.json')).toString());
 }
+
 
 function titleToFilename(title) {
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
 }
+
+// New Error for Harmonic missing configuration file
+function MissingFileError(file) {
+    this.name = 'MissingFileError';
+    this.file = file || "harmonic.json";
+    this.message = `Missing file: ${this.file}`;
+   
+}
+MissingFileError.prototype = Object.create(Error.prototype);
+MissingFileError.prototype.constructor = MissingFileError;

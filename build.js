@@ -8,6 +8,6 @@ module.exports = {
 	distBase: 'dist/',
 	config: {
 		babel: { optional: ['runtime'], stage: 0 },
-		mocha: '--colors --bail --timeout 5000'
+		mocha: '--colors --bail --timeout 15000'
 	}
 };
