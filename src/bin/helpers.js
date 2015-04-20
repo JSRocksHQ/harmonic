@@ -31,6 +31,7 @@ function displayNonInitializedFolderErrorMessage() {
 
 // Find harmonic.json. Returns path or false.
 function findHarmonicRoot(sitePath) {
+
     
     var currentPath = resolve(sitePath);
     var oldPath = "";
@@ -48,7 +49,6 @@ function findHarmonicRoot(sitePath) {
         }
 
     }
-    
     return currentPath;
 }
 

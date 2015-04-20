@@ -12,7 +12,7 @@ async function build(passedPath) {
             displayNonInitializedFolderErrorMessage();
             throw new MissingFileError();
         }
-       
+
         const harmonic = new Harmonic(sitePath, { quiet: false });
 
         harmonic.start(); // useless, remove?
