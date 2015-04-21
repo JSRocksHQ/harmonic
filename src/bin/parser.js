@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { promisify/*, promisifyAll*/ } from 'bluebird';
+import { promisify, promisifyAll, fromNode as promiseFromNode } from 'bluebird';
 import nunjucks from 'nunjucks';
 import permalinks from 'permalinks';
 import MkMeta from 'marked-metadata';
@@ -12,6 +12,7 @@ import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
 import { cliColor, getConfig } from './helpers';
 import Theme from './theme';
+promisifyAll(fs);
 const mkdirpAsync = promisify(mkdirp);
 const ncpAsync = promisify(ncp);
 
@@ -84,66 +85,36 @@ export default class Harmonic {
 
         const compiler = {
 
-            less: () => {
-                return new Promise((resolve, reject) => {
-                    const curTemplate = this.theme.themePath;
-                    const lessDir = `${curTemplate}/resources/_less`;
-                    const cssDir = `${curTemplate}/resources/css`;
-                    const verifyDirectory = (dir) => {
-                        if (!fs.existsSync(dir)) {
-                            fs.mkdirSync(dir);
-                        }
-                    };
+            less: async () => {
+                const lessIndexPath = path.join(this.theme.themePath, 'resources/_less/index.less');
+                const cssDir = path.join(this.sitePath, 'public/css');
 
-                    fs.readFile(`${lessDir}/index.less`, (error, data) => {
+                const lessInput = await fs.readFileAsync(lessIndexPath, { encoding: 'utf8' });
+                const { css } = await less.render(lessInput, { filename: lessIndexPath });
 
-                        const dataString = data.toString();
-                        const options = {
-                            paths: [lessDir],
-                            outputDir: cssDir,
-                            filename: 'main.less'
-                        };
+                await mkdirpAsync(cssDir);
+                await fs.writeFileAsync(path.join(cssDir, 'main.css'), css);
 
-                        options.outputfile = `${options.filename.split('.less')[0]}.css`;
-                        options.outputDir = path.resolve(this.sitePath, options.outputDir) + '/';
-
-                        verifyDirectory(options.outputDir);
-
-                        less.render(dataString, options).then(function(output) {
-                            fs.writeFileSync(options.outputDir + options.outputfile, output.css, 'utf8');
-                            console.log('Successfully generated CSS with LESS preprocessor');
-
-                            resolve();
-                        },
-                        function (err) {
-                            console.log(err);
-                        });
-                    });
-                });
+                console.log(clc.info('Successfully generated CSS with LESS preprocessor'));
             },
 
-            stylus: () => {
-                return new Promise((resolve, reject) => {
-                    const curTemplate = this.theme.themePath;
-                    const stylDir = `${curTemplate}/resources/_stylus`;
-                    const cssDir = `${curTemplate}/resources/css`;
-                    const code = fs.readFileSync(`${stylDir}/index.styl`, 'utf8');
+            stylus: async () => {
+                const stylDir = path.join(this.theme.themePath, 'resources/_stylus');
+                const stylIndexPath = path.join(stylDir, 'index.styl');
+                const cssDir = path.join(this.sitePath, 'public/css');
 
-                    stylus(code)
-                        .set('paths', [stylDir, `${stylDir}/engine`, `${stylDir}/partials`])
-                        .render((err, css) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-
-                            fs.writeFileSync(`${cssDir}/main.css`, css);
-                            console.log(
-                                clc.info('Successfully generated CSS with Stylus preprocessor')
-                            );
-                            resolve();
-                        });
+                const stylInput = await fs.readFileAsync(stylIndexPath, { encoding: 'utf8' });
+                const css = await promiseFromNode((cb) => {
+                    stylus(stylInput)
+                        .set('filename', stylIndexPath)
+                        .set('paths', [path.join(stylDir, 'engine'), path.join(stylDir, 'partials')])
+                        .render(cb);
                 });
+
+                await mkdirpAsync(cssDir);
+                await fs.writeFileAsync(path.join(cssDir, 'main.css'), css);
+
+                console.log(clc.info('Successfully generated CSS with Stylus preprocessor'));
             }
         };
 
