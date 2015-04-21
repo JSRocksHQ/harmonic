@@ -5,7 +5,6 @@
     },
     "rules": {
        "strict": [2, "never"], // ES Modules are implicitly strict
-       "no-reserved-keys": 2,
        "no-var": 2,
        "curly": 2,
        "default-case": 2,

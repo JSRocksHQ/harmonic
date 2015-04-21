@@ -55,7 +55,14 @@ async function init(sitePath) {
     ));
 }
 
-function config(sitePath) {
+function config(passedPath) {
+    const sitePath = findHarmonicRoot(passedPath);
+
+    if (!sitePath) {
+        displayNonInitializedFolderErrorMessage();
+        throw new MissingFileError();
+    }
+
     const manifest = path.join(sitePath, 'harmonic.json');
 
     return new Promise((fulfill, reject) => {
