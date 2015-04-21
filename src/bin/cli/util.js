@@ -33,7 +33,7 @@ async function init(sitePath) {
     const skeletonPath = path.join(rootdir, 'bin/skeleton');
 
     await mkdirpAsync(sitePath);
-    await ncpAsync(skeletonPath, sitePath);
+    await ncpAsync(skeletonPath, sitePath, { stopOnErr: true });
     console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
 
     await config(sitePath);

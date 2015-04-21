@@ -262,14 +262,14 @@ export default class Harmonic {
     }
 
     async copyThemeResources() {
-        await ncpAsync(path.join(this.theme.themePath, 'resources'), path.join(this.sitePath, 'public'));
+        await ncpAsync(path.join(this.theme.themePath, 'resources'), path.join(this.sitePath, 'public'), { stopOnErr: true });
         console.log(clc.info('Theme resources copied'));
     }
 
     async copyUserResources() {
         const userResourcesPath = path.join(this.sitePath, 'resources');
         await mkdirpAsync(userResourcesPath);
-        await ncpAsync(userResourcesPath, path.join(this.sitePath, 'public'));
+        await ncpAsync(userResourcesPath, path.join(this.sitePath, 'public'), { stopOnErr: true });
         console.log(clc.info(`User resources copied`));
     }
 
