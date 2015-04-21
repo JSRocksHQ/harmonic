@@ -101,37 +101,22 @@ export default class Harmonic {
                         const options = {
                             paths: [lessDir],
                             outputDir: cssDir,
-                            optimization: 1,
-                            filename: 'main.less',
-                            compress: true,
-                            yuicompress: true
+                            filename: 'main.less'
                         };
 
                         options.outputfile = `${options.filename.split('.less')[0]}.css`;
                         options.outputDir = path.resolve(this.sitePath, options.outputDir) + '/';
+
                         verifyDirectory(options.outputDir);
 
-                        const parser = new less.Parser(options);
-                        parser.parse(dataString, (error, cssTree) => {
+                        less.render(dataString, options).then(function(output) {
+                            fs.writeFileSync(options.outputDir + options.outputfile, output.css, 'utf8');
+                            console.log('Successfully generated CSS with LESS preprocessor');
 
-                            if (error) {
-                                less.writeError(error, options);
-                                reject(error);
-                                return;
-                            }
-
-                            const cssString = cssTree.toCSS({
-                                compress: options.compress,
-                                yuicompress: options.yuicompress
-                            });
-
-                            const optionFile = options.outputDir + options.outputfile;
-
-                            fs.writeFileSync(optionFile, cssString, 'utf8');
-                            console.log(
-                                clc.info('Successfully generated CSS with LESS preprocessor')
-                            );
                             resolve();
+                        },
+                        function (err) {
+                            console.log(err);
                         });
                     });
                 });
