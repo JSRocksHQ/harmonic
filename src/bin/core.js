@@ -31,8 +31,13 @@ async function build(passedPath) {
         await harmonic.copyThemeResources();
         await harmonic.copyUserResources();
     } catch (err) {
-        console.log(err);
-        if (err.stack) console.log(err.stack);
+        // The error stack already includes the error name and message.
+        if (err.stack) {
+            console.error(err.stack);
+        } else {
+            console.error(err.toString());
+        }
+
         // re-throw to keep promise in rejected state
         throw err;
     }
