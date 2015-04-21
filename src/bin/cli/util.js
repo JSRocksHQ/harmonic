@@ -36,7 +36,7 @@ async function init(sitePath) {
     await ncpAsync(skeletonPath, sitePath, { stopOnErr: true });
     console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
 
-    await config(sitePath);
+    await config(sitePath, true);
 
     console.log(clc.info('\nInstalling dependencies...'));
     const npm = await npmLoadAsync();
@@ -55,8 +55,8 @@ async function init(sitePath) {
     ));
 }
 
-function config(passedPath) {
-    const sitePath = findHarmonicRoot(passedPath);
+function config(passedPath, _skipFindRoot = false) {
+    const sitePath = _skipFindRoot ? passedPath : findHarmonicRoot(passedPath);
 
     if (!sitePath) {
         displayNonInitializedFolderErrorMessage();
