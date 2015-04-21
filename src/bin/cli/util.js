@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { Server } from 'node-static';
 import co from 'co';
 import prompt from 'co-prompt';
+import mkdirp from 'mkdirp';
 import { ncp } from 'ncp';
 import open from 'open';
 import { load as npmLoad } from 'npm';
@@ -13,7 +14,9 @@ import { rootdir, postspath, pagespath } from '../config';
 import { cliColor, getConfig, titleToFilename, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from '../helpers';
 promisifyAll(fs);
 const npmLoadAsync = promisify(npmLoad);
+const mkdirpAsync = promisify(mkdirp);
 const ncpAsync = promisify(ncp);
+const clc = cliColor();
 
 export { init, config, newFile, run, openFile };
 
@@ -28,14 +31,8 @@ function openFile(type, sitePath, file) {
 
 async function init(sitePath) {
     const skeletonPath = path.join(rootdir, 'bin/skeleton');
-    const clc = cliColor();
 
-    // `fs.exists` doesn't follow the Node.js callback convention, it needs to be promisified manually.
-    const exists = await new Promise((fulfill) => fs.exists(sitePath, fulfill));
-    if (!exists) {
-        await fs.mkdirAsync(sitePath);
-    }
-
+    await mkdirpAsync(sitePath);
     await ncpAsync(skeletonPath, sitePath);
     console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
 
@@ -59,7 +56,6 @@ async function init(sitePath) {
 }
 
 function config(sitePath) {
-    const clc = cliColor();
     const manifest = path.join(sitePath, 'harmonic.json');
 
     return new Promise((fulfill, reject) => {
@@ -138,8 +134,7 @@ function newFile(passedPath, type, title, autoOpen) {
         throw new MissingFileError();
     }
 
-    var clc = cliColor(),
-        langs = getConfig(sitePath).i18n.languages,
+    var langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
             'layout: ' + type + '\n' +
             'title: ' + title + '\n' +
@@ -155,11 +150,9 @@ function newFile(passedPath, type, title, autoOpen) {
         filename = titleToFilename(title);
 
     langs.forEach((lang) => {
-        let fileLangDir = path.join(filedir, lang);
-        let fileW = path.join(fileLangDir, filename);
-        if (!fs.existsSync(fileLangDir)) {
-            fs.mkdirSync(fileLangDir);
-        }
+        const fileLangDir = path.join(filedir, lang);
+        const fileW = path.join(fileLangDir, filename);
+        mkdirp.sync(fileLangDir);
         fs.writeFileSync(fileW, template);
         if (autoOpen) {
             openFile('text', sitePath, fileW);
@@ -173,8 +166,6 @@ function newFile(passedPath, type, title, autoOpen) {
 }
 
 function run(passedPath, port, autoOpen) {
-    let clc = cliColor();
-
     const sitePath = findHarmonicRoot(passedPath);
 
     if (!sitePath) {
@@ -182,8 +173,7 @@ function run(passedPath, port, autoOpen) {
         throw new MissingFileError();
     }
 
-
-    let file = new Server(path.join(sitePath, 'public'));
+    const file = new Server(path.join(sitePath, 'public'));
 
     console.log(clc.info('Harmonic site is running on http://localhost:' + port));
     if (autoOpen) {

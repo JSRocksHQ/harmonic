@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { promisify/*, promisifyAll*/ } from 'bluebird';
 import nunjucks from 'nunjucks';
 import permalinks from 'permalinks';
 import MkMeta from 'marked-metadata';
@@ -11,6 +12,8 @@ import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
 import { cliColor, getConfig } from './helpers';
 import Theme from './theme';
+const mkdirpAsync = promisify(mkdirp);
+const ncpAsync = promisify(ncp);
 
 const clc = cliColor();
 const rMarkdownExt = /\.(?:md|markdown)$/;
@@ -71,10 +74,8 @@ export default class Harmonic {
 
     createPublicFolder() {
         let publicDirPath = path.join(this.sitePath, 'public');
-        if (!fs.existsSync(publicDirPath)) {
-            fs.mkdirSync(publicDirPath);
-            console.log(clc.info('Successfully generated public folder'));
-        }
+        mkdirp.sync(publicDirPath);
+        console.log(clc.info('Successfully generated public folder'));
     }
 
     async compileCSS() {
@@ -261,38 +262,15 @@ export default class Harmonic {
     }
 
     async copyThemeResources() {
-        await new Promise((resolve, reject) => {
-            const curTemplate = this.theme.themePath;
-            ncp(path.join(curTemplate, 'resources'), path.join(this.sitePath, 'public'), (err) => {
-                if (err) {
-                    throw new Error(`Harmonic failed to copy the theme's resources.`);
-                }
-                resolve();
-            });
-        });
-
+        await ncpAsync(path.join(this.theme.themePath, 'resources'), path.join(this.sitePath, 'public'));
         console.log(clc.info('Theme resources copied'));
     }
 
     async copyUserResources() {
-        await new Promise((resolve, reject) => {
-            ncp(path.join(this.sitePath, 'resources'), path.join(this.sitePath, 'public'), (err) => {
-                if (err) {
-                    // no need to throw error. The user might just not have a resources folder.
-                    // I am not checking for its presence with fs.exists and fs.existsSync because
-                    // node docs says it will be deprecated. Their advise is to try to use the file/folder
-                    // and handle the possible error.
-                    //
-                    // We'll still log the error to output though...
-                    console.log(clc.warn(`Harmonic did not copy any user resources.`));
-                } else {
-                    console.log(clc.info(`User resources copied`));
-                }
-                resolve();
-            });
-        });
-
-
+        const userResourcesPath = path.join(this.sitePath, 'resources');
+        await mkdirpAsync(userResourcesPath);
+        await ncpAsync(userResourcesPath, path.join(this.sitePath, 'public'));
+        console.log(clc.info(`User resources copied`));
     }
 
     async generatePosts(files) {
@@ -521,11 +499,8 @@ export default class Harmonic {
 
         for (const lang of this.config.i18n.languages) {
             const langPath = path.join(this.sitePath, pagespath, lang);
-            if (!fs.existsSync(langPath)) {
-                fs.mkdirSync(langPath);
-            } else {
-                files[lang] = fs.readdirSync(langPath).filter((p) => rMarkdownExt.test(p));
-            }
+            mkdirp.sync(langPath);
+            files[lang] = fs.readdirSync(langPath).filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
