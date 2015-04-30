@@ -53,10 +53,9 @@ program
     .command('run [port] [path]')
     .option('--no-open', 'Don\'t open a new browser window')
     .description('Run you static site locally. Port is optional')
-    .action((port = 9356, path = '.', { open: autoOpen }) => {
-        build(path).then(function() {
-            run(path, port, autoOpen);
-        });
+    .action(async (port = 9356, path = '.', { open: autoOpen }) => {
+        await build(path);
+        run(path, port, autoOpen);
     });
 
 program.on('*', (args) => {

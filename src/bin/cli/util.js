@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { promisify, promisifyAll } from 'bluebird';
-import { createServer } from 'http';
-import { Server } from 'node-static';
+import { promisify, promisifyAll, fromNode as promiseFromNode } from 'bluebird';
+import chokidar from 'chokidar';
+import browserSync from 'browser-sync';
 import co from 'co';
 import prompt from 'co-prompt';
 import mkdirp from 'mkdirp';
@@ -12,6 +12,7 @@ import { load as npmLoad } from 'npm';
 import dd from 'dedent';
 import { rootdir, postspath, pagespath } from '../config';
 import { cliColor, getConfig, titleToFilename, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from '../helpers';
+import { build } from '../core';
 promisifyAll(fs);
 const npmLoadAsync = promisify(npmLoad);
 const mkdirpAsync = promisify(mkdirp);
@@ -25,6 +26,7 @@ function openFile(type, sitePath, file) {
     if (type === 'file') {
         open(path.resolve(sitePath, file));
     } else {
+        // TODO unless we add a --no-watch flag, we can just delegate this to browser-sync
         open(file);
     }
 }
@@ -172,7 +174,7 @@ function newFile(passedPath, type, title, autoOpen) {
     ));
 }
 
-function run(passedPath, port, autoOpen) {
+async function run(passedPath, port, autoOpen) {
     const sitePath = findHarmonicRoot(passedPath);
 
     if (!sitePath) {
@@ -180,24 +182,78 @@ function run(passedPath, port, autoOpen) {
         throw new MissingFileError();
     }
 
-    const file = new Server(path.join(sitePath, 'public'));
+    let isBuilding = false;
+    let pendingBuild = false;
+    const bs = browserSync.create();
 
-    console.log(clc.info('Harmonic site is running on http://localhost:' + port));
-    if (autoOpen) {
-        openFile('uri', sitePath, 'http://localhost:' + port);
+    await promiseFromNode((cb) => {
+        bs.init({
+            server: {
+                baseDir: path.join(sitePath, 'public'),
+                middleware: [
+                    (req, res, next) => {
+                        if (isBuilding) {
+                            // TODO deliver browser-sync snippet when requesting a html file
+                            res.writeHead(503);
+                            res.end();
+                            return;
+                        }
+                        next();
+                    }
+                ]
+            },
+            port,
+            open: autoOpen
+        }, cb);
+    });
+
+    console.log(clc.info(`Harmonic site is running.`));
+
+    async function buildSite() {
+        try {
+            await build(sitePath);
+            if (!pendingBuild) {
+                bs.reload();
+            }
+        } catch (err) {
+            console.error(clc.error('Build error:'));
+            console.error(err.stack || err.toString());
+        }
+
+        if (pendingBuild) {
+            pendingBuild = false;
+            await buildSite();
+        }
     }
-    // Create the server
-    createServer((request, response) => {
-        request.addListener('end', function() {
-            file.serve(request, response, (err) => {
-                if (err) {
-                    console.log(clc.error(
-                        'Error serving ' + request.url + ' - ' + err.message
-                    ));
-                    response.writeHead(err.status, err.headers);
-                    response.end();
-                }
-            });
-        }).resume();
-    }).listen(port);
+
+    async function doBuildSite() {
+        // TODO watcher.unwatch and watcher.add when selected theme changes in harmonic.json
+        if (isBuilding) {
+            pendingBuild = true;
+            return;
+        }
+
+        isBuilding = true;
+        await buildSite();
+        isBuilding = false;
+    }
+
+    const watcher = chokidar.watch(['src', 'harmonic.json', path.join('node_modules', getConfig(sitePath).theme)], {
+        // interval: 1000,
+        // atomic: false,
+        ignoreInitial: true,
+        // ignorePermissionErrors: true,
+        cwd: sitePath
+    })
+        .on('add', doBuildSite)
+        // .on('addDir', doBuildSite)
+        .on('change', doBuildSite)
+        .on('unlink', doBuildSite)
+        // .on('unlinkDir', doBuildSite)
+        .on('error', (error) => console.error('Error occurred', error));
+
+    await promiseFromNode((cb) => watcher.on('ready', cb));
+    console.log(clc.info('Watching Harmonic project for changes...'));
+
+    return { watcher };
 }
