@@ -70,7 +70,7 @@ export default class Harmonic {
 
     clean() {
         console.log(clc.warn('Cleaning up...'));
-        rimrafSync(path.join(this.sitePath, 'public'));
+        rimrafSync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
     }
 
     createPublicFolder() {

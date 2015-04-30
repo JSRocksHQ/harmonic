@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { promisify, promisifyAll, fromNode as promiseFromNode, delay } from 'bluebird';
+import { promisify, promisifyAll, fromNode as promiseFromNode } from 'bluebird';
 import chokidar from 'chokidar';
 import browserSync from 'browser-sync';
 import co from 'co';
@@ -182,48 +182,60 @@ async function run(passedPath, port, autoOpen) {
         throw new MissingFileError();
     }
 
+    let isBuilding = false;
+    let pendingBuild = false;
     const bs = browserSync.create();
+
     await promiseFromNode((cb) => {
         bs.init({
             server: {
-                baseDir: path.join(sitePath, 'public')
+                baseDir: path.join(sitePath, 'public'),
+                middleware: [
+                    (req, res, next) => {
+                        if (isBuilding) {
+                            // TODO deliver browser-sync snippet when requesting a html file
+                            res.writeHead(503);
+                            res.end();
+                            return;
+                        }
+                        next();
+                    }
+                ]
             },
             port,
             open: autoOpen
         }, cb);
     });
 
-    console.log(clc.info(`Harmonic site is running on http://localhost:${port}`));
+    console.log(clc.info(`Harmonic site is running.`));
 
-    let isBuilding = false;
-    let pendingBuild = false;
+    async function buildSite() {
+        try {
+            await build(sitePath);
+            if (!pendingBuild) {
+                bs.reload();
+            }
+        } catch (err) {
+            console.error(clc.error('Build error:'));
+            console.error(err.stack || err.toString());
+        }
 
-    async function buildSite(event, path) {
-        // TODO check why the `change` event is firing twice sometimes
-        // TODO rimraf sometimes fails while browser is reloading
+        if (pendingBuild) {
+            pendingBuild = false;
+            await buildSite();
+        }
+    }
+
+    async function doBuildSite() {
         // TODO watcher.unwatch and watcher.add when selected theme changes in harmonic.json
-        console.log(event, path); // DEBUG
-
         if (isBuilding) {
             pendingBuild = true;
             return;
         }
 
         isBuilding = true;
-        try {
-            await build(sitePath);
-            bs.reload();
-            await delay(1000);
-        } catch (err) {
-            console.error(clc.error('Build error:'));
-            console.error(err.stack || err.toString());
-        }
+        await buildSite();
         isBuilding = false;
-
-        if (pendingBuild) {
-            pendingBuild = false;
-            buildSite('pending', '');
-        }
     }
 
     const watcher = chokidar.watch(['src', 'harmonic.json', path.join('node_modules', getConfig(sitePath).theme)], {
@@ -233,11 +245,11 @@ async function run(passedPath, port, autoOpen) {
         // ignorePermissionErrors: true,
         cwd: sitePath
     })
-        .on('add', buildSite.bind(null, 'add'))
-        // .on('addDir', buildSite)
-        .on('change', buildSite.bind(null, 'change'))
-        .on('unlink', buildSite.bind(null, 'unlink'))
-        // .on('unlinkDir', buildSite)
+        .on('add', doBuildSite)
+        // .on('addDir', doBuildSite)
+        .on('change', doBuildSite)
+        .on('unlink', doBuildSite)
+        // .on('unlinkDir', doBuildSite)
         .on('error', (error) => console.error('Error occurred', error));
 
     await promiseFromNode((cb) => watcher.on('ready', cb));
