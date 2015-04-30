@@ -1,8 +1,8 @@
-# <a name="harmonic"><img src="https://cdn.rawgit.com/jsrockshq/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450"></a>
-[![Build Status](https://travis-ci.org/jsrockshq/harmonic.svg?branch=master)](https://travis-ci.org/jsrockshq/harmonic)
-[![Dependency Status](http://img.shields.io/david/jsrockshq/harmonic.svg)](https://david-dm.org/jsrockshq/harmonic)
-[![devDependency Status](http://img.shields.io/david/dev/jsrockshq/harmonic.svg)](https://david-dm.org/jsrockshq/harmonic#info=devDependencies)e
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jsrockshq/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# <a name="harmonic"><img src="https://cdn.rawgit.com/JSRocksHQ/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450"></a>
+[![Build Status](https://travis-ci.org/JSRocksHQ/harmonic.svg?branch=master)](https://travis-ci.org/JSRocksHQ/harmonic)
+[![Dependency Status](http://img.shields.io/david/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic)
+[![devDependency Status](http://img.shields.io/david/dev/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic#info=devDependencies)e
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/JSRocksHQ/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Please note that this project is currently under development.**  
 **Contributions are very welcome!**
