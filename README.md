@@ -124,6 +124,8 @@ You can specify a port, by default Harmonic will use the 9356 port:
 harmonic run 9090
 ```
 
+Harmonic will also watch all files in the `src` directory and in the currently selected theme, triggering a new build and reloading the opened pages when changes are detected.
+
 ## Help
 ```shell
 harmonic --help
