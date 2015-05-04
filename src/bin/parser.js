@@ -291,7 +291,7 @@ export default class Harmonic {
                         replacement: lang
                     }]
                 };
-                if (config.i18n.default === lang) {
+                if (config.i18n.default === lang && config.posts_permalink.match(':language')) {
                     options.structure = config.posts_permalink.split(':language/')[1];
                     postPath = permalinks(options);
                 } else {
