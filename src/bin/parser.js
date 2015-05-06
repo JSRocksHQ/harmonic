@@ -6,7 +6,7 @@ import permalinks from 'permalinks';
 import MkMeta from 'marked-metadata';
 import mkdirp from 'mkdirp';
 import { ncp } from 'ncp';
-import { sync as rimrafSync } from 'rimraf';
+import rimraf from 'rimraf';
 import stylus from 'stylus';
 import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
@@ -15,6 +15,7 @@ import Theme from './theme';
 promisifyAll(fs);
 const mkdirpAsync = promisify(mkdirp);
 const ncpAsync = promisify(ncp);
+const rimrafAsync = promisify(rimraf);
 
 const clc = cliColor();
 const rMarkdownExt = /\.(?:md|markdown)$/;
@@ -68,14 +69,14 @@ export default class Harmonic {
         return Promise.resolve();
     }
 
-    clean() {
+    async clean() {
         console.log(clc.warn('Cleaning up...'));
-        rimrafSync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
+        await rimrafAsync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
     }
 
-    createPublicFolder() {
+    async createPublicFolder() {
         let publicDirPath = path.join(this.sitePath, 'public');
-        mkdirp.sync(publicDirPath);
+        await mkdirpAsync(publicDirPath);
         console.log(clc.info('Successfully generated public folder'));
     }
 
@@ -125,14 +126,14 @@ export default class Harmonic {
         await compiler[currentCSSCompiler]();
     }
 
-    compileJS(postsMetadata, pagesMetadata) {
-        const harmonicClient = fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`)
-            .toString()
-            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
-            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
+    async compileJS(postsMetadata, pagesMetadata) {
+        let harmonicClient = await fs.readFileAsync(`${rootdir}/bin/client/harmonic-client.js`);
+        harmonicClient = harmonicClient.toString()
+        .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
+        .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
+        .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
-        fs.writeFileSync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
+        await fs.writeFileAsync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
 
     generateTagsPages(postsMetadata) {
@@ -439,33 +440,33 @@ export default class Harmonic {
         return pages;
     }
 
-    getPostFiles() {
+    async getPostFiles() {
         const files = {};
 
         for (const lang of this.config.i18n.languages) {
-            files[lang] = fs.readdirSync(path.join(this.sitePath, postspath, lang))
-                .filter((p) => rMarkdownExt.test(p));
+            files[lang] = await fs.readdirAsync(path.join(this.sitePath, postspath, lang));
+            files[lang] = files[lang].filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
     }
 
-    getPageFiles() {
+    async getPageFiles() {
         const files = {};
 
         for (const lang of this.config.i18n.languages) {
             const langPath = path.join(this.sitePath, pagespath, lang);
-            mkdirp.sync(langPath);
-            files[lang] = fs.readdirSync(langPath).filter((p) => rMarkdownExt.test(p));
+            await mkdirpAsync(langPath);
+            files[lang] = await fs.readdirAsync(langPath).filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
     }
 
-    generateRSS(postsMetadata, pagesMetadata) {
+    async generateRSS(postsMetadata, pagesMetadata) {
         var _posts = null,
             nunjucksEnv = this.nunjucksEnv,
-            rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
+            rssTemplate = await fs.readFileAsync(`${__dirname}/resources/rss.xml`),
             rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
             rssContent = '',
             rssPath = null,
@@ -504,8 +505,8 @@ export default class Harmonic {
                 pages: pagesMetadata
             });
 
-            mkdirp.sync(rssPath);
-            fs.writeFileSync(`${rssPath}/rss.xml`, rssContent);
+            await mkdirpAsync(rssPath);
+            await fs.writeFileAsync(`${rssPath}/rss.xml`, rssContent);
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
         }
     }

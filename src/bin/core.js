@@ -14,16 +14,16 @@ async function build(passedPath) {
     const harmonic = new Harmonic(sitePath, { quiet: false });
 
     harmonic.start(); // useless, remove?
-    harmonic.clean();
-    harmonic.createPublicFolder();
+    await harmonic.clean();
+    await harmonic.createPublicFolder();
 
     await harmonic.compileCSS();
 
-    const pagesMetadata = await harmonic.generatePages(harmonic.getPageFiles());
-    const postsMetadata = await harmonic.generatePosts(harmonic.getPostFiles());
+    const pagesMetadata = await harmonic.generatePages(await harmonic.getPageFiles());
+    const postsMetadata = await harmonic.generatePosts(await harmonic.getPostFiles());
 
-    harmonic.generateRSS(postsMetadata, pagesMetadata);
-    harmonic.compileJS(postsMetadata, pagesMetadata);
+    await harmonic.generateRSS(postsMetadata, pagesMetadata);
+    await harmonic.compileJS(postsMetadata, pagesMetadata);
     harmonic.generateIndex(postsMetadata, pagesMetadata);
     harmonic.generateTagsPages(postsMetadata);
 
