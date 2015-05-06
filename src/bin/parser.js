@@ -125,14 +125,14 @@ export default class Harmonic {
         await compiler[currentCSSCompiler]();
     }
 
-    compileJS(postsMetadata, pagesMetadata) {
-        const harmonicClient = fs.readFileSync(`${rootdir}/bin/client/harmonic-client.js`)
-            .toString()
-            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
-            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
-            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
+    async compileJS(postsMetadata, pagesMetadata) {
+        let harmonicClient = await fs.readFileAsync(`${rootdir}/bin/client/harmonic-client.js`);
+        harmonicClient = harmonicClient.toString()
+        .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
+        .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
+        .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
-        fs.writeFileSync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
+        await fs.writeFileSync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
 
     generateTagsPages(postsMetadata) {
