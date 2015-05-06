@@ -1,5 +1,5 @@
 import { resolve, join } from 'path';
-import { readFileSync, statSync } from 'fs';
+import { readFileSync } from 'fs';
 import dd from 'dedent';
 
 export default class Theme {
