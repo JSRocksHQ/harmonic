@@ -15,7 +15,7 @@ async function build(passedPath) {
 
     harmonic.start(); // useless, remove?
     harmonic.clean();
-    harmonic.createPublicFolder();
+    await harmonic.createPublicFolder();
 
     await harmonic.compileCSS();
 

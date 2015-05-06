@@ -73,9 +73,9 @@ export default class Harmonic {
         rimrafSync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
     }
 
-    createPublicFolder() {
+    async createPublicFolder() {
         let publicDirPath = path.join(this.sitePath, 'public');
-        mkdirp.sync(publicDirPath);
+        await mkdirpAsync(publicDirPath);
         console.log(clc.info('Successfully generated public folder'));
     }
 
