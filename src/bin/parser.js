@@ -132,7 +132,7 @@ export default class Harmonic {
         .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
         .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
-        await fs.writeFileSync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
+        await fs.writeFileAsync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
 
     generateTagsPages(postsMetadata) {
