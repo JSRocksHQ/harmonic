@@ -450,13 +450,13 @@ export default class Harmonic {
         return files;
     }
 
-    getPageFiles() {
+    async getPageFiles() {
         const files = {};
 
         for (const lang of this.config.i18n.languages) {
             const langPath = path.join(this.sitePath, pagespath, lang);
-            mkdirp.sync(langPath);
-            files[lang] = fs.readdirSync(langPath).filter((p) => rMarkdownExt.test(p));
+            await mkdirpAsync(langPath);
+            files[lang] = await fs.readdirAsync(langPath).filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
