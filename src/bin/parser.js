@@ -6,7 +6,7 @@ import permalinks from 'permalinks';
 import MkMeta from 'marked-metadata';
 import mkdirp from 'mkdirp';
 import { ncp } from 'ncp';
-import { sync as rimrafSync } from 'rimraf';
+import rimraf from 'rimraf';
 import stylus from 'stylus';
 import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
@@ -15,6 +15,7 @@ import Theme from './theme';
 promisifyAll(fs);
 const mkdirpAsync = promisify(mkdirp);
 const ncpAsync = promisify(ncp);
+const rimrafAsync = promisify(rimraf);
 
 const clc = cliColor();
 const rMarkdownExt = /\.(?:md|markdown)$/;
@@ -68,9 +69,9 @@ export default class Harmonic {
         return Promise.resolve();
     }
 
-    clean() {
+    async clean() {
         console.log(clc.warn('Cleaning up...'));
-        rimrafSync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
+        await rimrafAsync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
     }
 
     async createPublicFolder() {

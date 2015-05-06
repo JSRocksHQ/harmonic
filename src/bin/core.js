@@ -14,7 +14,7 @@ async function build(passedPath) {
     const harmonic = new Harmonic(sitePath, { quiet: false });
 
     harmonic.start(); // useless, remove?
-    harmonic.clean();
+    await harmonic.clean();
     await harmonic.createPublicFolder();
 
     await harmonic.compileCSS();
