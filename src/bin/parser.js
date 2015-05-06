@@ -462,10 +462,10 @@ export default class Harmonic {
         return files;
     }
 
-    generateRSS(postsMetadata, pagesMetadata) {
+    async generateRSS(postsMetadata, pagesMetadata) {
         var _posts = null,
             nunjucksEnv = this.nunjucksEnv,
-            rssTemplate = fs.readFileSync(`${__dirname}/resources/rss.xml`),
+            rssTemplate = await fs.readFileAsync(`${__dirname}/resources/rss.xml`),
             rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
             rssContent = '',
             rssPath = null,
@@ -504,8 +504,8 @@ export default class Harmonic {
                 pages: pagesMetadata
             });
 
-            mkdirp.sync(rssPath);
-            fs.writeFileSync(`${rssPath}/rss.xml`, rssContent);
+            await mkdirpAsync(rssPath);
+            await fs.writeFileAsync(`${rssPath}/rss.xml`, rssContent);
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
         }
     }

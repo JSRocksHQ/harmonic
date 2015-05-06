@@ -22,7 +22,7 @@ async function build(passedPath) {
     const pagesMetadata = await harmonic.generatePages(harmonic.getPageFiles());
     const postsMetadata = await harmonic.generatePosts(harmonic.getPostFiles());
 
-    harmonic.generateRSS(postsMetadata, pagesMetadata);
+    await harmonic.generateRSS(postsMetadata, pagesMetadata);
     await harmonic.compileJS(postsMetadata, pagesMetadata);
     harmonic.generateIndex(postsMetadata, pagesMetadata);
     harmonic.generateTagsPages(postsMetadata);
