@@ -20,7 +20,7 @@ async function build(passedPath) {
     await harmonic.compileCSS();
 
     const pagesMetadata = await harmonic.generatePages(harmonic.getPageFiles());
-    const postsMetadata = await harmonic.generatePosts(harmonic.getPostFiles());
+    const postsMetadata = await harmonic.generatePosts(await harmonic.getPostFiles());
 
     await harmonic.generateRSS(postsMetadata, pagesMetadata);
     await harmonic.compileJS(postsMetadata, pagesMetadata);

@@ -439,12 +439,12 @@ export default class Harmonic {
         return pages;
     }
 
-    getPostFiles() {
+    async getPostFiles() {
         const files = {};
 
         for (const lang of this.config.i18n.languages) {
-            files[lang] = fs.readdirSync(path.join(this.sitePath, postspath, lang))
-                .filter((p) => rMarkdownExt.test(p));
+            files[lang] = await fs.readdirAsync(path.join(this.sitePath, postspath, lang));
+            files[lang] = files[lang].filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
