@@ -61,7 +61,7 @@ function getConfig(sitePath) {
 }
 
 function titleToFilename(title) {
-    return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-*|-*$/g, '').toLowerCase() + '.md';
+    return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() + '.md';
 }
 
 // Note: class declarations are not hoisted, so this can't be listed in the exports statement at the top of this file.
