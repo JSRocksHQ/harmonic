@@ -241,125 +241,102 @@ export default class Harmonic {
             tokens = [
                 config.header_tokens ? config.header_tokens[0] : '<!--',
                 config.header_tokens ? config.header_tokens[1] : '-->'
-            ],
-            writePromises = [];
+            ];
 
-        langs.forEach((lang) => {
-            files[lang].forEach((file) => {
-                var metadata, post, postCropped, filename, checkDate, postPath, categories,
-                    _post, postHTMLFile, postDate, month, year, options,
-                    md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
+        await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
+            var metadata, post, postCropped, filename, checkDate, postPath, categories,
+                _post, postHTMLFile, postDate, month, year, options,
+                md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
 
-                md.defineTokens(tokens[0], tokens[1]);
-                metadata = Helper.normalizeMetaData(md.metadata());
-                post = Helper.normalizeContent(md.markdown());
-                postCropped = md.markdown({
-                    crop: '<!--more-->'
-                });
-
-                filename = path.extname(file) === '.md' ?
-                    path.basename(file, '.md') :
-                    path.basename(file, '.markdown');
-
-                checkDate = new Date(filename.substr(0, 10));
-
-                filename = isNaN(checkDate.getDate()) ?
-                    filename :
-                    filename.substr(11, filename.length);
-
-                postPath = null;
-                categories = metadata.categories.split(',');
-                postDate = new Date(metadata.date);
-                year = postDate.getFullYear();
-                month = ('0' + (postDate.getMonth() + 1)).slice(-2);
-
-                // If is the default language, generate in the root path
-                options = {
-                    replacements: [{
-                        pattern: ':year',
-                        replacement: year
-                    },
-                    {
-                        pattern: ':month',
-                        replacement: month
-                    },
-                    {
-                        pattern: ':title',
-                        replacement: filename
-                    },
-                    {
-                        pattern: ':language',
-                        replacement: lang
-                    }]
-                };
-                if (config.i18n.default === lang && config.posts_permalink.match(':language')) {
-                    options.structure = config.posts_permalink.split(':language/')[1];
-                    postPath = permalinks(options);
-                } else {
-                    options.structure = config.posts_permalink;
-                    postPath = permalinks(options);
-                }
-
-                metadata.categories = categories;
-                metadata.content = postCropped;
-                metadata.file = postspath + file;
-                metadata.filename = filename;
-                metadata.link = postPath;
-                metadata.lang = lang;
-                metadata.default_lang = config.i18n.default === lang ? false : true;
-                metadata.date = new Date(metadata.date);
-
-                _post = {
-                    content: post,
-                    metadata: metadata
-                };
-
-                postHTMLFile = postsTemplateNJ
-                    .render({
-                        post: _post,
-                        config: config
-                    })
-                    .replace(/<!--[\s\S]*?-->/g, '');
-
-                if (metadata.published && metadata.published === 'false') {
-                    return;
-                }
-
-                if (metadata.date && metadata.date > currentDate) {
-                    console.log(clc.info(`Skipping future post ${metadata.filename}`));
-                    return;
-                }
-
-                writePromises.push(new Promise((resolve, reject) => {
-                    mkdirp(path.join(this.sitePath, 'public', postPath), (err) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-                        // write post html file
-                        fs.writeFile(path.join(this.sitePath, 'public', postPath, 'index.html'),
-                            postHTMLFile, function(err) {
-                                if (err) {
-                                    reject(err);
-                                    return;
-                                }
-                                console.log(
-                                    clc.info('Successfully generated post ' + postPath)
-                                );
-                                resolve();
-                            }
-                        );
-                    });
-                }));
-
-                if (posts[lang]) {
-                    posts[lang].push(metadata);
-                } else {
-                    posts[lang] = [metadata];
-                }
+            md.defineTokens(tokens[0], tokens[1]);
+            metadata = Helper.normalizeMetaData(md.metadata());
+            post = Helper.normalizeContent(md.markdown());
+            postCropped = md.markdown({
+                crop: '<!--more-->'
             });
-        });
-        await* writePromises;
+
+            filename = path.extname(file) === '.md' ?
+                path.basename(file, '.md') :
+                path.basename(file, '.markdown');
+
+            checkDate = new Date(filename.substr(0, 10));
+
+            filename = isNaN(checkDate.getDate()) ?
+                filename :
+                filename.substr(11, filename.length);
+
+            postPath = null;
+            categories = metadata.categories.split(',');
+            postDate = new Date(metadata.date);
+            year = postDate.getFullYear();
+            month = ('0' + (postDate.getMonth() + 1)).slice(-2);
+
+            // If is the default language, generate in the root path
+            options = {
+                replacements: [{
+                    pattern: ':year',
+                    replacement: year
+                },
+                {
+                    pattern: ':month',
+                    replacement: month
+                },
+                {
+                    pattern: ':title',
+                    replacement: filename
+                },
+                {
+                    pattern: ':language',
+                    replacement: lang
+                }]
+            };
+            if (config.i18n.default === lang && config.posts_permalink.match(':language')) {
+                options.structure = config.posts_permalink.split(':language/')[1];
+                postPath = permalinks(options);
+            } else {
+                options.structure = config.posts_permalink;
+                postPath = permalinks(options);
+            }
+
+            metadata.categories = categories;
+            metadata.content = postCropped;
+            metadata.file = postspath + file;
+            metadata.filename = filename;
+            metadata.link = postPath;
+            metadata.lang = lang;
+            metadata.default_lang = config.i18n.default === lang ? false : true;
+            metadata.date = new Date(metadata.date);
+
+            _post = {
+                content: post,
+                metadata: metadata
+            };
+
+            postHTMLFile = postsTemplateNJ
+                .render({
+                    post: _post,
+                    config: config
+                })
+                .replace(/<!--[\s\S]*?-->/g, '');
+
+            if (metadata.published && metadata.published === 'false') {
+                return;
+            }
+
+            if (metadata.date && metadata.date > currentDate) {
+                console.log(clc.info(`Skipping future post ${metadata.filename}`));
+                return;
+            }
+
+            await mkdirpAsync(path.join(this.sitePath, 'public', postPath));
+
+            // write post html file
+            await fs.writeFileAsync(path.join(this.sitePath, 'public', postPath, 'index.html'), postHTMLFile);
+            console.log(clc.info('Successfully generated post ' + postPath));
+
+            posts[lang] = posts[lang] || [];
+            posts[lang].push(metadata);
+        })));
         return posts;
     }
 
@@ -370,73 +347,55 @@ export default class Harmonic {
             config.header_tokens ? config.header_tokens[0] : '<!--',
             config.header_tokens ? config.header_tokens[1] : '-->'
         ];
-        const writePromises = [];
         const pages = [];
 
-        langs.forEach((lang) => {
-            files[lang].forEach((file) => {
-                var metadata, pagePermalink, _page, pageHTMLFile,
-                    pagePath = path.join(this.sitePath, pagespath, lang, file),
-                    pageTpl = this.theme.getFileContents('page.html'),
-                    pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),
-                    md = new MkMeta(pagePath),
-                    pageSrc = '',
-                    filename = path.extname(file) === '.md' ?
-                        path.basename(file, '.md') :
-                        path.basename(file, '.markdown');
+        await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
+            var metadata, pagePermalink, _page, pageHTMLFile,
+                pagePath = path.join(this.sitePath, pagespath, lang, file),
+                pageTpl = this.theme.getFileContents('page.html'),
+                pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),
+                md = new MkMeta(pagePath),
+                pageSrc = '',
+                filename = path.extname(file) === '.md' ?
+                    path.basename(file, '.md') :
+                    path.basename(file, '.markdown');
 
-                md.defineTokens(tokens[0], tokens[1]);
+            md.defineTokens(tokens[0], tokens[1]);
 
-                // Markdown extra
-                metadata = md.metadata();
-                pagePermalink = permalinks(config.pages_permalink, {
-                    title: filename
-                });
-
-                _page = {
-                    content: md.markdown(),
-                    metadata: metadata
-                };
-
-                pageHTMLFile = pageTplNJ.render({
-                    page: _page,
-                    config: config
-                });
-
-                // Removing header metadata
-                pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
-
-                metadata.content = pageHTMLFile;
-                metadata.file = postspath + file; // TODO check whether this needs sitePath
-                metadata.filename = filename;
-                metadata.link = `/${filename}.html`;
-                metadata.date = new Date(metadata.date);
-                pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
-
-                pages.push(metadata);
-
-                writePromises.push(new Promise((resolve, reject) => {
-                    mkdirp(path.join(this.sitePath, 'public', pagePermalink), (err) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-                        // write page html file
-                        fs.writeFile(pageSrc, pageHTMLFile, (err) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-                            console.log(
-                                clc.info(`Successfully generated page ${pagePermalink}`)
-                            );
-                            resolve();
-                        });
-                    });
-                }));
+            // Markdown extra
+            metadata = md.metadata();
+            pagePermalink = permalinks(config.pages_permalink, {
+                title: filename
             });
-        });
-        await* writePromises;
+
+            _page = {
+                content: md.markdown(),
+                metadata: metadata
+            };
+
+            pageHTMLFile = pageTplNJ.render({
+                page: _page,
+                config: config
+            });
+
+            // Removing header metadata
+            pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+
+            metadata.content = pageHTMLFile;
+            metadata.file = postspath + file; // TODO check whether this needs sitePath
+            metadata.filename = filename;
+            metadata.link = `/${filename}.html`;
+            metadata.date = new Date(metadata.date);
+            pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
+
+            pages.push(metadata);
+
+            await mkdirpAsync(path.join(this.sitePath, 'public', pagePermalink));
+
+            // write page html file
+            await fs.writeFileAsync(pageSrc, pageHTMLFile);
+            console.log(clc.info(`Successfully generated page ${pagePermalink}`));
+        })));
         return pages;
     }
 
@@ -511,4 +470,3 @@ export default class Harmonic {
         }
     }
 }
-
