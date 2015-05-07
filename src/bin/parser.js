@@ -22,27 +22,21 @@ const rMarkdownExt = /\.(?:md|markdown)$/;
 
 const Helper = {
 
-    sort: function _sort(a, b) {
+    sort(a, b) {
         return new Date(b.date) - new Date(a.date);
     },
 
     sortPosts: function(posts) {
-        var p,
-            newPosts = {};
-
-        for (p in posts) {
-            posts[p].sort(Helper.sort);
-            newPosts[p] = posts[p];
-        }
-        return newPosts;
+        Object.values(posts).forEach((postsArray) => postsArray.sort(Helper.sort));
+        return posts;
     },
 
-    normalizeMetaData: function(data) {
+    normalizeMetaData(data) {
         data.title = data.title.replace(/\"/g, '');
         return data;
     },
 
-    normalizeContent: function(data) {
+    normalizeContent(data) {
         return data;
     }
 };
@@ -117,7 +111,7 @@ export default class Harmonic {
 
     async compileJS(postsMetadata, pagesMetadata) {
         const harmonicClient = (await fs.readFileAsync(`${rootdir}/bin/client/harmonic-client.js`, { encoding: 'utf8' }))
-            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
+            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(postsMetadata))
             .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
             .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
@@ -325,7 +319,7 @@ export default class Harmonic {
             posts[lang] = posts[lang] || [];
             posts[lang].push(metadata);
         })));
-        return posts;
+        return Helper.sortPosts(posts);
     }
 
     async generatePages(files) {
