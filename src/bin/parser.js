@@ -64,20 +64,9 @@ export default class Harmonic {
         this.nunjucksEnv = nunjucks.configure(this.theme.themePath, { watch: false });
     }
 
-    start() {
-        console.log(clc.info('starting the parser'));
-        return Promise.resolve();
-    }
-
     async clean() {
         console.log(clc.warn('Cleaning up...'));
         await rimrafAsync(path.join(this.sitePath, 'public'), { maxBusyTries: 20 });
-    }
-
-    async createPublicFolder() {
-        let publicDirPath = path.join(this.sitePath, 'public');
-        await mkdirpAsync(publicDirPath);
-        console.log(clc.info('Successfully generated public folder'));
     }
 
     async compileCSS() {
@@ -127,11 +116,10 @@ export default class Harmonic {
     }
 
     async compileJS(postsMetadata, pagesMetadata) {
-        let harmonicClient = await fs.readFileAsync(`${rootdir}/bin/client/harmonic-client.js`);
-        harmonicClient = harmonicClient.toString()
-        .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
-        .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
-        .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
+        const harmonicClient = (await fs.readFileAsync(`${rootdir}/bin/client/harmonic-client.js`, { encoding: 'utf8' }))
+            .replace(/__HARMONIC\.POSTS__/g, JSON.stringify(Helper.sortPosts(postsMetadata)))
+            .replace(/__HARMONIC\.PAGES__/g, JSON.stringify(pagesMetadata))
+            .replace(/__HARMONIC\.CONFIG__/g, JSON.stringify(this.config));
 
         await fs.writeFileAsync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
@@ -403,8 +391,8 @@ export default class Harmonic {
         const files = {};
 
         for (const lang of this.config.i18n.languages) {
-            files[lang] = await fs.readdirAsync(path.join(this.sitePath, postspath, lang));
-            files[lang] = files[lang].filter((p) => rMarkdownExt.test(p));
+            files[lang] = (await fs.readdirAsync(path.join(this.sitePath, postspath, lang)))
+                .filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
@@ -416,7 +404,7 @@ export default class Harmonic {
         for (const lang of this.config.i18n.languages) {
             const langPath = path.join(this.sitePath, pagespath, lang);
             await mkdirpAsync(langPath);
-            files[lang] = await fs.readdirAsync(langPath).filter((p) => rMarkdownExt.test(p));
+            files[lang] = (await fs.readdirAsync(langPath)).filter((p) => rMarkdownExt.test(p));
         }
 
         return files;
