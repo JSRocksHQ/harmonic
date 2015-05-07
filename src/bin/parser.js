@@ -149,35 +149,23 @@ export default class Harmonic {
     }
 
     async generateIndex(postsMetadata, pagesMetadata) {
-        var lang,
-            _posts = null,
-            nunjucksEnv = this.nunjucksEnv,
-            indexTemplate = this.theme.getFileContents('index.html'),
-            indexTemplateNJ = nunjucks.compile(indexTemplate, nunjucksEnv),
-            indexContent = '',
-            indexPath = null,
-            config = this.config;
+        const indexTemplateNJ = nunjucks.compile(this.theme.getFileContents('index.html'), this.nunjucksEnv);
+        const config = this.config;
 
-        for (lang in postsMetadata) {
-            postsMetadata[lang].sort(Helper.sort);
+        await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
+            const posts = langPosts.slice(0, config.index_posts || 10);
 
-            _posts = postsMetadata[lang].slice(0, config.index_posts || 10);
-
-            indexContent = indexTemplateNJ.render({
-                posts: _posts,
-                config: config,
+            const indexContent = indexTemplateNJ.render({
+                posts,
+                config,
                 pages: pagesMetadata
             });
 
-            if (config.i18n.default === lang) {
-                indexPath = path.join(this.sitePath, 'public');
-            } else {
-                indexPath = path.join(this.sitePath, 'public', lang);
-            }
+            const indexPath = path.join(this.sitePath, 'public', ...(config.i18n.default === lang ? [] : [lang]));
             await mkdirpAsync(indexPath);
             await fs.writeFileAsync(path.join(indexPath, 'index.html'), indexContent);
             console.log(clc.info(`${lang}/index file successfully created`));
-        }
+        });
     }
 
     async copyThemeResources() {
@@ -385,50 +373,32 @@ export default class Harmonic {
     }
 
     async generateRSS(postsMetadata, pagesMetadata) {
-        var _posts = null,
-            nunjucksEnv = this.nunjucksEnv,
-            rssTemplate = await fs.readFileAsync(`${__dirname}/resources/rss.xml`),
-            rssTemplateNJ = nunjucks.compile(rssTemplate.toString(), nunjucksEnv),
-            rssContent = '',
-            rssPath = null,
-            rssLink = '',
-            rssAuthor = '',
-            config = this.config,
-            lang;
+        const rssTemplate = await fs.readFileAsync(path.join(__dirname, 'resources/rss.xml'), { encoding: 'utf8' });
+        const rssTemplateNJ = nunjucks.compile(rssTemplate, this.nunjucksEnv);
+        const config = this.config;
+        const rssAuthor = config.author_email ? `${config.author_email} ( ${config.author} )` : config.author;
 
-        for (lang in postsMetadata) {
-            postsMetadata[lang].sort(Helper.sort);
-            _posts = postsMetadata[lang].slice(0, config.index_posts || 10);
+        await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
+            const posts = langPosts.slice(0, config.index_posts || 10);
+            const isDefaultLang = config.i18n.default === lang;
+            const rssPath = path.join(this.sitePath, 'public', ...(isDefaultLang ? [] : [lang]));
+            const rssLink = `${config.domain}${isDefaultLang ? '' : '/' + lang}/rss.xml`;
 
-            if (config.author_email) {
-                rssAuthor = `${config.author_email} ( ${config.author} )`;
-            } else {
-                rssAuthor = config.author;
-            }
-
-            if (config.i18n.default === lang) {
-                rssPath = path.join(this.sitePath, 'public');
-                rssLink = `${config.domain}/rss.xml`;
-            } else {
-                rssPath = path.join(this.sitePath, 'public', lang);
-                rssLink = `${config.domain}/${lang}/rss.xml`;
-            }
-
-            rssContent = rssTemplateNJ.render({
+            const rssContent = rssTemplateNJ.render({
                 rss: {
                     date: new Date().toUTCString(),
                     link: rssLink,
                     author: rssAuthor,
                     lang: lang
                 },
-                posts: _posts,
-                config: config,
+                posts,
+                config,
                 pages: pagesMetadata
             });
 
             await mkdirpAsync(rssPath);
             await fs.writeFileAsync(`${rssPath}/rss.xml`, rssContent);
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
-        }
+        });
     }
 }
