@@ -47,7 +47,9 @@ export default class Harmonic {
         this.sitePath = path.resolve(sitePath);
         this.quiet = !!quiet;
 
-        const config = getConfig(this.sitePath);
+        const config = Object.assign({
+            index_posts: 10
+        }, getConfig(this.sitePath));
         this.theme = new Theme(config.theme, this.sitePath);
 
         if (fs.existsSync(path.join(this.theme.themePath, 'config.json'))) {
@@ -153,7 +155,7 @@ export default class Harmonic {
         const config = this.config;
 
         await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
-            const posts = langPosts.slice(0, config.index_posts || 10);
+            const posts = langPosts.slice(0, config.index_posts);
 
             const indexContent = indexTemplateNJ.render({
                 posts,
@@ -379,7 +381,7 @@ export default class Harmonic {
         const rssAuthor = config.author_email ? `${config.author_email} ( ${config.author} )` : config.author;
 
         await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
-            const posts = langPosts.slice(0, config.index_posts || 10);
+            const posts = langPosts.slice(0, config.index_posts);
             const isDefaultLang = config.i18n.default === lang;
             const rssPath = path.join(this.sitePath, 'public', ...(isDefaultLang ? [] : [lang]));
             const rssLink = `${config.domain}${isDefaultLang ? '' : '/' + lang}/rss.xml`;
