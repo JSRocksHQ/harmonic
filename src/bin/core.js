@@ -20,18 +20,21 @@ async function build(passedPath) {
 
     await harmonic.clean();
 
-    await harmonic.compileCSS();
+    const postsDataPromise = (async () => await harmonic.generatePosts(await harmonic.getPostFiles()))();
+    const pagesDataPromise = (async () => await harmonic.generatePages(await harmonic.getPageFiles()))();
 
-    const pagesMetadata = await harmonic.generatePages(await harmonic.getPageFiles());
-    const postsMetadata = await harmonic.generatePosts(await harmonic.getPostFiles());
-
-    await harmonic.generateRSS(postsMetadata, pagesMetadata);
-    await harmonic.compileJS(postsMetadata, pagesMetadata);
-    harmonic.generateIndex(postsMetadata, pagesMetadata);
-    harmonic.generateTagsPages(postsMetadata);
-
-    await harmonic.copyThemeResources();
-    await harmonic.copyUserResources();
+    await* [
+        harmonic.compileCSS(),
+        (async () => await harmonic.generateIndex(await postsDataPromise, await pagesDataPromise))(),
+        (async () => await harmonic.generateTagsPages(await postsDataPromise))(),
+        (async () => await harmonic.compileJS(await postsDataPromise, await pagesDataPromise))(),
+        (async () => await harmonic.generateRSS(await postsDataPromise, await pagesDataPromise))(),
+        (async () => {
+            // finish copying theme resources first to allow user resources to overwrite them.
+            await harmonic.copyThemeResources();
+            await harmonic.copyUserResources();
+        })(),
+    ];
 
     // TODO move logging to outside of this API?
     const endTime = Date.now();
