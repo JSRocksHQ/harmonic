@@ -119,50 +119,33 @@ export default class Harmonic {
     }
 
     async generateTagsPages(postsMetadata) {
-        var postsByTag = {},
-            nunjucksEnv = this.nunjucksEnv,
-            tagTemplate = this.theme.getFileContents('index.html'),
-            tagTemplateNJ = nunjucks.compile(tagTemplate, nunjucksEnv),
-            tagPath = null,
-            lang, i, tags, y, tag, tagContent,
-            config = this.config;
+        const tagTemplateNJ = nunjucks.compile(this.theme.getFileContents('index.html'), this.nunjucksEnv);
+        const config = this.config;
 
-        for (lang in postsMetadata) {
-            for (i = 0; i < postsMetadata[lang].length; i += 1) {
-                tags = postsMetadata[lang][i].categories;
-                for (y = 0; y < tags.length; y += 1) {
-                    tag = tags[y]
-                    .toLowerCase()
-                    .trim()
-                    .split(' ')
-                    .join('-');
-
+        await* [].concat(...Object.entries(postsMetadata).map(([lang, langPosts]) => {
+            const postsByTag = {};
+            langPosts.forEach((post) => {
+                post.categories.forEach((category) => {
+                    // TODO replace with kebabCase?
+                    const tag = category.toLowerCase().trim().split(' ').join('-');
                     postsByTag[tag] = postsByTag[tag] || [];
-                    postsByTag[tag].push(postsMetadata[lang][i]);
-                }
-            }
+                    postsByTag[tag].push(post);
+                });
+            });
 
-            for (i in postsByTag) {
-                tagContent = tagTemplateNJ.render({
-                    posts: postsByTag[i].filter((post) => post.lang === lang),
+            return Object.entries(postsByTag).map(async ([tag, tagPosts]) => {
+                const tagContent = tagTemplateNJ.render({
+                    posts: tagPosts,
                     config,
-                    category: i
+                    category: tag
                 });
 
-                // If is the default language, generate in the root path
-                if (config.i18n.default === lang) {
-                    tagPath = path.join(this.sitePath, 'public/categories', i);
-                } else {
-                    tagPath = path.join(this.sitePath, 'public/categories', lang, i);
-                }
-
+                const tagPath = path.join(this.sitePath, 'public/categories', ...(config.i18n.default === lang ? [] : [lang]), tag);
                 await mkdirpAsync(tagPath);
                 await fs.writeFileAsync(path.join(tagPath, 'index.html'), tagContent);
-                console.log(
-                    clc.info(`Successfully generated tag[${i}] archive html file`)
-                );
-            }
-        }
+                console.log(clc.info(`Successfully generated tag[${tag}] archive html file`));
+            });
+        }));
     }
 
     async generateIndex(postsMetadata, pagesMetadata) {
