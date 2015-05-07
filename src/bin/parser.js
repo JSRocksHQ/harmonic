@@ -118,7 +118,7 @@ export default class Harmonic {
         await fs.writeFileAsync(path.join(this.sitePath, 'public/harmonic.js'), harmonicClient);
     }
 
-    generateTagsPages(postsMetadata) {
+    async generateTagsPages(postsMetadata) {
         var postsByTag = {},
             nunjucksEnv = this.nunjucksEnv,
             tagTemplate = this.theme.getFileContents('index.html'),
@@ -137,11 +137,8 @@ export default class Harmonic {
                     .split(' ')
                     .join('-');
 
-                    if (Array.isArray(postsByTag[tag])) {
-                        postsByTag[tag].push(postsMetadata[lang][i]);
-                    } else {
-                        postsByTag[tag] = [postsMetadata[lang][i]];
-                    }
+                    postsByTag[tag] = postsByTag[tag] || [];
+                    postsByTag[tag].push(postsMetadata[lang][i]);
                 }
             }
 
@@ -159,8 +156,8 @@ export default class Harmonic {
                     tagPath = path.join(this.sitePath, 'public/categories', lang, i);
                 }
 
-                mkdirp.sync(tagPath);
-                fs.writeFileSync(path.join(tagPath, 'index.html'), tagContent);
+                await mkdirpAsync(tagPath);
+                await fs.writeFileAsync(path.join(tagPath, 'index.html'), tagContent);
                 console.log(
                     clc.info(`Successfully generated tag[${i}] archive html file`)
                 );
@@ -168,7 +165,7 @@ export default class Harmonic {
         }
     }
 
-    generateIndex(postsMetadata, pagesMetadata) {
+    async generateIndex(postsMetadata, pagesMetadata) {
         var lang,
             _posts = null,
             nunjucksEnv = this.nunjucksEnv,
@@ -194,8 +191,8 @@ export default class Harmonic {
             } else {
                 indexPath = path.join(this.sitePath, 'public', lang);
             }
-            mkdirp.sync(indexPath);
-            fs.writeFileSync(path.join(indexPath, 'index.html'), indexContent);
+            await mkdirpAsync(indexPath);
+            await fs.writeFileAsync(path.join(indexPath, 'index.html'), indexContent);
             console.log(clc.info(`${lang}/index file successfully created`));
         }
     }
