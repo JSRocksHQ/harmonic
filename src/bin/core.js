@@ -1,9 +1,14 @@
+import prettyMs from 'pretty-ms';
 import { isHarmonicProject, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from './helpers';
 import Harmonic from './parser';
+import { cliColor } from './helpers';
+const clc = cliColor();
 
 export { build };
 
 async function build(passedPath) {
+    const startTime = Date.now();
+
     const sitePath = findHarmonicRoot(passedPath);
 
     if (!sitePath) {
@@ -27,4 +32,8 @@ async function build(passedPath) {
 
     await harmonic.copyThemeResources();
     await harmonic.copyUserResources();
+
+    // TODO move logging to outside of this API?
+    const endTime = Date.now();
+    console.log(clc.info(`Build completed in ${prettyMs(endTime - startTime)}.`));
 }
