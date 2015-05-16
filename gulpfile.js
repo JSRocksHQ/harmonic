@@ -1,6 +1,7 @@
 'use strict';
 
 var path = require('path');
+var exec = require('child_process').exec;
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var rimraf = require('rimraf');
@@ -9,13 +10,18 @@ var globManip = require('glob-manipulate');
 var build = require('./build');
 var copySrc = ['**'].concat(globManip.negate(build.src.js));
 // this allows global gulp (CLI) to find local mocha
-var TEST_ENV = { PATH: path.join(__dirname, 'node_modules/.bin') + path.delimiter + process.env.PATH };
+process.env.PATH = path.join(__dirname, 'node_modules/.bin') + path.delimiter + process.env.PATH;
 
-// Run unit tests in complete isolation, see https://github.com/es6rocks/harmonic/issues/122#issuecomment-85333442
+// Run unit tests in complete isolation, see https://github.com/JSRocksHQ/harmonic/issues/122#issuecomment-85333442
 function runTests(opt, cb) {
-	plugins.shell.task('mocha ' + build.config.mocha + ' "' + build.distBase + 'test"', opt)()
-		.on('end', cb)
-		.resume();
+	var child = exec('mocha ' + build.config.mocha + ' "' + build.distBase + 'test"', {
+	  maxBuffer: 16 * 1024 * 1024,
+	}, function(err/*, stdout, stderr*/) {
+		cb(opt.ignoreErrors ? null : err);
+	});
+
+	child.stdout.pipe(process.stdout);
+	child.stderr.pipe(process.stderr);
 }
 
 gulp.task('clean', function(cb) {
@@ -40,7 +46,7 @@ gulp.task('build', ['clean'], function(cb) {
 	)
 		.pipe(gulp.dest(build.distBase))
 		.on('end', function() {
-			runTests({ env: TEST_ENV }, cb);
+			runTests({ ignoreErrors: false }, cb);
 		})
 		.resume();
 });
@@ -64,7 +70,7 @@ gulp.task('default', ['clean'], function(cb) {
 		if (idx !== -1) list.splice(idx, 1);
 	}
 
-	// Diagram reference: https://github.com/es6rocks/slush-es20xx/issues/5#issue-52701608 // TODO update diagram
+	// Diagram reference: https://github.com/JSRocksHQ/slush-es20xx/issues/5#issue-52701608 // TODO update diagram
 	var batched = batch(function(files, cb) {
 		files = files
 			.pipe(plugins.plumber(function(err) {
@@ -134,7 +140,7 @@ gulp.task('default', ['clean'], function(cb) {
 					return;
 				}
 
-				runTests({ env: TEST_ENV, ignoreErrors: true }, endBatch);
+				runTests({ ignoreErrors: true }, endBatch);
 
 				function endBatch() {
 					if (filesFailingLint.length) {
