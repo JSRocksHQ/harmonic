@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/JSRocksHQ/harmonic.svg?branch=master)](https://travis-ci.org/JSRocksHQ/harmonic)
 [![Dependency Status](http://img.shields.io/david/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic)
 [![devDependency Status](http://img.shields.io/david/dev/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic#info=devDependencies)
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/JSRocksHQ/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://img.shields.io/badge/gitter-join_chat-1dce73.svg)](https://gitter.im/JSRocksHQ/harmonic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Please note that this project is currently under development.**  
 **Contributions are very welcome!**
