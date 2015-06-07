@@ -354,10 +354,10 @@ export default class Harmonic {
     async getPostFiles() {
         const files = {};
 
-        for (const lang of this.config.i18n.languages) {
+        await* this.config.i18n.languages.map(async (lang) => {
             files[lang] = (await fs.readdirAsync(path.join(this.sitePath, postspath, lang)))
                 .filter((p) => rMarkdownExt.test(p));
-        }
+        });
 
         return files;
     }
@@ -365,11 +365,11 @@ export default class Harmonic {
     async getPageFiles() {
         const files = {};
 
-        for (const lang of this.config.i18n.languages) {
+        await* this.config.i18n.languages.map(async (lang) => {
             const langPath = path.join(this.sitePath, pagespath, lang);
             await mkdirpAsync(langPath);
             files[lang] = (await fs.readdirAsync(langPath)).filter((p) => rMarkdownExt.test(p));
-        }
+        });
 
         return files;
     }
