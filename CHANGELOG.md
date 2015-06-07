@@ -12,7 +12,7 @@
 
 ### Internal
 - Build: all Node.js `.js` files are now compiled with Babel.
-- Build: Grunt.js -> gulp, based on the [slush-es20xx](https://github.com/es6rocks/slush-es20xx) workflow.
+- Build: Grunt.js -> gulp, based on the [slush-es20xx](https://github.com/JSRocksHQ/slush-es20xx) workflow.
 - ES.next: all the CommonJS syntax has been replaced with ECMAScript Modules syntax.
 - Development: fixed `npm link` in Unix-based OS's.
 - CI: added unit tests.
@@ -22,10 +22,10 @@
 - Lots of general code refactoring and cleanup.
 
 ### Miscellaneous
-- Docs: added [Contributing Guide](https://github.com/es6rocks/harmonic/blob/master/CONTRIBUTING.md).
-- Docs: updated the Wiki's [Installing page](https://github.com/es6rocks/harmonic/wiki/Installing).
-- Docs: revamped the repository's [README](https://github.com/es6rocks/harmonic#the-next-static-site-generator) header.
-- Added [Harmonic Gitter room](https://gitter.im/es6rocks/harmonic).
+- Docs: added [Contributing Guide](https://github.com/JSRocksHQ/harmonic/blob/master/CONTRIBUTING.md).
+- Docs: updated the Wiki's [Installing page](https://github.com/JSRocksHQ/harmonic/wiki/Installing).
+- Docs: revamped the repository's [README](https://github.com/JSRocksHQ/harmonic#the-next-static-site-generator) header.
+- Added [Harmonic Gitter room](https://gitter.im/JSRocksHQ/harmonic).
 
 
 # 0.0.9 released on Oct 10, 2014
