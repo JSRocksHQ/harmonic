@@ -2,7 +2,7 @@
   "name": "harmonic",
   "description": "The next static site generator",
   "homepage": "https://github.com/JSRocksHQ/harmonic",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "engines": {
     "node": ">=0.10"
   },
