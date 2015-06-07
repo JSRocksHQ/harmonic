@@ -25,4 +25,4 @@ Implement your bug fix or feature, write tests to cover it and make sure all tes
 
 ## Documentation
 
-Documentation is extremely important and takes a fair deal of time and effort to write and keep updated. Please submit any and all improvements you can make to the repository's docs and the [Wiki](https://github.com/es6rocks/harmonic/wiki).
+Documentation is extremely important and takes a fair deal of time and effort to write and keep updated. Please submit any and all improvements you can make to the repository's docs and the [Wiki](https://github.com/JSRocksHQ/harmonic/wiki).

@@ -8,12 +8,12 @@
 **Contributions are very welcome!**
 
 Harmonic is being developed with some goals:  
-- Learn and play with ES6 (in node and the browser)
-- Build a simple static site generator in node using ES6 features
-- Create the ES6 Rocks website with Harmonic!  
-(Actually, the website is already online [ES6Rocks](http://es6rocks.com))  
+- Learn and play with ECMAScript 2015 (ES6) and beyond (in node and the browser)
+- Build a simple static site generator in node using ES2015+ features
+- Create the JS Rocks website with Harmonic!  
+(Actually, the website is already online: [JS Rocks](http://jsrocks.org/))  
 
-Check out the full documentation in [Harmonic's Wiki](https://github.com/es6rocks/harmonic/wiki/).
+Check out the full documentation in [Harmonic's Wiki](https://github.com/JSRocksHQ/harmonic/wiki/).
 
 ## Installing
 
@@ -22,7 +22,7 @@ Harmonic is available on npm:
 ```shell
 npm install harmonic -g
 ```
-For more details, check out the full documentation: [Installing](https://github.com/es6rocks/harmonic/wiki/Installing)
+For more details, check out the full documentation: [Installing](https://github.com/JSRocksHQ/harmonic/wiki/Installing)
 
 ## Init
 First thing you will need to do is to initialize a new Harmonic website.  
@@ -32,7 +32,7 @@ harmonic init [PATH]
 ```
 [PATH] is your website dir. The default path is the current dir.  
 Harmonic will prompt you asking for some data about your website:   
-![Config](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/config.png)  
+![Config](https://raw.githubusercontent.com/wiki/JSRocksHQ/harmonic/img/config.png)  
 
 Harmonic will then generate a config file, which is a simple JSON object.  
 Any time you want, you can configure your static website with the CLI `config` command:  
@@ -41,7 +41,7 @@ cd [PATH]
 harmonic config
 ```
 Now, enter in your website dir and you are ready to start [creating posts](#blogging)!  
-For more details, check out the full documentation: [Config](https://github.com/es6rocks/harmonic/wiki/Config/)
+For more details, check out the full documentation: [Config](https://github.com/JSRocksHQ/harmonic/wiki/Config/)
 
 ## Blogging
 Harmonic follows the same pattern as others static site generators that you may know.  
@@ -52,7 +52,7 @@ You must write your posts in [Markdown](http://daringfireball.net/projects/markd
 cd your_awesome_website
 harmonic new_post "Hello World"
 ```
-![New Post](https://raw.githubusercontent.com/wiki/es6rocks/harmonic/img/new_post.png)
+![New Post](https://raw.githubusercontent.com/wiki/JSRocksHQ/harmonic/img/new_post.png)
 
 After running `new_post`, a markdown file will be generated in the `/src/posts/[lang]` folder, ready for editing.  
 
@@ -66,20 +66,20 @@ title: hello world
 date: 2014-05-17T08:18:47.847Z
 comments: true
 published: true
-keywords: JavaScript, ES6
+keywords: JavaScript, ES2015
 description: Hello world post
-categories: JavaScript, ES6
+categories: JavaScript, ES2015
 authorName: Jaydson
 -->
 ```
-You can check all possible header values in the [header page](https://github.com/es6rocks/harmonic/wiki/markdown-header).  
+You can check all possible header values in the [header page](https://github.com/JSRocksHQ/harmonic/wiki/markdown-header).  
 
 #### Markdown content
 Everything after the header is the post content.  
 Exemple:  
 ```markdown
 # Hello World  
-This is my awesome post using [Harmonic](https://github.com/es6rocks/harmonic).  
+This is my awesome post using [Harmonic](https://github.com/JSRocksHQ/harmonic).  
 
 This is a list:  
 - Item 1
@@ -91,7 +91,7 @@ The code above will be parsed to something like this:
 <h1 id="hello-world">Hello World</h1>
 <p>
   This is my awesome post using 
-  <a href="https://github.com/es6rocks/harmonic">Harmonic</a>.
+  <a href="https://github.com/JSRocksHQ/harmonic">Harmonic</a>.
 </p>
 <p>This is a list:  </p>
 <ul>
@@ -100,7 +100,7 @@ The code above will be parsed to something like this:
 <li>Item 3</li>
 </ul>
 ```
-For more details, you can check the full documentation: [Blogging](https://github.com/es6rocks/harmonic/wiki/Blogging).  
+For more details, you can check the full documentation: [Blogging](https://github.com/JSRocksHQ/harmonic/wiki/Blogging).  
 ## New Page
 ```
 cd your_awesome_website
@@ -109,7 +109,7 @@ harmonic new_page "Hello World Page"
 After running `new_page`, a markdown file will be generated in the `/src/pages/[lang]` folder, ready for editing.  
 
 ## Build
-The build tool will generate the index page, posts, pages, categories, compile styles and ES6.
+The build tool will generate the index page, posts, pages, categories, compile styles and ES2015+.
 ```shell
 harmonic build
 ```
@@ -132,4 +132,4 @@ harmonic --help
 ```
 
 ## Contributing
-See the [Contributing guide](https://github.com/es6rocks/harmonic/blob/master/CONTRIBUTING.md).
+See the [Contributing guide](https://github.com/JSRocksHQ/harmonic/blob/master/CONTRIBUTING.md).
