@@ -76,7 +76,7 @@ You can check all possible header values in the [header page](https://github.com
 
 #### Markdown content
 Everything after the header is the post content.  
-Exemple:  
+Example:  
 ```markdown
 # Hello World  
 This is my awesome post using [Harmonic](https://github.com/JSRocksHQ/harmonic).  
