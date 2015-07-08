@@ -183,7 +183,7 @@ export default class Harmonic {
     }
 
     async generatePosts(files) {
-        var langs = Object.keys(files),
+        let langs = Object.keys(files),
             config = this.config,
             posts = {},
             currentDate = new Date(),
@@ -196,7 +196,7 @@ export default class Harmonic {
             ];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            var metadata, post, postCropped, filename, checkDate, postPath, categories,
+            let metadata, post, postCropped, filename, checkDate, postPath, categories,
                 _post, postHTMLFile, postDate, month, year, options,
                 md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
 
@@ -302,7 +302,7 @@ export default class Harmonic {
         const pages = [];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            var metadata, pagePermalink, _page, pageHTMLFile,
+            let metadata, pagePermalink, _page, pageHTMLFile,
                 pagePath = path.join(this.sitePath, pagespath, lang, file),
                 pageTpl = this.theme.getFileContents('page.html'),
                 pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),

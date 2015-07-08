@@ -143,7 +143,7 @@ function newFile(passedPath, type, title, autoOpen) {
         throw new MissingFileError();
     }
 
-    var langs = getConfig(sitePath).i18n.languages,
+    let langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
             'layout: ' + type + '\n' +
             'title: ' + title + '\n' +
