@@ -17,6 +17,8 @@
        "quotes": [2, "single"],
        "spaced-line-comment": 2,
        "no-loop-func": 0, // this is more annoying than useful when properly using ES2015 block bindings
-       "no-underscore-dangle": 0
+       "no-underscore-dangle": 0,
+       "no-alert": 0,
+       "no-shadow": 0
     }
 }
