@@ -145,7 +145,7 @@ function newFile(passedPath, type, title, autoOpen) {
         throw new MissingFileError();
     }
 
-    let langs = getConfig(sitePath).i18n.languages,
+    const langs = getConfig(sitePath).i18n.languages,
         template = '<!--\n' +
             'layout: ' + type + '\n' +
             'title: ' + title + '\n' +

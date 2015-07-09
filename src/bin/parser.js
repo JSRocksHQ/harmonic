@@ -186,7 +186,7 @@ export default class Harmonic {
     }
 
     async generatePosts(files) {
-        let langs = Object.keys(files),
+        const langs = Object.keys(files),
             config = this.config,
             posts = {},
             currentDate = new Date(),

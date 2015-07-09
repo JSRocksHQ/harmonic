@@ -41,7 +41,7 @@ describe('CLI', function() {
     });
 
     it('should init a new Harmonic site', function(done) {
-        let harmonic = spawn('node', [harmonicBin, 'init', testDir]);
+        const harmonic = spawn('node', [harmonicBin, 'init', testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 
@@ -60,7 +60,7 @@ describe('CLI', function() {
     });
 
     it('should build the Harmonic site', function(done) {
-        let harmonic = spawn('node', [harmonicBin, 'build', testDir]);
+        const harmonic = spawn('node', [harmonicBin, 'build', testDir]);
         harmonic.stdin.setEncoding('utf8');
         harmonic.stdout.setEncoding('utf8');
 
@@ -71,7 +71,7 @@ describe('CLI', function() {
     });
 
     it('should create and build a new post', function(done) {
-        let config = getConfig(testDir),
+        const config = getConfig(testDir),
             langs = config.i18n.languages,
             title = 'new_post test',
             fileName = titleToFilename(title),
@@ -89,17 +89,17 @@ describe('CLI', function() {
                 resolve();
             });
         }).then(function() {
-            let harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
+            const harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
             harmonicBuild.stdin.setEncoding('utf8');
             harmonicBuild.stdout.setEncoding('utf8');
             return new Promise(function(resolve) {
                 harmonicBuild.on('close', function() {
-                    let date = new Date(),
+                    const date = new Date(),
                         year = String(date.getFullYear()),
                         month = ('0' + (date.getMonth() + 1)).slice(-2),
                         slug = fileName.replace(/\.md$/, '');
                     langs.forEach(function(lang) {
-                        let langSegment = lang === config.i18n.default ? '.' : lang;
+                        const langSegment = lang === config.i18n.default ? '.' : lang;
                         readFileSync(join(testDir, 'public', langSegment, year, month,
                             slug, 'index.html')).toString().should.containEql(title);
                     });
@@ -117,7 +117,7 @@ describe('helpers', function() {
 
     it('.isHarmonicProject() should return whether the CWD is a Harmonic site', function() {
         disableStdout();
-        let result = isHarmonicProject(__dirname);
+        const result = isHarmonicProject(__dirname);
         enableStdout();
         result.should.be.false;
         isHarmonicProject(testDir).should.be.true;
