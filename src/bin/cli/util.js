@@ -145,20 +145,21 @@ function newFile(passedPath, type, title, autoOpen) {
         throw new MissingFileError();
     }
 
-    const langs = getConfig(sitePath).i18n.languages,
-        template = '<!--\n' +
-            'layout: ' + type + '\n' +
-            'title: ' + title + '\n' +
-            'date: ' + new Date().toJSON() + '\n' +
-            'comments: true\n' +
-            'published: true\n' +
-            'keywords:\n' +
-            'description:\n' +
-            'categories:\n' +
-            '-->\n' +
-            '# ' + title,
-        filedir = path.join(sitePath, type === 'post' ? postspath : pagespath),
-        filename = titleToFilename(title);
+    const langs = getConfig(sitePath).i18n.languages;
+    // TODO use template literal + dedent
+    const template = '<!--\n' +
+        'layout: ' + type + '\n' +
+        'title: ' + title + '\n' +
+        'date: ' + new Date().toJSON() + '\n' +
+        'comments: true\n' +
+        'published: true\n' +
+        'keywords:\n' +
+        'description:\n' +
+        'categories:\n' +
+        '-->\n' +
+        '# ' + title;
+    const filedir = path.join(sitePath, type === 'post' ? postspath : pagespath);
+    const filename = titleToFilename(title);
 
     langs.forEach((lang) => {
         const fileLangDir = path.join(filedir, lang);

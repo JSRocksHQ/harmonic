@@ -1,10 +1,11 @@
 import { version } from '../config';
 import { cliColor } from '../helpers';
 
-const clc = cliColor(),
-	logo = clc.message('\n' +
-        '|_| _  _ _ _  _  _ . _ \n' +
-        '| |(_|| | | |(_)| ||(_ \n' +
-        '                 ' + version + '  \n');
+const clc = cliColor();
+const logo = clc.message(`
+|_| _  _ _ _  _  _ . _
+| |(_|| | | |(_)| ||(_
+                 ${version}
+`);
 
 export default logo;

@@ -68,7 +68,7 @@ export default class Harmonic {
 
     async compileCSS() {
         const currentCSSCompiler = this.config.preprocessor;
-        if (!currentCSSCompiler){
+        if (!currentCSSCompiler) {
             return;
         }
 
@@ -186,19 +186,20 @@ export default class Harmonic {
     }
 
     async generatePosts(files) {
-        const langs = Object.keys(files),
-            config = this.config,
-            posts = {},
-            currentDate = new Date(),
-            nunjucksEnv = this.nunjucksEnv,
-            postsTemplate = this.theme.getFileContents('post.html'),
-            postsTemplateNJ = nunjucks.compile(postsTemplate, nunjucksEnv),
-            tokens = [
-                config.header_tokens ? config.header_tokens[0] : '<!--',
-                config.header_tokens ? config.header_tokens[1] : '-->'
-            ];
+        const langs = Object.keys(files);
+        const config = this.config;
+        const posts = {};
+        const currentDate = new Date();
+        const nunjucksEnv = this.nunjucksEnv;
+        const postsTemplate = this.theme.getFileContents('post.html');
+        const postsTemplateNJ = nunjucks.compile(postsTemplate, nunjucksEnv);
+        const tokens = [
+            config.header_tokens ? config.header_tokens[0] : '<!--',
+            config.header_tokens ? config.header_tokens[1] : '-->'
+        ];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
+            // TODO this can most likely do with some refactoring and code style adjustments
             let metadata, post, postCropped, filename, checkDate, postPath, categories,
                 _post, postHTMLFile, postDate, month, year, options,
                 md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
@@ -305,6 +306,7 @@ export default class Harmonic {
         const pages = [];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
+            // TODO this can most likely do with some refactoring and code style adjustments
             let metadata, pagePermalink, _page, pageHTMLFile,
                 pagePath = path.join(this.sitePath, pagespath, lang, file),
                 pageTpl = this.theme.getFileContents('page.html'),
