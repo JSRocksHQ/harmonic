@@ -1,3 +1,5 @@
+/*eslint-disable no-process-exit*/
+
 import program from 'commander';
 import { version } from '../config';
 import { cliColor } from '../helpers';

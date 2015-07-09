@@ -1,5 +1,5 @@
 import prettyMs from 'pretty-ms';
-import { isHarmonicProject, findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from './helpers';
+import { findHarmonicRoot, displayNonInitializedFolderErrorMessage, MissingFileError } from './helpers';
 import Harmonic from './parser';
 import { cliColor } from './helpers';
 const clc = cliColor();
@@ -33,7 +33,7 @@ async function build(passedPath) {
             // finish copying theme resources first to allow user resources to overwrite them.
             await harmonic.copyThemeResources();
             await harmonic.copyUserResources();
-        })(),
+        })()
     ];
 
     // TODO move logging to outside of this API?

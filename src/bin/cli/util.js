@@ -31,32 +31,6 @@ function openFile(type, sitePath, file) {
     }
 }
 
-async function init(sitePath) {
-    const skeletonPath = path.join(rootdir, 'bin/skeleton');
-
-    await mkdirpAsync(sitePath);
-    await ncpAsync(skeletonPath, sitePath, { stopOnErr: true });
-    console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
-
-    await config(sitePath, true);
-
-    console.log(clc.info('\nInstalling dependencies...'));
-    const npm = await npmLoadAsync();
-    try {
-        await promisify(npm.commands.install)(sitePath, []);
-    } catch (e) {
-        console.error(dd
-            `Command ${clc.error('npm install')} failed.
-             Make sure you are connected to the internet and execute the command above in your Harmonic skeleton directory.`
-        );
-    }
-
-    console.log('\n' + clc.info(dd
-        `Your Harmonic website skeleton was successfully created!
-         Now, browse the project directory and have fun.`
-    ));
-}
-
 function config(passedPath, _skipFindRoot = false) {
     const sitePath = _skipFindRoot ? passedPath : findHarmonicRoot(passedPath);
 
@@ -74,6 +48,7 @@ function config(passedPath, _skipFindRoot = false) {
                 'Just hit enter if you are ok with the default values.\n\n'
             ));
 
+            /*eslint-disable camelcase*/
             const templateObj = {
                 name: 'Awesome website',
                 title: 'My awesome static website',
@@ -93,6 +68,7 @@ function config(passedPath, _skipFindRoot = false) {
                     languages: ['en', 'pt-br']
                 }
             };
+            /*eslint-enable camelcase*/
 
             function _p(message) {
                 return prompt(clc.message(message));
@@ -129,6 +105,32 @@ function config(passedPath, _skipFindRoot = false) {
             });
         })();
     });
+}
+
+async function init(sitePath) {
+    const skeletonPath = path.join(rootdir, 'bin/skeleton');
+
+    await mkdirpAsync(sitePath);
+    await ncpAsync(skeletonPath, sitePath, { stopOnErr: true });
+    console.log(clc.message('Harmonic skeleton started at: ' + path.resolve(sitePath)));
+
+    await config(sitePath, true);
+
+    console.log(clc.info('\nInstalling dependencies...'));
+    const npm = await npmLoadAsync();
+    try {
+        await promisify(npm.commands.install)(sitePath, []);
+    } catch (e) {
+        console.error(dd
+            `Command ${clc.error('npm install')} failed.
+             Make sure you are connected to the internet and execute the command above in your Harmonic skeleton directory.`
+        );
+    }
+
+    console.log('\n' + clc.info(dd
+        `Your Harmonic website skeleton was successfully created!
+         Now, browse the project directory and have fun.`
+    ));
 }
 
 /**

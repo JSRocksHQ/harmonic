@@ -27,6 +27,16 @@ function displayNonInitializedFolderErrorMessage() {
     );
 }
 
+// Check if harmonic.json file exists
+function isHarmonicProject(sitePath) {
+    try {
+        getConfig(sitePath);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
 // Find harmonic.json. Returns path or false.
 function findHarmonicRoot(sitePath) {
     let currentPath = resolve(sitePath);
@@ -44,16 +54,6 @@ function findHarmonicRoot(sitePath) {
     }
 
     return currentPath;
-}
-
-// Check if harmonic.json file exists
-function isHarmonicProject(sitePath) {
-    try {
-        getConfig(sitePath);
-        return true;
-    } catch (e) {
-        return false;
-    }
 }
 
 function getConfig(sitePath) {

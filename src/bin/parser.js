@@ -42,6 +42,7 @@ const Helper = {
 };
 
 export default class Harmonic {
+    /*eslint-disable camelcase*/
 
     constructor(sitePath, { quiet = true } = {}) {
         this.sitePath = path.resolve(sitePath);
@@ -67,7 +68,9 @@ export default class Harmonic {
 
     async compileCSS() {
         const currentCSSCompiler = this.config.preprocessor;
-        if (!currentCSSCompiler) return;
+        if (!currentCSSCompiler){
+            return;
+        }
 
         const compiler = {
 
