@@ -60,7 +60,7 @@ function config(passedPath, _skipFindRoot = false) {
                 theme: 'harmonic-theme-default',
                 preprocessor: 'stylus',
                 posts_permalink: ':language/:year/:month/:title',
-                pages_permalink: 'pages/:title',
+                pages_permalink: ':language/pages/:title',
                 header_tokens: ['<!--', '-->'],
                 index_posts: 10,
                 i18n: {

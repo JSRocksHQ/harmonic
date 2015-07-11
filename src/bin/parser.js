@@ -307,7 +307,7 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, pagePermalink, _page, pageHTMLFile,
+            let metadata, pagePermalink, _page, pageHTMLFile, options,
                 pagePath = path.join(this.sitePath, pagespath, lang, file),
                 pageTpl = this.theme.getFileContents('page.html'),
                 pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),
@@ -321,9 +321,24 @@ export default class Harmonic {
 
             // Markdown extra
             metadata = md.metadata();
-            pagePermalink = permalinks(config.pages_permalink, {
-                title: filename
-            });
+
+            options = {
+                replacements: [{
+                    pattern: ':title',
+                    replacement: filename
+                },
+                {
+                    pattern: ':language',
+                    replacement: lang
+                }]
+            };
+            if (config.i18n.default === lang) {
+                options.structure = config.pages_permalink.split(':language/')[1];
+                pagePermalink = permalinks(options);
+            } else {
+                options.structure = config.pages_permalink;
+                pagePermalink = permalinks(options);
+            }
 
             _page = {
                 content: md.markdown(),
@@ -342,6 +357,7 @@ export default class Harmonic {
             metadata.file = postspath + file; // TODO check whether this needs sitePath
             metadata.filename = filename;
             metadata.link = `/${filename}.html`;
+            metadata.lang = lang;
             metadata.date = new Date(metadata.date);
             pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
 
