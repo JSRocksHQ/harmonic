@@ -6,7 +6,7 @@ comments: false
 published: true
 keywords: JavaScript, ES6
 description: About page
-categories: 
+categories:
 authorName: Jaydson
 -->
 # Hello page
