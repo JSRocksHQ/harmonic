@@ -338,7 +338,6 @@ export default class Harmonic {
             } else {
                 options.structure = config.pages_permalink;
                 pagePermalink = permalinks(options);
-                console.log(pagePermalink, options);
             }
 
             _page = {
