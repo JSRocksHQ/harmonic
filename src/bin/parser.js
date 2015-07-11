@@ -342,6 +342,7 @@ export default class Harmonic {
             metadata.file = postspath + file; // TODO check whether this needs sitePath
             metadata.filename = filename;
             metadata.link = `/${filename}.html`;
+            metadata.lang = lang;
             metadata.date = new Date(metadata.date);
             pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
 
