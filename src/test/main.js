@@ -9,7 +9,7 @@ import { sync as mkdirpSync } from 'mkdirp';
 import 'should';
 import Harmonic from '../bin/parser';
 import { isHarmonicProject, getConfig, titleToFilename } from '../bin/helpers';
-import { postspath } from '../bin/config';
+import { postspath, pagespath } from '../bin/config';
 
 const testDir = join(__dirname, 'site');
 const harmonicBin = join(__dirname, '../../entry_points/harmonic');
@@ -109,8 +109,41 @@ describe('CLI', function() {
         }).then(done);
     });
 
-    // write this test once #73 is resolved
-    it('should create and build a new page');
+    it('should create and build a new page', function(done) {
+        const config = getConfig(testDir),
+            langs = config.i18n.languages,
+            title = 'new_page test',
+            fileName = titleToFilename(title),
+            harmonic = spawn('node', [harmonicBin, 'new_page', '--no-open', title, testDir]);
+        harmonic.stdin.setEncoding('utf8');
+        harmonic.stdout.setEncoding('utf8');
+
+        new Promise(function(resolve) {
+            harmonic.on('close', function() {
+                langs.forEach(function(lang) {
+                    readFileSync(
+                        join(testDir, pagespath, lang, fileName)
+                    ).toString().should.containEql(title);
+                });
+                resolve();
+            });
+        }).then(function() {
+            const harmonicBuild = spawn('node', [harmonicBin, 'build', testDir]);
+            harmonicBuild.stdin.setEncoding('utf8');
+            harmonicBuild.stdout.setEncoding('utf8');
+            return new Promise(function(resolve) {
+                harmonicBuild.on('close', function() {
+                    const slug = fileName.replace(/\.md$/, '');
+                    langs.forEach(function(lang) {
+                        const langSegment = lang === config.i18n.default ? '.' : lang;
+                        readFileSync(join(testDir, 'public', langSegment, 'pages',
+                            slug, 'index.html')).toString().should.containEql(title);
+                    });
+                    resolve();
+                });
+            });
+        }).then(done);
+    });
 });
 
 describe('helpers', function() {
