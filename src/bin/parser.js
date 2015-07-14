@@ -163,8 +163,8 @@ export default class Harmonic {
 
             const indexContent = indexTemplateNJ.render({
                 posts,
-                config,
-                pages
+                pages,
+                config
             });
 
             const indexPath = path.join(this.sitePath, 'public', ...(config.i18n.default === lang ? [] : [lang]));
@@ -300,11 +300,11 @@ export default class Harmonic {
     async generatePages(files) {
         const langs = Object.keys(files);
         const config = this.config;
+        const pages = {};
         const tokens = [
             config.header_tokens ? config.header_tokens[0] : '<!--',
             config.header_tokens ? config.header_tokens[1] : '-->'
         ];
-        const pages = {};
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
@@ -362,14 +362,14 @@ export default class Harmonic {
             metadata.date = new Date(metadata.date);
             pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
 
-            pages[lang] = pages[lang] || [];
-            pages[lang].push(metadata);
-
             await mkdirpAsync(path.join(this.sitePath, 'public', pagePermalink));
 
             // write page html file
             await fs.writeFileAsync(pageSrc, pageHTMLFile);
             console.log(clc.info(`Successfully generated page ${pagePermalink}`));
+
+            pages[lang] = pages[lang] || [];
+            pages[lang].push(metadata);
         })));
         return pages;
     }
