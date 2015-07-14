@@ -159,11 +159,12 @@ export default class Harmonic {
 
         await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
             const posts = langPosts.slice(0, config.index_posts);
+            const pages = pagesMetadata[lang] || [];
 
             const indexContent = indexTemplateNJ.render({
                 posts,
                 config,
-                pages: pagesMetadata
+                pages
             });
 
             const indexPath = path.join(this.sitePath, 'public', ...(config.i18n.default === lang ? [] : [lang]));
@@ -303,7 +304,7 @@ export default class Harmonic {
             config.header_tokens ? config.header_tokens[0] : '<!--',
             config.header_tokens ? config.header_tokens[1] : '-->'
         ];
-        const pages = [];
+        const pages = {};
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
@@ -356,12 +357,13 @@ export default class Harmonic {
             metadata.content = pageHTMLFile;
             metadata.file = postspath + file; // TODO check whether this needs sitePath
             metadata.filename = filename;
-            metadata.link = `/${filename}.html`;
+            metadata.link = pagePermalink;
             metadata.lang = lang;
             metadata.date = new Date(metadata.date);
             pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
 
-            pages.push(metadata);
+            pages[lang] = pages[lang] || [];
+            pages[lang].push(metadata);
 
             await mkdirpAsync(path.join(this.sitePath, 'public', pagePermalink));
 
