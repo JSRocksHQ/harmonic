@@ -36,7 +36,7 @@
     "ES2016"
   ],
   "dependencies": {
-    "babel-runtime": "^5.4.3",
+    "babel-runtime": "5.6.20",
     "bluebird": "^2.9.33",
     "browser-sync": "^2.7.13",
     "chokidar": "^1.0.3",
