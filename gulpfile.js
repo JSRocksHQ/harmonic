@@ -9,8 +9,6 @@ var mergeStream = require('merge-stream');
 var globManip = require('glob-manipulate');
 var build = require('./build');
 var copySrc = ['**'].concat(globManip.negate(build.src.js));
-// this allows global gulp (CLI) to find local mocha
-process.env.PATH = path.join(__dirname, 'node_modules/.bin') + path.delimiter + process.env.PATH;
 
 // Run unit tests in complete isolation, see https://github.com/JSRocksHQ/harmonic/issues/122#issuecomment-85333442
 function runTests(opt, cb) {
@@ -32,9 +30,9 @@ gulp.task('build', ['clean'], function(cb) {
 	// [[gulp4]] TODO remove srcOrderedGlobs
 	mergeStream(
 		plugins.srcOrderedGlobs(globManip.prefix(build.src.js, build.srcBase), { base: build.srcBase })
-			// .pipe(plugins.eslint())
-			// .pipe(plugins.eslint.format())
-			// .pipe(plugins.eslint.failAfterError())
+			.pipe(plugins.eslint())
+			.pipe(plugins.eslint.format())
+			.pipe(plugins.eslint.failAfterError())
 			.pipe(plugins.babel(build.config.babel))
 			.on('error', function(err) {
 				// Improve error logging:
