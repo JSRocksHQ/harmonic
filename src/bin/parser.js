@@ -10,7 +10,7 @@ import rimraf from 'rimraf';
 import stylus from 'stylus';
 import less from 'less';
 import { rootdir, postspath, pagespath } from './config';
-import { cliColor, getConfig } from './helpers';
+import { cliColor, getConfig, getFileName, getStructure } from './helpers';
 import Theme from './theme';
 promisifyAll(fs);
 const mkdirpAsync = promisify(mkdirp);
@@ -201,7 +201,7 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, post, postCropped, filename, checkDate, postPath, categories,
+            let metadata, post, postCropped, filename, postPath, categories,
                 _post, postHTMLFile, postDate, month, year, options,
                 md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
 
@@ -212,15 +212,7 @@ export default class Harmonic {
                 crop: '<!--more-->'
             });
 
-            filename = path.extname(file) === '.md' ?
-                path.basename(file, '.md') :
-                path.basename(file, '.markdown');
-
-            checkDate = new Date(filename.substr(0, 10));
-
-            filename = isNaN(checkDate.getDate()) ?
-                filename :
-                filename.substr(11, filename.length);
+            filename = getFileName(file);
 
             postPath = null;
             categories = metadata.categories.split(',');
@@ -247,13 +239,9 @@ export default class Harmonic {
                     replacement: lang
                 }]
             };
-            if (config.i18n.default === lang && config.posts_permalink.match(':language')) {
-                options.structure = config.posts_permalink.split(':language/')[1];
-                postPath = permalinks(options);
-            } else {
-                options.structure = config.posts_permalink;
-                postPath = permalinks(options);
-            }
+
+            options.structure = getStructure(config.i18n.default, lang, config.posts_permalink);
+            postPath = permalinks(options);
 
             metadata.categories = categories;
             metadata.content = postCropped;
@@ -314,9 +302,7 @@ export default class Harmonic {
                 pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),
                 md = new MkMeta(pagePath),
                 pageSrc = '',
-                filename = path.extname(file) === '.md' ?
-                    path.basename(file, '.md') :
-                    path.basename(file, '.markdown');
+                filename = getFileName(file);
 
             md.defineTokens(tokens[0], tokens[1]);
 
@@ -333,13 +319,10 @@ export default class Harmonic {
                     replacement: lang
                 }]
             };
-            if (config.i18n.default === lang) {
-                options.structure = config.pages_permalink.split(':language/')[1];
-                pagePermalink = permalinks(options);
-            } else {
-                options.structure = config.pages_permalink;
-                pagePermalink = permalinks(options);
-            }
+
+            options.structure = getStructure(config.i18n.default, lang, config.pages_permalink);
+
+            pagePermalink = permalinks(options);
 
             _page = {
                 content: md.markdown(),

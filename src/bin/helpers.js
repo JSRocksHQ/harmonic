@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, extname, basename } from 'path';
 import _cliColor from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename,
-    findHarmonicRoot, displayNonInitializedFolderErrorMessage };
+    findHarmonicRoot, displayNonInitializedFolderErrorMessage, getFileName, getStructure };
 
 // CLI color
 function cliColor() {
@@ -62,6 +62,19 @@ function getConfig(sitePath) {
 
 function titleToFilename(title) {
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() + '.md';
+}
+
+function getFileName(file) {
+    const filename = extname(file) === '.md' ? basename(file, '.md') : basename(file, '.markdown');
+    const checkDate = new Date(filename.substr(0, 10));
+    return isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
+}
+
+function getStructure(defaultLang, lang, permaLink) {
+    if (defaultLang === lang && permaLink.match(':language')) {
+        return permaLink.split(':language/')[1];
+    }
+    return permaLink;
 }
 
 // Note: class declarations are not hoisted, so this can't be listed in the exports statement at the top of this file.
