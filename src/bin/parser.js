@@ -201,10 +201,10 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, post, postCropped, filename, postPath, categories,
-                _post, postHTMLFile, postDate, month, year, options,
-                md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
+            let metadata, filename, postPath, _post, postHTMLFile, options, md, postSrc,
+                postCropped, categories, postDate, month, year, post;
 
+            md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
             metadata = Helper.normalizeMetaData(md.metadata());
             post = Helper.normalizeContent(md.markdown());
@@ -251,7 +251,7 @@ export default class Harmonic {
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default === lang ? false : true;
             metadata.date = new Date(metadata.date);
-
+            postSrc = path.join(this.sitePath, 'public', postPath, 'index.html');
             _post = {
                 content: post,
                 metadata: metadata
@@ -276,8 +276,8 @@ export default class Harmonic {
             await mkdirpAsync(path.join(this.sitePath, 'public', postPath));
 
             // write post html file
-            await fs.writeFileAsync(path.join(this.sitePath, 'public', postPath, 'index.html'), postHTMLFile);
-            console.log(clc.info('Successfully generated post ' + postPath));
+            await fs.writeFileAsync(postSrc, postHTMLFile);
+            console.log(clc.info(`Successfully generated post ${postPath}`));
 
             posts[lang] = posts[lang] || [];
             posts[lang].push(metadata);
@@ -289,6 +289,9 @@ export default class Harmonic {
         const langs = Object.keys(files);
         const config = this.config;
         const pages = {};
+        const nunjucksEnv = this.nunjucksEnv;
+        const pagesTemplate = this.theme.getFileContents('page.html');
+        const pagesTemplateNJ = nunjucks.compile(pagesTemplate, nunjucksEnv);
         const tokens = [
             config.header_tokens ? config.header_tokens[0] : '<!--',
             config.header_tokens ? config.header_tokens[1] : '-->'
@@ -296,13 +299,10 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, pagePermalink, _page, pageHTMLFile, options,
-                pagePath = path.join(this.sitePath, pagespath, lang, file),
-                pageTpl = this.theme.getFileContents('page.html'),
-                pageTplNJ = nunjucks.compile(pageTpl, this.nunjucksEnv),
-                md = new MkMeta(pagePath),
-                pageSrc = '',
-                filename = getFileName(file);
+            let metadata, filename, pagePath, _page, pageHTMLFile, options, md, pageSrc;
+
+            md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
+            filename = getFileName(file);
 
             md.defineTokens(tokens[0], tokens[1]);
 
@@ -321,15 +321,14 @@ export default class Harmonic {
             };
 
             options.structure = getStructure(config.i18n.default, lang, config.pages_permalink);
-
-            pagePermalink = permalinks(options);
+            pagePath = permalinks(options);
 
             _page = {
                 content: md.markdown(),
                 metadata: metadata
             };
 
-            pageHTMLFile = pageTplNJ.render({
+            pageHTMLFile = pagesTemplateNJ.render({
                 page: _page,
                 config: config
             });
@@ -340,19 +339,22 @@ export default class Harmonic {
             metadata.content = pageHTMLFile;
             metadata.file = postspath + file; // TODO check whether this needs sitePath
             metadata.filename = filename;
-            metadata.link = pagePermalink;
+            metadata.link = pagePath;
             metadata.lang = lang;
             metadata.date = new Date(metadata.date);
-            pageSrc = path.join(this.sitePath, 'public', pagePermalink, 'index.html');
+            pageSrc = path.join(this.sitePath, 'public', pagePath, 'index.html');
 
-            await mkdirpAsync(path.join(this.sitePath, 'public', pagePermalink));
+            await mkdirpAsync(path.join(this.sitePath, 'public', pagePath));
 
             // write page html file
             await fs.writeFileAsync(pageSrc, pageHTMLFile);
-            console.log(clc.info(`Successfully generated page ${pagePermalink}`));
+            console.log(clc.info(`Successfully generated page ${pagePath}`));
 
             pages[lang] = pages[lang] || [];
             pages[lang].push(metadata);
+
+            // write post html file
+
         })));
         return pages;
     }
