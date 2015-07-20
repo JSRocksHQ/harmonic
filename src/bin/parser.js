@@ -201,9 +201,8 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, postPath, _post, postHTMLFile, options, md, postFilePath,
+            let metadata, filename, postPath, _post, postHTMLFile, options, md,
                 postCropped, categories, postDate, month, year, post;
-
             md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
             metadata = Helper.normalizeMetaData(md.metadata());
@@ -251,7 +250,6 @@ export default class Harmonic {
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default === lang ? false : true;
             metadata.date = new Date(metadata.date);
-            postFilePath = path.join(this.sitePath, 'public', postPath, 'index.html');
             _post = {
                 content: post,
                 metadata: metadata
@@ -273,7 +271,9 @@ export default class Harmonic {
                 return;
             }
 
-            await mkdirpAsync(path.join(this.sitePath, 'public', postPath));
+            const postDirPath = path.join(this.sitePath, 'public', postPath);
+            const postFilePath = path.join(postDirPath, 'index.html');
+            await mkdirpAsync(postDirPath);
 
             // write post html file
             await fs.writeFileAsync(postFilePath, postHTMLFile);
@@ -299,7 +299,7 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, pagePath, _page, pageHTMLFile, options, md, pageFilePath;
+            let metadata, filename, pagePath, _page, pageHTMLFile, options, md;
 
             md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
             filename = getFileName(file);
@@ -342,9 +342,10 @@ export default class Harmonic {
             metadata.link = pagePath;
             metadata.lang = lang;
             metadata.date = new Date(metadata.date);
-            pageFilePath = path.join(this.sitePath, 'public', pagePath, 'index.html');
 
-            await mkdirpAsync(path.join(this.sitePath, 'public', pagePath));
+            const pageDirPath = path.join(this.sitePath, 'public', pagePath);
+            const pageFilePath = path.join(pageDirPath, 'index.html');
+            await mkdirpAsync(pageDirPath);
 
             // write page html file
             await fs.writeFileAsync(pageFilePath, pageHTMLFile);
@@ -352,8 +353,6 @@ export default class Harmonic {
 
             pages[lang] = pages[lang] || [];
             pages[lang].push(metadata);
-
-            // write post html file
 
         })));
         return pages;
