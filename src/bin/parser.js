@@ -201,7 +201,7 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, postPath, _post, postHTMLFile, options, md, postSrc,
+            let metadata, filename, postPath, _post, postHTMLFile, options, md, postFilePath,
                 postCropped, categories, postDate, month, year, post;
 
             md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
@@ -251,7 +251,7 @@ export default class Harmonic {
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default === lang ? false : true;
             metadata.date = new Date(metadata.date);
-            postSrc = path.join(this.sitePath, 'public', postPath, 'index.html');
+            postFilePath = path.join(this.sitePath, 'public', postPath, 'index.html');
             _post = {
                 content: post,
                 metadata: metadata
@@ -276,7 +276,7 @@ export default class Harmonic {
             await mkdirpAsync(path.join(this.sitePath, 'public', postPath));
 
             // write post html file
-            await fs.writeFileAsync(postSrc, postHTMLFile);
+            await fs.writeFileAsync(postFilePath, postHTMLFile);
             console.log(clc.info(`Successfully generated post ${postPath}`));
 
             posts[lang] = posts[lang] || [];
@@ -299,7 +299,7 @@ export default class Harmonic {
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, pagePath, _page, pageHTMLFile, options, md, pageSrc;
+            let metadata, filename, pagePath, _page, pageHTMLFile, options, md, pageFilePath;
 
             md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
             filename = getFileName(file);
@@ -342,12 +342,12 @@ export default class Harmonic {
             metadata.link = pagePath;
             metadata.lang = lang;
             metadata.date = new Date(metadata.date);
-            pageSrc = path.join(this.sitePath, 'public', pagePath, 'index.html');
+            pageFilePath = path.join(this.sitePath, 'public', pagePath, 'index.html');
 
             await mkdirpAsync(path.join(this.sitePath, 'public', pagePath));
 
             // write page html file
-            await fs.writeFileAsync(pageSrc, pageHTMLFile);
+            await fs.writeFileAsync(pageFilePath, pageHTMLFile);
             console.log(clc.info(`Successfully generated page ${pagePath}`));
 
             pages[lang] = pages[lang] || [];
