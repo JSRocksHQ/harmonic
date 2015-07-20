@@ -300,7 +300,6 @@ export default class Harmonic {
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             // TODO this can most likely do with some refactoring and code style adjustments
             let metadata, filename, pagePath, _page, pageHTMLFile, options, md;
-
             md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
             filename = getFileName(file);
 
@@ -353,7 +352,6 @@ export default class Harmonic {
 
             pages[lang] = pages[lang] || [];
             pages[lang].push(metadata);
-
         })));
         return pages;
     }
