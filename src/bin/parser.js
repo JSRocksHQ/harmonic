@@ -1,5 +1,7 @@
 import path from 'path';
 import fs from 'fs';
+import core from 'babel-runtime/core-js';
+const { lpad } = core.String.prototype;
 import { promisify, promisifyAll, fromNode as promiseFromNode } from 'bluebird';
 import nunjucks from 'nunjucks';
 import permalinks from 'permalinks';
@@ -26,17 +28,21 @@ const Helper = {
         return new Date(b.date) - new Date(a.date);
     },
 
-    sortPosts: function(posts) {
+    sortPosts(posts) {
         Object.values(posts).forEach((postsArray) => postsArray.sort(Helper.sort));
         return posts;
     },
 
     normalizeMetaData(data) {
-        data.title = data.title.replace(/\"/g, '');
-        return data;
-    },
+        data.categories = (data.categories || '').split(',').map((category) => category.trim());
 
-    normalizeContent(data) {
+        if (data.date) {
+            data.date = new Date(data.date);
+        }
+
+        // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
+        data.title = data.title.replace(/\"/g, '');
+
         return data;
     }
 };
@@ -194,40 +200,27 @@ export default class Harmonic {
         const nunjucksEnv = this.nunjucksEnv;
         const postsTemplate = this.theme.getFileContents('post.html');
         const postsTemplateNJ = nunjucks.compile(postsTemplate, nunjucksEnv);
-        const tokens = [
-            config.header_tokens ? config.header_tokens[0] : '<!--',
-            config.header_tokens ? config.header_tokens[1] : '-->'
-        ];
+        const tokens = config.header_tokens || ['<!--', '-->'];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, postPath, _post, postHTMLFile, options, md,
-                postCropped, categories, postDate, month, year, post;
-            md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
+            const md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
-            metadata = Helper.normalizeMetaData(md.metadata());
-            post = Helper.normalizeContent(md.markdown());
-            postCropped = md.markdown({
+
+            const metadata = Helper.normalizeMetaData(md.metadata());
+            metadata.content = md.markdown({
                 crop: '<!--more-->'
             });
 
-            filename = getFileName(file);
+            const filename = getFileName(file);
 
-            postPath = null;
-            categories = metadata.categories.split(',');
-            postDate = new Date(metadata.date);
-            year = postDate.getFullYear();
-            month = ('0' + (postDate.getMonth() + 1)).slice(-2);
-
-            // If is the default language, generate in the root path
-            options = {
+            const postPath = permalinks({
                 replacements: [{
                     pattern: ':year',
-                    replacement: year
+                    replacement: metadata.date.getFullYear()
                 },
                 {
                     pattern: ':month',
-                    replacement: month
+                    replacement: (metadata.date.getMonth() + 1)::lpad(2, '0')
                 },
                 {
                     pattern: ':title',
@@ -236,28 +229,22 @@ export default class Harmonic {
                 {
                     pattern: ':language',
                     replacement: lang
-                }]
-            };
+                }],
+                structure: getStructure(config.i18n.default, lang, config.posts_permalink)
+            });
 
-            options.structure = getStructure(config.i18n.default, lang, config.posts_permalink);
-            postPath = permalinks(options);
-
-            metadata.categories = categories;
-            metadata.content = postCropped;
             metadata.file = postspath + file;
             metadata.filename = filename;
             metadata.link = postPath;
             metadata.lang = lang;
-            metadata.default_lang = config.i18n.default === lang ? false : true;
-            metadata.date = new Date(metadata.date);
-            _post = {
-                content: post,
-                metadata: metadata
-            };
+            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
-            postHTMLFile = postsTemplateNJ
+            const postHTMLFile = postsTemplateNJ
                 .render({
-                    post: _post,
+                    post: {
+                        content: md.markdown(),
+                        metadata: metadata
+                    },
                     config: config
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
@@ -292,23 +279,17 @@ export default class Harmonic {
         const nunjucksEnv = this.nunjucksEnv;
         const pagesTemplate = this.theme.getFileContents('page.html');
         const pagesTemplateNJ = nunjucks.compile(pagesTemplate, nunjucksEnv);
-        const tokens = [
-            config.header_tokens ? config.header_tokens[0] : '<!--',
-            config.header_tokens ? config.header_tokens[1] : '-->'
-        ];
+        const tokens = config.header_tokens || ['<!--', '-->'];
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            // TODO this can most likely do with some refactoring and code style adjustments
-            let metadata, filename, pagePath, _page, pageHTMLFile, options, md;
-            md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
-            filename = getFileName(file);
-
+            const md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
-            // Markdown extra
-            metadata = md.metadata();
+            const metadata = Helper.normalizeMetaData(md.metadata());
 
-            options = {
+            const filename = getFileName(file);
+
+            const pagePath = permalinks({
                 replacements: [{
                     pattern: ':title',
                     replacement: filename
@@ -316,31 +297,26 @@ export default class Harmonic {
                 {
                     pattern: ':language',
                     replacement: lang
-                }]
-            };
-
-            options.structure = getStructure(config.i18n.default, lang, config.pages_permalink);
-            pagePath = permalinks(options);
-
-            _page = {
-                content: md.markdown(),
-                metadata: metadata
-            };
-
-            pageHTMLFile = pagesTemplateNJ.render({
-                page: _page,
-                config: config
+                }],
+                structure: getStructure(config.i18n.default, lang, config.pages_permalink)
             });
 
-            // Removing header metadata
-            pageHTMLFile = pageHTMLFile.replace(/<!--[\s\S]*?-->/g, '');
+            const pageHTMLFile = pagesTemplateNJ
+                .render({
+                    page: {
+                        content: md.markdown(),
+                        metadata: metadata
+                    },
+                    config: config
+                })
+                .replace(/<!--[\s\S]*?-->/g, '');
 
             metadata.content = pageHTMLFile;
-            metadata.file = postspath + file; // TODO check whether this needs sitePath
+            metadata.file = postspath + file;
             metadata.filename = filename;
             metadata.link = pagePath;
             metadata.lang = lang;
-            metadata.date = new Date(metadata.date);
+            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
             const pageDirPath = path.join(this.sitePath, 'public', pagePath);
             const pageFilePath = path.join(pageDirPath, 'index.html');

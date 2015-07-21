@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs';
 import { join, resolve, extname, basename } from 'path';
+import core from 'babel-runtime/core-js';
+const { includes: strIncludes } = core.String.prototype;
 import _cliColor from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename,
@@ -65,13 +67,15 @@ function titleToFilename(title) {
 }
 
 function getFileName(file) {
-    const filename = extname(file) === '.md' ? basename(file, '.md') : basename(file, '.markdown');
+    const filename = basename(file, extname(file));
     const checkDate = new Date(filename.substr(0, 10));
     return isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
 }
 
 function getStructure(defaultLang, lang, permaLink) {
-    if (defaultLang === lang && permaLink.match(':language')) {
+    // If is the default language, generate in the root path
+    if (defaultLang === lang && permaLink::strIncludes(':language')) {
+        // TODO allow customizing the permalink format? https://github.com/JSRocksHQ/harmonic/pull/97#issuecomment-67596545
         return permaLink.split(':language/')[1];
     }
     return permaLink;
