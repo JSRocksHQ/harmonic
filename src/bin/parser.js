@@ -66,6 +66,7 @@ export default class Harmonic {
 
         this.config = config;
         this.nunjucksEnv = nunjucks.configure(this.theme.themePath, { watch: false });
+        this.templates = {};
     }
 
     async clean() {
@@ -193,13 +194,19 @@ export default class Harmonic {
         console.log(clc.info(`User resources copied`));
     }
 
+    getTemplate(layout) {
+        if(!this.templates[layout]){
+            let templateFile = this.theme.getFileContents(layout);
+            this.templates[layout] = nunjucks.compile(templateFile, this.nunjucksEnv);
+        }
+        return this.templates[layout];
+    }
+
     async generatePosts(files) {
         const langs = Object.keys(files);
         const config = this.config;
         const posts = {};
         const currentDate = new Date();
-        const nunjucksEnv = this.nunjucksEnv;
-        const postTemplates = {};
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
             layout: 'post.html'
@@ -214,11 +221,7 @@ export default class Harmonic {
                 crop: '<!--more-->'
             });
 
-            if(!postTemplates[metadata.layout]){
-                let templateFile = this.theme.getFileContents(metadata.layout);
-                postTemplates[metadata.layout] = nunjucks.compile(templateFile, nunjucksEnv);
-            }
-
+            const template = this.getTemplate(metadata.layout);
             const filename = getFileName(file);
 
             const postPath = permalinks({
@@ -247,7 +250,7 @@ export default class Harmonic {
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
-            const postHTMLFile = postTemplates[metadata.layout]
+            const postHTMLFile = template
                 .render({
                     post: {
                         content: md.markdown(),
@@ -284,8 +287,6 @@ export default class Harmonic {
         const langs = Object.keys(files);
         const config = this.config;
         const pages = {};
-        const nunjucksEnv = this.nunjucksEnv;
-        const pageTemplates = {};
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
             layout: 'page.html'
@@ -296,11 +297,7 @@ export default class Harmonic {
             md.defineTokens(tokens[0], tokens[1]);
 
             const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
-            if(!pageTemplates[metadata.layout]){
-                let templateFile = this.theme.getFileContents(metadata.layout);
-                pageTemplates[metadata.layout] = nunjucks.compile(templateFile, nunjucksEnv);
-            }
-
+            const template = this.getTemplate(metadata.layout);
             const filename = getFileName(file);
 
             const pagePath = permalinks({
@@ -315,7 +312,7 @@ export default class Harmonic {
                 structure: getStructure(config.i18n.default, lang, config.pages_permalink)
             });
 
-            const pageHTMLFile = pageTemplates[metadata.layout]
+            const pageHTMLFile = template
                 .render({
                     page: {
                         content: md.markdown(),
