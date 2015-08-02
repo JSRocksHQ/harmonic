@@ -33,7 +33,7 @@ const Helper = {
         return posts;
     },
 
-    normalizeMetaData(data) {
+    normalizeMetaData(data, defaults) {
         data.categories = (data.categories || '').split(',').map((category) => category.trim());
 
         if (data.date) {
@@ -42,6 +42,7 @@ const Helper = {
 
         // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
         data.title = data.title.replace(/\"/g, '');
+        data.layout = data.layout ? data.layout + '.html' : defaults.layout;
 
         return data;
     }
@@ -200,20 +201,22 @@ export default class Harmonic {
         const nunjucksEnv = this.nunjucksEnv;
         const postTemplates = {};
         const tokens = config.header_tokens || ['<!--', '-->'];
+        const metadataDefaults = {
+            layout: 'post.html'
+        };
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             const md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
-            const metadata = Helper.normalizeMetaData(md.metadata());
+            const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
             metadata.content = md.markdown({
                 crop: '<!--more-->'
             });
 
-            const layoutName = metadata.layout ? metadata.layout + '.html' : 'post.html';
-            if(!postTemplates[layoutName]){
-                let templateFile = this.theme.getFileContents(layoutName);
-                postTemplates[layoutName] = nunjucks.compile(templateFile, nunjucksEnv);
+            if(!postTemplates[metadata.layout]){
+                let templateFile = this.theme.getFileContents(metadata.layout);
+                postTemplates[metadata.layout] = nunjucks.compile(templateFile, nunjucksEnv);
             }
 
             const filename = getFileName(file);
@@ -244,7 +247,7 @@ export default class Harmonic {
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
-            const postHTMLFile = postTemplates[layoutName]
+            const postHTMLFile = postTemplates[metadata.layout]
                 .render({
                     post: {
                         content: md.markdown(),
@@ -284,17 +287,18 @@ export default class Harmonic {
         const nunjucksEnv = this.nunjucksEnv;
         const pageTemplates = {};
         const tokens = config.header_tokens || ['<!--', '-->'];
+        const metadataDefaults = {
+            layout: 'page.html'
+        };
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             const md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
-            const metadata = Helper.normalizeMetaData(md.metadata());
-
-            const layoutName = metadata.layout ? metadata.layout + '.html' : 'page.html';
-            if(!pageTemplates[layoutName]){
-                let templateFile = this.theme.getFileContents(layoutName);
-                pageTemplates[layoutName] = nunjucks.compile(templateFile, nunjucksEnv);
+            const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
+            if(!pageTemplates[metadata.layout]){
+                let templateFile = this.theme.getFileContents(metadata.layout);
+                pageTemplates[metadata.layout] = nunjucks.compile(templateFile, nunjucksEnv);
             }
 
             const filename = getFileName(file);
@@ -311,7 +315,7 @@ export default class Harmonic {
                 structure: getStructure(config.i18n.default, lang, config.pages_permalink)
             });
 
-            const pageHTMLFile = pageTemplates[layoutName]
+            const pageHTMLFile = pageTemplates[metadata.layout]
                 .render({
                     page: {
                         content: md.markdown(),
