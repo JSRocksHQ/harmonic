@@ -40,9 +40,10 @@ const Helper = {
             data.date = new Date(data.date);
         }
 
+        data.layout = data.layout || defaults.layout;
+
         // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
         data.title = data.title.replace(/\"/g, '');
-        data.layout = data.layout ? data.layout + '.html' : defaults.layout;
 
         return data;
     }
@@ -195,9 +196,9 @@ export default class Harmonic {
     }
 
     getTemplate(layout) {
-        if(!this.templates[layout]){
-            let templateFile = this.theme.getFileContents(layout);
-            this.templates[layout] = nunjucks.compile(templateFile, this.nunjucksEnv);
+        if(!this.templates[layout]) {
+            const templateContents = this.theme.getFileContents(`${layout}.html`);
+            this.templates[layout] = nunjucks.compile(templateContents, this.nunjucksEnv);
         }
         return this.templates[layout];
     }
@@ -209,7 +210,7 @@ export default class Harmonic {
         const currentDate = new Date();
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
-            layout: 'post.html'
+            layout: 'post'
         };
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
@@ -289,7 +290,7 @@ export default class Harmonic {
         const pages = {};
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
-            layout: 'page.html'
+            layout: 'page'
         };
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
