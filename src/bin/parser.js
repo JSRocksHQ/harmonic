@@ -313,6 +313,13 @@ export default class Harmonic {
                 structure: getStructure(config.i18n.default, lang, config.pages_permalink)
             });
 
+            metadata.content = pageHTMLFile;
+            metadata.file = postspath + file;
+            metadata.filename = filename;
+            metadata.link = pagePath;
+            metadata.lang = lang;
+            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
+
             const pageHTMLFile = template
                 .render({
                     page: {
@@ -322,13 +329,6 @@ export default class Harmonic {
                     config: config
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
-
-            metadata.content = pageHTMLFile;
-            metadata.file = postspath + file;
-            metadata.filename = filename;
-            metadata.link = pagePath;
-            metadata.lang = lang;
-            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
             const pageDirPath = path.join(this.sitePath, 'public', pagePath);
             const pageFilePath = path.join(pageDirPath, 'index.html');
