@@ -151,7 +151,8 @@ export default class Harmonic {
                 const tagContent = tagTemplateNJ.render({
                     posts: tagPosts,
                     config,
-                    category: tag
+                    category: tag,
+                    lang
                 });
 
                 const tagPath = path.join(this.sitePath, 'public/categories', ...(config.i18n.default === lang ? [] : [lang]), tag);
@@ -173,7 +174,8 @@ export default class Harmonic {
             const indexContent = indexTemplateNJ.render({
                 posts,
                 pages,
-                config
+                config,
+                lang
             });
 
             const indexPath = path.join(this.sitePath, 'public', ...(config.i18n.default === lang ? [] : [lang]));
@@ -255,9 +257,10 @@ export default class Harmonic {
                 .render({
                     post: {
                         content: md.markdown(),
-                        metadata: metadata
+                        metadata
                     },
-                    config: config
+                    config,
+                    lang
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
 
@@ -313,7 +316,6 @@ export default class Harmonic {
                 structure: getStructure(config.i18n.default, lang, config.pages_permalink)
             });
 
-            metadata.content = pageHTMLFile;
             metadata.file = postspath + file;
             metadata.filename = filename;
             metadata.link = pagePath;
@@ -324,11 +326,14 @@ export default class Harmonic {
                 .render({
                     page: {
                         content: md.markdown(),
-                        metadata: metadata
+                        metadata
                     },
-                    config: config
+                    config,
+                    lang
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
+
+            metadata.content = pageHTMLFile;
 
             const pageDirPath = path.join(this.sitePath, 'public', pagePath);
             const pageFilePath = path.join(pageDirPath, 'index.html');
