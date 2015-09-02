@@ -205,18 +205,20 @@ export default class Harmonic {
         return this.templates[layout];
     }
 
-    async generatePosts(files) {
+    async generateFiles(files, filesType) {
         const langs = Object.keys(files);
         const config = this.config;
-        const posts = {};
+        const generatedFiles = {};
         const currentDate = new Date();
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
-            layout: 'post'
+            layout: filesType
         };
 
+        const filesPath = filesType === 'post' ? postspath : pagespath;
+
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            const md = new MkMeta(path.join(this.sitePath, postspath, lang, file));
+            const md = new MkMeta(path.join(this.sitePath, filesPath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
             const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
@@ -226,8 +228,9 @@ export default class Harmonic {
 
             const template = this.getTemplate(metadata.layout);
             const filename = getFileName(file);
+            const permalink = filesType === 'post' ? config.posts_permalink : config.pages_permalink;
 
-            const postPath = permalinks({
+            const filePath = permalinks({
                 replacements: [{
                     pattern: ':year',
                     replacement: metadata.date.getFullYear()
@@ -244,25 +247,28 @@ export default class Harmonic {
                     pattern: ':language',
                     replacement: lang
                 }],
-                structure: getStructure(config.i18n.default, lang, config.posts_permalink)
+                structure: getStructure(config.i18n.default, lang, permalink)
             });
 
-            metadata.file = postspath + file;
+            metadata.file = filesPath + file;
             metadata.filename = filename;
-            metadata.link = postPath;
+            metadata.link = filePath;
             metadata.lang = lang;
             metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
-            const postHTMLFile = template
+            const contentHTMLFile = template
                 .render({
-                    post: {
+                    [filesType]: {
                         content: md.markdown(),
-                        metadata
+                        metadata: metadata
                     },
-                    config,
-                    lang
+                    config: config
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
+
+            if(filesType === 'page') {
+                metadata.content = contentHTMLFile;
+            }
 
             if (metadata.published && metadata.published === 'false') {
                 return;
@@ -273,80 +279,17 @@ export default class Harmonic {
                 return;
             }
 
-            const postDirPath = path.join(this.sitePath, 'public', postPath);
+            const postDirPath = path.join(this.sitePath, 'public', filePath);
             const postFilePath = path.join(postDirPath, 'index.html');
             await mkdirpAsync(postDirPath);
 
-            // write post html file
-            await fs.writeFileAsync(postFilePath, postHTMLFile);
-            console.log(clc.info(`Successfully generated post ${postPath}`));
+            await fs.writeFileAsync(postFilePath, contentHTMLFile);
+            console.log(clc.info(`Successfully generated post ${filePath}`));
 
-            posts[lang] = posts[lang] || [];
-            posts[lang].push(metadata);
+            generatedFiles[lang] = generatedFiles[lang] || [];
+            generatedFiles[lang].push(metadata);
         })));
-        return Helper.sortPosts(posts);
-    }
-
-    async generatePages(files) {
-        const langs = Object.keys(files);
-        const config = this.config;
-        const pages = {};
-        const tokens = config.header_tokens || ['<!--', '-->'];
-        const metadataDefaults = {
-            layout: 'page'
-        };
-
-        await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
-            const md = new MkMeta(path.join(this.sitePath, pagespath, lang, file));
-            md.defineTokens(tokens[0], tokens[1]);
-
-            const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
-            const template = this.getTemplate(metadata.layout);
-            const filename = getFileName(file);
-
-            const pagePath = permalinks({
-                replacements: [{
-                    pattern: ':title',
-                    replacement: filename
-                },
-                {
-                    pattern: ':language',
-                    replacement: lang
-                }],
-                structure: getStructure(config.i18n.default, lang, config.pages_permalink)
-            });
-
-            metadata.file = postspath + file;
-            metadata.filename = filename;
-            metadata.link = pagePath;
-            metadata.lang = lang;
-            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
-
-            const pageHTMLFile = template
-                .render({
-                    page: {
-                        content: md.markdown(),
-                        metadata
-                    },
-                    config,
-                    lang
-                })
-                .replace(/<!--[\s\S]*?-->/g, '');
-
-            metadata.content = pageHTMLFile;
-
-            const pageDirPath = path.join(this.sitePath, 'public', pagePath);
-            const pageFilePath = path.join(pageDirPath, 'index.html');
-            await mkdirpAsync(pageDirPath);
-
-            // write page html file
-            await fs.writeFileAsync(pageFilePath, pageHTMLFile);
-            console.log(clc.info(`Successfully generated page ${pagePath}`));
-
-            pages[lang] = pages[lang] || [];
-            pages[lang].push(metadata);
-        })));
-        return pages;
+        return Helper.sortPosts(generatedFiles);
     }
 
     async getPostFiles() {

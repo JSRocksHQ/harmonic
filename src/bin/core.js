@@ -20,8 +20,8 @@ async function build(passedPath) {
 
     await harmonic.clean();
 
-    const postsDataPromise = (async () => await harmonic.generatePosts(await harmonic.getPostFiles()))();
-    const pagesDataPromise = (async () => await harmonic.generatePages(await harmonic.getPageFiles()))();
+    const postsDataPromise = (async () => await harmonic.generateFiles(await harmonic.getPostFiles(), 'post'))();
+    const pagesDataPromise = (async () => await harmonic.generateFiles(await harmonic.getPageFiles(), 'page'))();
 
     await* [
         harmonic.compileCSS(),
