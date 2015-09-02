@@ -275,7 +275,7 @@ export default class Harmonic {
             }
 
             if (metadata.date && metadata.date > currentDate) {
-                console.log(clc.info(`Skipping future post ${metadata.filename}`));
+                console.log(clc.info(`Skipping future ${filesType} ${metadata.filename}`));
                 return;
             }
 
@@ -284,7 +284,7 @@ export default class Harmonic {
             await mkdirpAsync(postDirPath);
 
             await fs.writeFileAsync(postFilePath, contentHTMLFile);
-            console.log(clc.info(`Successfully generated post ${filePath}`));
+            console.log(clc.info(`Successfully generated ${filesType} ${filePath}`));
 
             generatedFiles[lang] = generatedFiles[lang] || [];
             generatedFiles[lang].push(metadata);
