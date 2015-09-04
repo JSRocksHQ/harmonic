@@ -28,9 +28,9 @@ const Helper = {
         return new Date(b.date) - new Date(a.date);
     },
 
-    sortPosts(posts) {
-        Object.values(posts).forEach((postsArray) => postsArray.sort(Helper.sort));
-        return posts;
+    sortByDate(files) {
+        Object.values(files).forEach((filesArray) => filesArray.sort(Helper.sort));
+        return files;
     },
 
     normalizeMetaData(data, defaults) {
@@ -280,18 +280,18 @@ export default class Harmonic {
                 return;
             }
 
-            const postDirPath = path.join(this.sitePath, 'public', filePath);
-            const postFilePath = path.join(postDirPath, 'index.html');
-            await mkdirpAsync(postDirPath);
+            const publicFileDirPath = path.join(this.sitePath, 'public', filePath);
+            const publicFilePath = path.join(publicFileDirPath, 'index.html');
+            await mkdirpAsync(publicFileDirPath);
 
-            await fs.writeFileAsync(postFilePath, contentHTMLFile);
+            await fs.writeFileAsync(publicFilePath, contentHTMLFile);
             console.log(clc.info(`Successfully generated ${fileType} ${filePath}`));
 
             generatedFiles[lang] = generatedFiles[lang] || [];
             generatedFiles[lang].push(metadata);
         })));
 
-        return Helper.sortPosts(generatedFiles);
+        return fileType === 'post' ? Helper.sortByDate(generatedFiles) : generatedFiles;
     }
 
     async getPostFiles() {
