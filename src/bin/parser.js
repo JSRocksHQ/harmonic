@@ -205,17 +205,17 @@ export default class Harmonic {
         return this.templates[layout];
     }
 
-    async generateFiles(files, filesType) {
+    async generateFiles(files, fileType) {
         const langs = Object.keys(files);
         const config = this.config;
         const generatedFiles = {};
         const currentDate = new Date();
         const tokens = config.header_tokens || ['<!--', '-->'];
         const metadataDefaults = {
-            layout: filesType
+            layout: fileType
         };
 
-        const filesPath = filesType === 'post' ? postspath : pagespath;
+        const filesPath = fileType === 'post' ? postspath : pagespath;
 
         await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
             const md = new MkMeta(path.join(this.sitePath, filesPath, lang, file));
@@ -228,7 +228,7 @@ export default class Harmonic {
 
             const template = this.getTemplate(metadata.layout);
             const filename = getFileName(file);
-            const permalink = filesType === 'post' ? config.posts_permalink : config.pages_permalink;
+            const permalink = fileType === 'post' ? config.posts_permalink : config.pages_permalink;
 
             const filePath = permalinks({
                 replacements: [{
@@ -258,7 +258,7 @@ export default class Harmonic {
 
             const contentHTMLFile = template
                 .render({
-                    [filesType]: {
+                    [fileType]: {
                         content: md.markdown(),
                         metadata
                     },
@@ -267,7 +267,7 @@ export default class Harmonic {
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
 
-            if(filesType === 'page') {
+            if(fileType === 'page') {
                 metadata.content = contentHTMLFile;
             }
 
@@ -276,7 +276,7 @@ export default class Harmonic {
             }
 
             if (metadata.date && metadata.date > currentDate) {
-                console.log(clc.info(`Skipping future ${filesType} ${metadata.filename}`));
+                console.log(clc.info(`Skipping future ${fileType} ${metadata.filename}`));
                 return;
             }
 
@@ -285,7 +285,7 @@ export default class Harmonic {
             await mkdirpAsync(postDirPath);
 
             await fs.writeFileAsync(postFilePath, contentHTMLFile);
-            console.log(clc.info(`Successfully generated ${filesType} ${filePath}`));
+            console.log(clc.info(`Successfully generated ${fileType} ${filePath}`));
 
             generatedFiles[lang] = generatedFiles[lang] || [];
             generatedFiles[lang].push(metadata);
