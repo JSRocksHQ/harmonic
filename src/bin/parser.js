@@ -264,7 +264,7 @@ export default class Harmonic {
             generatedFiles[lang].push(metadata);
         })));
 
-        return fileType === 'post' ? this.sortByDate(generatedFiles) : generatedFiles;
+        return fileType === 'post' ? this.sortByDate(generatedFiles) : this.sortByName(generatedFiles);
     }
 
     async getPostFiles() {
@@ -322,6 +322,13 @@ export default class Harmonic {
 
     sortByDate(files) {
         Object.values(files).forEach((filesArray) => filesArray.sort((a, b) => new Date(b.date) - new Date(a.date)));
+        return files;
+    }
+
+    sortByName(files) {
+        Object.values(files).forEach((filesArray) => filesArray.sort((a, b) => {
+            return a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : -1;
+        }));
         return files;
     }
 
