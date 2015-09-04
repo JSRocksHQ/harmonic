@@ -260,9 +260,10 @@ export default class Harmonic {
                 .render({
                     [filesType]: {
                         content: md.markdown(),
-                        metadata: metadata
+                        metadata
                     },
-                    config: config
+                    config,
+                    lang
                 })
                 .replace(/<!--[\s\S]*?-->/g, '');
 
@@ -289,6 +290,7 @@ export default class Harmonic {
             generatedFiles[lang] = generatedFiles[lang] || [];
             generatedFiles[lang].push(metadata);
         })));
+
         return Helper.sortPosts(generatedFiles);
     }
 
