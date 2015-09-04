@@ -22,33 +22,6 @@ const rimrafAsync = promisify(rimraf);
 const clc = cliColor();
 const rMarkdownExt = /\.(?:md|markdown)$/;
 
-const Helper = {
-
-    sort(a, b) {
-        return new Date(b.date) - new Date(a.date);
-    },
-
-    sortByDate(files) {
-        Object.values(files).forEach((filesArray) => filesArray.sort(Helper.sort));
-        return files;
-    },
-
-    normalizeMetaData(data, defaults) {
-        data.categories = (data.categories || '').split(',').map((category) => category.trim());
-
-        if (data.date) {
-            data.date = new Date(data.date);
-        }
-
-        data.layout = data.layout || defaults.layout;
-
-        // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
-        data.title = data.title.replace(/\"/g, '');
-
-        return data;
-    }
-};
-
 export default class Harmonic {
     /*eslint-disable camelcase*/
 
@@ -221,7 +194,7 @@ export default class Harmonic {
             const md = new MkMeta(path.join(this.sitePath, filesPath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
-            const metadata = Helper.normalizeMetaData(md.metadata(), metadataDefaults);
+            const metadata = this.normalizeMetaData(md.metadata(), metadataDefaults);
             metadata.content = md.markdown({
                 crop: '<!--more-->'
             });
@@ -291,7 +264,7 @@ export default class Harmonic {
             generatedFiles[lang].push(metadata);
         })));
 
-        return fileType === 'post' ? Helper.sortByDate(generatedFiles) : generatedFiles;
+        return fileType === 'post' ? this.sortByDate(generatedFiles) : generatedFiles;
     }
 
     async getPostFiles() {
@@ -346,4 +319,29 @@ export default class Harmonic {
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
         });
     }
+
+    sortByDate(files) {
+        Object.values(files).forEach((filesArray) => filesArray.sort(this.sort));
+        return files;
+    }
+
+    sort(a, b) {
+        return new Date(b.date) - new Date(a.date);
+    }
+
+    normalizeMetaData(data, defaults) {
+        data.categories = (data.categories || '').split(',').map((category) => category.trim());
+
+        if (data.date) {
+            data.date = new Date(data.date);
+        }
+
+        data.layout = data.layout || defaults.layout;
+
+        // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
+        data.title = data.title.replace(/\"/g, '');
+
+        return data;
+    }
+
 }
