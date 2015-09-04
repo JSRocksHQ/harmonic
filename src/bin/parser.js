@@ -321,12 +321,8 @@ export default class Harmonic {
     }
 
     sortByDate(files) {
-        Object.values(files).forEach((filesArray) => filesArray.sort(this.sort));
+        Object.values(files).forEach((filesArray) => filesArray.sort((a, b) => new Date(b.date) - new Date(a.date)));
         return files;
-    }
-
-    sort(a, b) {
-        return new Date(b.date) - new Date(a.date);
     }
 
     normalizeMetaData(data, defaults) {
