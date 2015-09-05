@@ -326,9 +326,9 @@ export default class Harmonic {
     }
 
     sortByName(files) {
-        Object.values(files).forEach((filesArray) => filesArray.sort((a, b) => {
-            return a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : -1;
-        }));
+        Object.values(files).forEach((filesArray) => filesArray.sort(
+            (a, b) => a.filename.toLowerCase() > b.filename.toLowerCase() ? 1 : -1
+        ));
         return files;
     }
 
