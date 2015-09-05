@@ -227,7 +227,6 @@ export default class Harmonic {
             metadata.filename = filename;
             metadata.link = filePath;
             metadata.lang = lang;
-            metadata.default_lang = config.i18n.default !== lang; // FIXME https://github.com/JSRocksHQ/harmonic/issues/169
 
             const contentHTMLFile = template
                 .render({
