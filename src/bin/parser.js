@@ -341,9 +341,6 @@ export default class Harmonic {
 
         data.layout = data.layout || defaults.layout;
 
-        // FIXME why is this here? The template should do the escaping, not `normalizeMetaData`
-        data.title = data.title.replace(/\"/g, '');
-
         return data;
     }
 
