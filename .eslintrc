@@ -5,6 +5,7 @@
     },
     "rules": {
        "strict": [2, "never"], // ES Modules are implicitly strict
+       "no-use-before-define": [2, "nofunc"], // allow referencing function declarations in the whole scope where they're defined
        "no-var": 2,
        "curly": 2,
        "default-case": 2,
