@@ -13,7 +13,7 @@ Harmonic is being developed with some goals:
 - Create the JS Rocks website with Harmonic!  
 (Actually, the website is already online: [JS Rocks](http://jsrocks.org/))  
 
-Check out the full documentation in [Harmonic's Wiki](https://github.com/JSRocksHQ/harmonic/wiki/).
+Check out the full [Harmonic documentation](doc).
 
 ## Installing
 
@@ -22,7 +22,7 @@ Harmonic is available on npm:
 ```shell
 npm install harmonic -g
 ```
-For more details, check out the full documentation: [Installing](https://github.com/JSRocksHQ/harmonic/wiki/Installing)
+For more details, check out the full documentation: [Installing](doc/installing.md)
 
 ## Init
 First thing you will need to do is to initialize a new Harmonic website.  
@@ -32,7 +32,7 @@ harmonic init [PATH]
 ```
 [PATH] is your website dir. The default path is the current dir.  
 Harmonic will prompt you asking for some data about your website:   
-![Config](https://raw.githubusercontent.com/wiki/JSRocksHQ/harmonic/img/config.png)  
+![Config](doc/img/config.png)  
 
 Harmonic will then generate a config file, which is a simple JSON object.  
 Any time you want, you can configure your static website with the CLI `config` command:  
@@ -41,7 +41,7 @@ cd [PATH]
 harmonic config
 ```
 Now, enter in your website dir and you are ready to start [creating posts](#blogging)!  
-For more details, check out the full documentation: [Config](https://github.com/JSRocksHQ/harmonic/wiki/Config/)
+For more details, check out the full documentation: [Config](doc/config.md)
 
 ## Blogging
 Harmonic follows the same pattern as others static site generators that you may know.  
@@ -52,7 +52,7 @@ You must write your posts in [Markdown](http://daringfireball.net/projects/markd
 cd your_awesome_website
 harmonic new_post "Hello World"
 ```
-![New Post](https://raw.githubusercontent.com/wiki/JSRocksHQ/harmonic/img/new_post.png)
+![New Post](doc/img/new_post.png)
 
 After running `new_post`, a markdown file will be generated in the `/src/posts/[lang]` folder, ready for editing.  
 
@@ -72,7 +72,7 @@ categories: JavaScript, ES2015
 authorName: Jaydson
 -->
 ```
-You can check all possible header values in the [header page](https://github.com/JSRocksHQ/harmonic/wiki/markdown-header).  
+You can check all possible header values in the [header page](doc/markdown-header.md).  
 
 #### Markdown content
 Everything after the header is the post content.  
@@ -100,7 +100,7 @@ The code above will be parsed to something like this:
 <li>Item 3</li>
 </ul>
 ```
-For more details, you can check the full documentation: [Blogging](https://github.com/JSRocksHQ/harmonic/wiki/Blogging).  
+For more details, you can check the full documentation: [Blogging](doc/blogging.md).  
 ## New Page
 ```
 cd your_awesome_website
@@ -132,4 +132,4 @@ harmonic --help
 ```
 
 ## Contributing
-See the [Contributing guide](https://github.com/JSRocksHQ/harmonic/blob/master/CONTRIBUTING.md).
+See the [Contributing guide](CONTRIBUTING.md).

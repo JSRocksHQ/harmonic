@@ -14,7 +14,7 @@
     "dist",
     "!dist/test",
     "entry_points",
-    "LICENSE"
+    "doc"
   ],
   "repository": {
     "type": "git",
