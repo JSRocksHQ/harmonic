@@ -1,4 +1,5 @@
 {
+    "extends": "eslint:recommended",
     "parser": "babel-eslint",
     "env": {
         "node": true
@@ -16,7 +17,7 @@
        "comma-style": 2,
        "no-multiple-empty-lines": [2, { "max": 2 }],
        "quotes": [2, "single"],
-       "spaced-line-comment": 2,
+       "spaced-comment": [2, "always", { "exceptions": ["/"] }],
        "no-loop-func": 0, // this is more annoying than useful when properly using ES2015 block bindings
        "no-underscore-dangle": 0,
        "no-alert": 0,
