@@ -84,7 +84,7 @@
   "scripts": {
     "dev": "gulp",
     "test": "gulp build",
-    "update-babel": "npm install --save --save-exact babel-runtime@5 && npm update --depth=1 babel-core && node scripts/check-babel.js",
+    "update-babel": "npm install --save --save-exact babel-runtime@5 && npm update --depth=1 babel-core",
     "require-clean-work-tree": "(git update-index -q --ignore-submodules --refresh && git diff-files --quiet --ignore-submodules && git diff-index --cached --quiet --ignore-submodules HEAD --) || (echo You have uncommitted changes. Please commit or stash them. >&2 && exit 1)",
     "preversion": "git pull && npm run --silent require-clean-work-tree && npm run --silent update-babel && (git diff-files --quiet -- package.json || git commit -m \"update Babel\" -- package.json) && npm test",
     "postversion": "git push --follow-tags && npm publish"
