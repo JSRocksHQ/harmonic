@@ -48,7 +48,7 @@ function config(passedPath, _skipFindRoot = false) {
                 'Just hit enter if you are ok with the default values.\n\n'
             ));
 
-            /*eslint-disable camelcase*/
+            /* eslint-disable camelcase */
             const templateObj = {
                 name: 'Awesome website',
                 title: 'My awesome static website',
@@ -68,7 +68,7 @@ function config(passedPath, _skipFindRoot = false) {
                     languages: ['en', 'pt-br']
                 }
             };
-            /*eslint-enable camelcase*/
+            /* eslint-enable camelcase */
 
             function _p(message) {
                 return prompt(clc.message(message));

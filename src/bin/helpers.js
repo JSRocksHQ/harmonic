@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
 import { join, resolve, extname, basename } from 'path';
-import core from 'babel-runtime/core-js';
-const { includes: strIncludes } = core.String.prototype;
+import strIncludes from 'core-js/library/fn/string/virtual/includes';
 import _cliColor from 'cli-color';
 
 export { cliColor, isHarmonicProject, getConfig, titleToFilename,

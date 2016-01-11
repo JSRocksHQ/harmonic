@@ -23,7 +23,7 @@ async function build(passedPath) {
     const postsDataPromise = (async () => await harmonic.generateFiles(await harmonic.getPostFiles(), 'post'))();
     const pagesDataPromise = (async () => await harmonic.generateFiles(await harmonic.getPageFiles(), 'page'))();
 
-    await* [
+    await Promise.all([
         harmonic.compileCSS(),
         (async () => await harmonic.generateIndex(await postsDataPromise, await pagesDataPromise))(),
         (async () => await harmonic.generateTagsPages(await postsDataPromise))(),
@@ -34,7 +34,7 @@ async function build(passedPath) {
             await harmonic.copyThemeResources();
             await harmonic.copyUserResources();
         })()
-    ];
+    ]);
 
     // TODO move logging to outside of this API?
     const endTime = Date.now();

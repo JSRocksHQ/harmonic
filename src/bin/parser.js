@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import core from 'babel-runtime/core-js';
-const { lpad } = core.String.prototype;
+import padStart from 'core-js/library/fn/string/virtual/pad-start';
 import { promisify, promisifyAll, fromNode as promiseFromNode } from 'bluebird';
 import nunjucks from 'nunjucks';
 import permalinks from 'permalinks';
@@ -23,7 +22,7 @@ const clc = cliColor();
 const rMarkdownExt = /\.(?:md|markdown)$/;
 
 export default class Harmonic {
-    /*eslint-disable camelcase*/
+    /* eslint-disable camelcase */
 
     constructor(sitePath, { quiet = true } = {}) {
         this.sitePath = path.resolve(sitePath);
@@ -109,7 +108,7 @@ export default class Harmonic {
         const tagTemplateNJ = nunjucks.compile(this.theme.getFileContents('index.html'), this.nunjucksEnv);
         const config = this.config;
 
-        await* [].concat(...Object.entries(postsMetadata).map(([lang, langPosts]) => {
+        await Promise.all([].concat(...Object.entries(postsMetadata).map(([lang, langPosts]) => {
             const postsByTag = {};
             langPosts.forEach((post) => {
                 post.categories.forEach((category) => {
@@ -133,14 +132,14 @@ export default class Harmonic {
                 await fs.writeFileAsync(path.join(tagPath, 'index.html'), tagContent);
                 console.log(clc.info(`Successfully generated tag[${tag}] archive html file`));
             });
-        }));
+        })));
     }
 
     async generateIndex(postsMetadata, pagesMetadata) {
         const indexTemplateNJ = nunjucks.compile(this.theme.getFileContents('index.html'), this.nunjucksEnv);
         const config = this.config;
 
-        await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
+        await Promise.all(Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
             const posts = langPosts.slice(0, config.index_posts);
             const pages = pagesMetadata[lang] || [];
 
@@ -155,7 +154,7 @@ export default class Harmonic {
             await mkdirpAsync(indexPath);
             await fs.writeFileAsync(path.join(indexPath, 'index.html'), indexContent);
             console.log(clc.info(`${lang}/index file successfully created`));
-        });
+        }));
     }
 
     async copyThemeResources() {
@@ -190,7 +189,7 @@ export default class Harmonic {
 
         const filesPath = fileType === 'post' ? postspath : pagespath;
 
-        await* [].concat(...langs.map((lang) => files[lang].map(async (file) => {
+        await Promise.all([].concat(...langs.map((lang) => files[lang].map(async (file) => {
             const md = new MkMeta(path.join(this.sitePath, filesPath, lang, file));
             md.defineTokens(tokens[0], tokens[1]);
 
@@ -207,16 +206,13 @@ export default class Harmonic {
                 replacements: [{
                     pattern: ':year',
                     replacement: metadata.date.getFullYear()
-                },
-                {
+                }, {
                     pattern: ':month',
-                    replacement: (metadata.date.getMonth() + 1)::lpad(2, '0')
-                },
-                {
+                    replacement: (metadata.date.getMonth() + 1)::padStart(2, '0')
+                }, {
                     pattern: ':title',
                     replacement: filename
-                },
-                {
+                }, {
                     pattern: ':language',
                     replacement: lang
                 }],
@@ -261,7 +257,7 @@ export default class Harmonic {
 
             generatedFiles[lang] = generatedFiles[lang] || [];
             generatedFiles[lang].push(metadata);
-        })));
+        }))));
 
         return fileType === 'post' ? this.sortByDate(generatedFiles) : this.sortByName(generatedFiles);
     }
@@ -269,10 +265,10 @@ export default class Harmonic {
     async getPostFiles() {
         const files = {};
 
-        await* this.config.i18n.languages.map(async (lang) => {
+        await Promise.all(this.config.i18n.languages.map(async (lang) => {
             files[lang] = (await fs.readdirAsync(path.join(this.sitePath, postspath, lang)))
                 .filter((p) => rMarkdownExt.test(p));
-        });
+        }));
 
         return files;
     }
@@ -280,11 +276,11 @@ export default class Harmonic {
     async getPageFiles() {
         const files = {};
 
-        await* this.config.i18n.languages.map(async (lang) => {
+        await Promise.all(this.config.i18n.languages.map(async (lang) => {
             const langPath = path.join(this.sitePath, pagespath, lang);
             await mkdirpAsync(langPath);
             files[lang] = (await fs.readdirAsync(langPath)).filter((p) => rMarkdownExt.test(p));
-        });
+        }));
 
         return files;
     }
@@ -295,7 +291,7 @@ export default class Harmonic {
         const config = this.config;
         const rssAuthor = config.author_email ? `${config.author_email} ( ${config.author} )` : config.author;
 
-        await* Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
+        await Promise.all(Object.entries(postsMetadata).map(async ([lang, langPosts]) => {
             const posts = langPosts.slice(0, config.index_posts);
             const isDefaultLang = config.i18n.default === lang;
             const rssPath = path.join(this.sitePath, 'public', ...(isDefaultLang ? [] : [lang]));
@@ -316,7 +312,7 @@ export default class Harmonic {
             await mkdirpAsync(rssPath);
             await fs.writeFileAsync(`${rssPath}/rss.xml`, rssContent);
             console.log(clc.info(`${lang}/rss.xml file successfully created`));
-        });
+        }));
     }
 
     sortByDate(files) {

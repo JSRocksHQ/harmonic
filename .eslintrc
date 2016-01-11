@@ -20,6 +20,7 @@
        "spaced-comment": [2, "always", { "exceptions": ["/"] }],
        "no-loop-func": 0, // this is more annoying than useful when properly using ES2015 block bindings
        "no-underscore-dangle": 0,
+       "no-console": 0,
        "no-alert": 0,
        "no-shadow": 0
     }

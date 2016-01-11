@@ -36,7 +36,7 @@
     "ES2016"
   ],
   "dependencies": {
-    "babel-runtime": "5.6.20",
+    "babel-runtime": "5.8.34",
     "bluebird": "^2.9.33",
     "browser-sync": "^2.7.13",
     "chokidar": "^1.0.3",
@@ -44,6 +44,7 @@
     "co": "^3.1.0",
     "co-prompt": "^1.0.0",
     "commander": "^2.8.1",
+    "core-js": "^2.0.2",
     "dedent": "^0.4.0",
     "less": "^2.5.1",
     "marked-metadata": "0.0.6",
@@ -62,7 +63,7 @@
     "chalk": "^1.1.0",
     "glob-manipulate": "^1.1.1",
     "gulp": "^3.9.0",
-    "gulp-babel": "^5.1.0",
+    "gulp-babel": "^5.3.0",
     "gulp-eslint": "^1.1.1",
     "gulp-filter": "^2.0.2",
     "gulp-load-plugins": "^1.0.0-rc.1",
