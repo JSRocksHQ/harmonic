@@ -1,4 +1,4 @@
-# <a name="harmonic"><img src="https://cdn.rawgit.com/JSRocksHQ/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450"></a>
+# <a name="harmonic" href="http://harmonicjs.com/"><img src="https://cdn.rawgit.com/JSRocksHQ/harmonic/e391ae462f3b047848f1783315de9edab019e197/harmonic-logo.svg" alt="Harmonic - The next static site generator" width="450"></a>
 [![Build Status](https://travis-ci.org/JSRocksHQ/harmonic.svg?branch=master)](https://travis-ci.org/JSRocksHQ/harmonic)
 [![Dependency Status](http://img.shields.io/david/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic)
 [![devDependency Status](http://img.shields.io/david/dev/JSRocksHQ/harmonic.svg)](https://david-dm.org/JSRocksHQ/harmonic#info=devDependencies)
@@ -130,6 +130,8 @@ Harmonic will also watch all files in the `src` directory and in the currently s
 ```shell
 harmonic --help
 ```
+
+Also see the full [Harmonic documentation](doc).
 
 ## Contributing
 See the [Contributing guide](CONTRIBUTING.md).

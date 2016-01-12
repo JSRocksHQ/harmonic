@@ -1,4 +1,4 @@
-# Blogging
+# Blogging with Harmonic
 
 Harmonic follow the pattern of others static site generators you may know.  
 You must write your posts in [Markdown](http://daringfireball.net/projects/markdown/) format.  
@@ -56,4 +56,4 @@ The code above will be parsed to something like this:
 </ul>
 ```
 
-[<<< Config](config.md) | [Markdown Header >>>](markdown-header.md)
+[<<< Configuring Harmonic](config.md) | [Markdown Header >>>](markdown-header.md)

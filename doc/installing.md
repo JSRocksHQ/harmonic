@@ -1,4 +1,4 @@
-# Installing
+# Installing Harmonic
 
 ## Prerequirements
 
@@ -26,4 +26,4 @@ npm link
 If everything is ok, you can type `harmonic` in your terminal, and you will get the harmonic menu:  
 ![Harmonic CLI](img/harmonic-cli.png)
 
-[<<< Index](README.md) | [Config >>>](config.md)
+[<<< Index](README.md) | [Configuring Harmonic >>>](config.md)

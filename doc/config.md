@@ -1,4 +1,4 @@
-# Config
+# Configuring Harmonic
 
 The Harmonic config file is a simple JSON object.  
 You can configure your static website with the CLI _config_ command:  
@@ -136,4 +136,4 @@ So, let's check the full config file:
 
 All this information are available in any template as _**config**_.  
 
-[<<< Installing](installing.md) | [Blogging >>>](blogging.md)
+[<<< Installing Harmonic](installing.md) | [Blogging with Harmonic >>>](blogging.md)

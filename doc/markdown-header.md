@@ -79,4 +79,4 @@ Let's check all available options harmonic have:
 
 NOT IMPLEMENTED YET means the default theme doesn't support those features.  
 
-[<<< Blogging](blogging.md) | [Themes >>>](themes.md)
+[<<< Blogging with Harmonic](blogging.md) | [Harmonic themes >>>](themes.md)

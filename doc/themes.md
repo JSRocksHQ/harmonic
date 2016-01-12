@@ -1,4 +1,4 @@
-# Themes
+# Harmonic themes
 
 _**Introduced in Harmonic@0.1.0**_
 
