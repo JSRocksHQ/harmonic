@@ -38,7 +38,7 @@ export default class Harmonic {
         }
 
         this.config = config;
-        this.nunjucksEnv = nunjucks.configure(this.theme.themePath, { watch: false });
+        this.nunjucksEnv = nunjucks.configure(this.theme.themePath);
         this.templates = {};
     }
 
