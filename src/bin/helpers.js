@@ -3,11 +3,8 @@ import { join, resolve, extname, basename } from 'path';
 import strIncludes from 'core-js/library/fn/string/virtual/includes';
 import _cliColor from 'cli-color';
 
-export { cliColor, isHarmonicProject, getConfig, titleToFilename,
-    findHarmonicRoot, displayNonInitializedFolderErrorMessage, getFileName, getStructure };
-
 // CLI color
-function cliColor() {
+export function cliColor() {
     return {
         info: _cliColor.green,
         error: _cliColor.red,
@@ -17,7 +14,7 @@ function cliColor() {
 }
 
 // Friendly message for non-initialized folder
-function displayNonInitializedFolderErrorMessage() {
+export function displayNonInitializedFolderErrorMessage() {
     const clc = cliColor();
 
     console.log(
@@ -29,7 +26,7 @@ function displayNonInitializedFolderErrorMessage() {
 }
 
 // Check if harmonic.json file exists
-function isHarmonicProject(sitePath) {
+export function isHarmonicProject(sitePath) {
     try {
         getConfig(sitePath);
         return true;
@@ -39,7 +36,7 @@ function isHarmonicProject(sitePath) {
 }
 
 // Find harmonic.json. Returns path or false.
-function findHarmonicRoot(sitePath) {
+export function findHarmonicRoot(sitePath) {
     let currentPath = resolve(sitePath);
     let oldPath = '';
 
@@ -57,21 +54,21 @@ function findHarmonicRoot(sitePath) {
     return currentPath;
 }
 
-function getConfig(sitePath) {
+export function getConfig(sitePath) {
     return JSON.parse(readFileSync(join(sitePath, 'harmonic.json')).toString());
 }
 
-function titleToFilename(title) {
+export function titleToFilename(title) {
     return title.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() + '.md';
 }
 
-function getFileName(file) {
+export function getFileName(file) {
     const filename = basename(file, extname(file));
     const checkDate = new Date(filename.substr(0, 10));
     return isNaN(checkDate.getDate()) ? filename : filename.substr(11, filename.length);
 }
 
-function getStructure(defaultLang, lang, permaLink) {
+export function getStructure(defaultLang, lang, permaLink) {
     // If is the default language, generate in the root path
     if (defaultLang === lang && permaLink::strIncludes(':language')) {
         // TODO allow customizing the permalink format? https://github.com/JSRocksHQ/harmonic/pull/97#issuecomment-67596545
