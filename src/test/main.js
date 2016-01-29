@@ -101,7 +101,7 @@ describe('CLI', () => {
                 for (const lang of langs) {
                     const langSegment = lang === config.i18n.default ? '.' : lang;
                     readFileSync(join(testDir, 'public', langSegment, year, month,
-                        slug, 'index.html')).toString().should.containEql(title);
+                        slug, 'index.html')).toString().should.containEql(`<h1 id="new_post-test">${title}</h1>`);
                 }
                 resolve();
             });
@@ -137,7 +137,7 @@ describe('CLI', () => {
                 for (const lang of langs) {
                     const langSegment = lang === config.i18n.default ? '.' : lang;
                     readFileSync(join(testDir, 'public', langSegment, 'pages',
-                        slug, 'index.html')).toString().should.containEql(title);
+                        slug, 'index.html')).toString().should.containEql(`<h1 id="new_page-test">${title}</h1>`);
                 }
                 resolve();
             });

@@ -194,9 +194,9 @@ export default class Harmonic {
             md.defineTokens(tokens[0], tokens[1]);
 
             const metadata = this.normalizeMetaData(md.metadata(), metadataDefaults);
-            metadata.content = md.markdown({
+            metadata.content = new nunjucks.runtime.SafeString(md.markdown({
                 crop: '<!--more-->'
-            });
+            }));
 
             const template = this.getTemplate(metadata.layout);
             const filename = getFileName(file);
@@ -227,7 +227,7 @@ export default class Harmonic {
             const contentHTMLFile = template
                 .render({
                     [fileType]: {
-                        content: md.markdown(),
+                        content: new nunjucks.runtime.SafeString(md.markdown()),
                         metadata
                     },
                     config,
@@ -236,7 +236,7 @@ export default class Harmonic {
                 .replace(/<!--[\s\S]*?-->/g, '');
 
             if(fileType === 'page') {
-                metadata.content = contentHTMLFile;
+                metadata.content = new nunjucks.runtime.SafeString(contentHTMLFile);
             }
 
             if (metadata.published && metadata.published === 'false') {
