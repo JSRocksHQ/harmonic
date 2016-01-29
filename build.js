@@ -7,7 +7,14 @@ module.exports = {
     },
     distBase: 'dist/',
     config: {
-        babel: { optional: ['runtime'], stage: 0 },
+        babel: {
+            presets: ['es2015'],
+            plugins: [
+                'syntax-async-functions', 'transform-async-to-generator',
+                'syntax-function-bind', 'transform-function-bind',
+                'transform-runtime'
+            ]
+        },
         mocha: '--colors --bail --timeout 15000'
     }
 };

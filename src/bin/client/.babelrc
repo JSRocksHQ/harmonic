@@ -1,3 +1,4 @@
 {
-  "blacklist": ["runtime"]
+    // Remove the `transform-runtime` plugin.
+    "plugins": []
 }

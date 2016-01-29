@@ -4,9 +4,7 @@ import Harmonic from './parser';
 import { cliColor } from './helpers';
 const clc = cliColor();
 
-export { build };
-
-async function build(passedPath) {
+export async function build(passedPath) {
     const startTime = Date.now();
 
     const sitePath = findHarmonicRoot(passedPath);

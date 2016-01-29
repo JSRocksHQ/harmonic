@@ -19,10 +19,9 @@ const mkdirpAsync = promisify(mkdirp);
 const ncpAsync = promisify(ncp);
 const clc = cliColor();
 
-export { init, config, newFile, run, openFile };
 
 // Open a file using browser, text-editor
-function openFile(type, sitePath, file) {
+export function openFile(type, sitePath, file) {
     if (type === 'file') {
         open(path.resolve(sitePath, file));
     } else {
@@ -31,7 +30,7 @@ function openFile(type, sitePath, file) {
     }
 }
 
-function config(passedPath, _skipFindRoot = false) {
+export function config(passedPath, _skipFindRoot = false) {
     const sitePath = _skipFindRoot ? passedPath : findHarmonicRoot(passedPath);
 
     if (!sitePath) {
@@ -107,7 +106,7 @@ function config(passedPath, _skipFindRoot = false) {
     });
 }
 
-async function init(sitePath) {
+export async function init(sitePath) {
     const skeletonPath = path.join(rootdir, 'bin/skeleton');
 
     await mkdirpAsync(sitePath);
@@ -137,7 +136,7 @@ async function init(sitePath) {
  * @param {string} type - The new file's type. Can be either 'post' or 'page'.
  * @param {string} title - The new file's title.
  */
-function newFile(passedPath, type, title, autoOpen) {
+export function newFile(passedPath, type, title, autoOpen) {
     const sitePath = findHarmonicRoot(passedPath);
 
     if (!sitePath) {
@@ -177,7 +176,7 @@ function newFile(passedPath, type, title, autoOpen) {
     ));
 }
 
-async function run(passedPath, port, autoOpen) {
+export async function run(passedPath, port, autoOpen) {
     const sitePath = findHarmonicRoot(passedPath);
 
     if (!sitePath) {
